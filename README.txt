@@ -5,9 +5,13 @@ to run the GUI:
 #DAQInterface must be configured(all artdaq environment variables setuped and source_me sourced)
 ./ARTDAQ_console
 
-build from source code process:
+build from source code process:  (leave off minus signs)
 -qmake -o Makefile ARTDAQ_console.pro
 -make
+
+Qt version 5 is needed, on sbnd-daq33 pick it up like this:
+ qmake -o Makefile ARTDAQ_consolse.pro
+ make
 
 IMPORTANT:
 add these lines to daqinterface.py located at your local installation of
