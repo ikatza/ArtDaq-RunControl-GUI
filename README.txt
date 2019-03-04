@@ -1,7 +1,7 @@
 
 ArtDaq RunControl GUI package
 
-to run the GUI:
+To run the GUI:
 #DAQInterface must be configured(all artdaq environment variables setuped and source_me sourced)
 ./ARTDAQ_console
 
