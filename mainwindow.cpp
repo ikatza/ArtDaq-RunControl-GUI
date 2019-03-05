@@ -360,6 +360,7 @@ void MainWindow::bCONFIGPressed(){
 
 void MainWindow::lvBOOTConfigSelected(){
 
+    QString env_str = env.value("DAQINTERFACE_USER_DIR","DEFAULT");
     list_BOOTConfig_selected.clear();
     QStringList list_str;
     QModelIndexList list = ui->lvConfigBOOT->selectionModel()->selectedRows();
@@ -368,7 +369,7 @@ void MainWindow::lvBOOTConfigSelected(){
         qDebug()<<list.length();
         for(QModelIndex idx : list){
             list_str = idx.model()->data(idx,Qt::DisplayRole).toString().split(' ',QString::KeepEmptyParts);
-            QString str = "docs/"+list_str.first();
+            QString str = env_str + "/" + list_str.first();
             list_BOOTConfig_selected.append(str);
             list_str.clear();
         }
@@ -570,8 +571,8 @@ void MainWindow::bListDAQConfigs(){
     DAQState = 2;
     QRegExp reg("*.txt");
     reg.setPatternSyntax(QRegExp::Wildcard);
-    QString env_str = env.value("ARTDAQ_DAQINTERFACE_DIR","DEFAULT");
-    QDirIterator dirIt(env_str + "/docs");
+    QString env_str = env.value("DAQINTERFACE_USER_DIR","DEFAULT");
+    QDirIterator dirIt(env_str);
     QString str;
     QStringList list_str, list_config;
     while(dirIt.hasNext()){
