@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     //QTimer *ptimer = new QTimer(timer);
     ui->setupUi(this);
-    configurarVentana();
+    configurateWindow();
     DAQState = 0;
     banBOOT = false,banCONFIG = false,banBOOTCONFIG = false, banBOOTED = false, banCONFIGURED = false;
     banRUNNING = false, banPAUSED = false;
@@ -22,12 +22,12 @@ MainWindow::MainWindow(QWidget *parent) :
     kill_proc->~QProcess();
     connect(ui->bDAQInterface,SIGNAL(clicked(bool)),this,SLOT(bDAQInterfacePressed()));
     connect(daqinterface_pointer,SIGNAL(readyReadStandardOutput()),this,SLOT(DAQInterfaceOutput()));
-    connect(daqinterface_pointer,SIGNAL(started()),this,SLOT(setBotonesDAQInterfaceInicializado()));
+    connect(daqinterface_pointer,SIGNAL(started()),this,SLOT(setButtonsDAQInterfaceInitialized()));
     connect(ui->bBelen,SIGNAL(clicked(bool)),this,SLOT(MensajeParaBelen()));
     connect(ui->bDAQcomp,SIGNAL(clicked(bool)),this,SLOT(bListDAQComps()));
     connect(ui->bDAQconf,SIGNAL(clicked(bool)),this,SLOT(bListDAQConfigs()));
-    connect(ui->lvComponentes,SIGNAL(clicked(QModelIndex)),this,SLOT(lvComponentesSelected()));
-    connect(ui->lvConfiguraciones,SIGNAL(clicked(QModelIndex)),this,SLOT(lvConfiguracionesSelected()));
+    connect(ui->lvComponents,SIGNAL(clicked(QModelIndex)),this,SLOT(lvComponentsSelected()));
+    connect(ui->lvConfigurations,SIGNAL(clicked(QModelIndex)),this,SLOT(lvConfigurationsSelected()));
     connect(ui->lvConfigBOOT,SIGNAL(clicked(QModelIndex)),this,SLOT(lvBOOTConfigSelected()));
     connect(ui->bBOOT,SIGNAL(clicked(bool)),this,SLOT(bBOOTPressed()));
     connect(ui->bCONFIG,SIGNAL(clicked(bool)),this,SLOT(bCONFIGPressed()));
@@ -35,10 +35,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&timer,SIGNAL(timeout()),this,SLOT(checkStatus()));
     connect(ui->bStop,SIGNAL(clicked(bool)),this,SLOT(bSTOPPressed()));
     connect(ui->bTerminate,SIGNAL(clicked(bool)),this,SLOT(bTERMINATEPressed()));
-    connect(ui->bFinalizarSesion,SIGNAL(clicked(bool)),this,SLOT(bFinalizarSesionPressed()));
+    connect(ui->bEndSession,SIGNAL(clicked(bool)),this,SLOT(bEndSessionPressed()));
     env = QProcessEnvironment::systemEnvironment();
     //connect(ui->actionSource_config_file,SIGNAL(triggered()),this,SLOT(menuSourceConfigFilePressed()));
-    inicializarBotones();
+    initializeButtons();
 
 }
 
@@ -48,7 +48,7 @@ MainWindow::~MainWindow()
 }
 
 
-void MainWindow::configurarVentana(){
+void MainWindow::configurateWindow(){
 
     this->setWindowTitle("ARTDAQ RUN CONTROL");
     this->setFixedSize(this->geometry().width(),this->geometry().height());
@@ -76,11 +76,11 @@ void MainWindow::configurarVentana(){
 
 }*/
 
-void MainWindow::bFinalizarSesionPressed(){
+void MainWindow::bEndSessionPressed(){
 
     QMessageBox msgBox;
-    msgBox.setText("Finalizar sesion");
-    msgBox.setInformativeText("Realmente desea finalizar la sesion?\n se destruiran todos los procesos de ARTDAQ");
+    msgBox.setText("End session");
+    msgBox.setInformativeText("Do you really wish to end the session?\n All the artDAQ processes will be destroyed ");
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::No);
     int ret = msgBox.exec();
@@ -90,7 +90,7 @@ void MainWindow::bFinalizarSesionPressed(){
 
             kill_p->start("pkill",QStringList()<<"-f"<<"pmt.rb");
             kill_p->execute("pkill",QStringList()<<"-f"<<"daqinterface.py");
-            inicializarBotones();
+            initializeButtons();
             timer.stop();
             break;
       case QMessageBox::No:
@@ -101,11 +101,11 @@ void MainWindow::bFinalizarSesionPressed(){
 
 }
 
-void MainWindow::inicializarBotones(){
+void MainWindow::initializeButtons(){
 
     ui->bDAQcomp->setEnabled(false);
     ui->bDAQconf->setEnabled(false);
-    ui->bFinalizarSesion->setEnabled(false);
+    ui->bEndSession->setEnabled(false);
     ui->bBelen->setVisible(false);
     ui->bBelen->setEnabled(false);
     ui->bCONFIG->setEnabled(false);
@@ -130,12 +130,12 @@ void MainWindow::checkStatus(){
     QString str_status = daq_string.at(1);
     qDebug()<<str_status;
     ui->lbStatus->setText(status_map.value(str_status).toUpper());
-    estado(str_status);
+    status(str_status);
 }
 
-void MainWindow::estado(QString estado){
+void MainWindow::status(QString status){
 
-    int est = status_map_int.value(estado);
+    int est = status_map_int.value(status);
 
     switch (est){
     case 1: //stopped
@@ -147,7 +147,7 @@ void MainWindow::estado(QString estado){
         banRUNNING = false;
         banPAUSED = false;
         isLVSelected();
-        estadoTransicion();
+        statusTransition();
         break;
     case 2: //booted
         //banBOOT = false;
@@ -158,7 +158,7 @@ void MainWindow::estado(QString estado){
         banRUNNING = false;
         banPAUSED = false;
         isLVSelected();
-        estadoTransicion();
+        statusTransition();
         break;
     case 3: //ready
         //banBOOT = false;
@@ -169,12 +169,12 @@ void MainWindow::estado(QString estado){
         banRUNNING = false;
         banPAUSED = false;
         isLVSelected();
-        estadoTransicion();
+        statusTransition();
         break;
     case 4: // running
         banRUNNING = true;
         banPAUSED = false;
-        estadoTransicion();
+        statusTransition();
         break;
     case 5: // pause
         banRUNNING = false;
@@ -235,7 +235,7 @@ void MainWindow::bSTARTPressed(){
                 //ui->bPause->setEnabled(true);
                 banRUNNING = true;
         }else{
-            estado(str_status);
+            status(str_status);
         }
        }
 
@@ -257,12 +257,12 @@ void MainWindow::bSTARTPressed(){
 
 void MainWindow::bBOOTPressed(){
 
-    daq_commands.start("setdaqcomps.sh",lista_comps_selected);
+    daq_commands.start("setdaqcomps.sh",list_comps_selected);
     daq_commands.waitForFinished(30000);
     QThread::msleep(100);
-    lista_BOOTConfig_selected.push_front("boot");
-    qDebug()<<lista_BOOTConfig_selected;
-    daq_commands.execute("send_transition.sh",lista_BOOTConfig_selected);
+    list_BOOTConfig_selected.push_front("boot");
+    qDebug()<<list_BOOTConfig_selected;
+    daq_commands.execute("send_transition.sh",list_BOOTConfig_selected);
     daq_commands.waitForFinished(30000);
     daq_commands.start("status.sh",QStringList()<<"");
     daq_commands.waitForFinished();
@@ -300,15 +300,15 @@ void MainWindow::bBOOTPressed(){
 
     }
     qDebug()<<str_status;
-    lista_BOOTConfig_selected.removeFirst();
+    list_BOOTConfig_selected.removeFirst();
 
 }
 
 void MainWindow::bCONFIGPressed(){
 
-    lista_config_selected.push_front("config");
-    qDebug()<<lista_config_selected;
-    daq_commands.start("send_transition.sh",lista_config_selected);
+    list_config_selected.push_front("config");
+    qDebug()<<list_config_selected;
+    daq_commands.start("send_transition.sh",list_config_selected);
     daq_commands.waitForFinished(30000);
     daq_commands.start("status.sh",QStringList()<<"");
     daq_commands.waitForFinished();
@@ -354,25 +354,25 @@ void MainWindow::bCONFIGPressed(){
         isLVSelected();
     }
     qDebug()<<str_status;
-    lista_config_selected.removeFirst();
+    list_config_selected.removeFirst();
 
 }
 
 void MainWindow::lvBOOTConfigSelected(){
 
-    lista_BOOTConfig_selected.clear();
-    QStringList lista_str;
-    QModelIndexList lista = ui->lvConfigBOOT->selectionModel()->selectedRows();
-    if(lista.length() != 0)
+    list_BOOTConfig_selected.clear();
+    QStringList list_str;
+    QModelIndexList list = ui->lvConfigBOOT->selectionModel()->selectedRows();
+    if(list.length() != 0)
     {
-        qDebug()<<lista.length();
-        for(QModelIndex indice : lista){
-            lista_str = indice.model()->data(indice,Qt::DisplayRole).toString().split(' ',QString::KeepEmptyParts);
-            QString str = "docs/"+lista_str.first();
-            lista_BOOTConfig_selected.append(str);
-            lista_str.clear();
+        qDebug()<<list.length();
+        for(QModelIndex idx : list){
+            list_str = idx.model()->data(idx,Qt::DisplayRole).toString().split(' ',QString::KeepEmptyParts);
+            QString str = "docs/"+list_str.first();
+            list_BOOTConfig_selected.append(str);
+            list_str.clear();
         }
-        qDebug()<<lista_BOOTConfig_selected;
+        qDebug()<<list_BOOTConfig_selected;
         banBOOTCONFIG = true;
 
     }else{
@@ -381,20 +381,20 @@ void MainWindow::lvBOOTConfigSelected(){
     isLVSelected();
 }
 
-void MainWindow::lvComponentesSelected(){
+void MainWindow::lvComponentsSelected(){
 
-    lista_comps_selected.clear();
-    QStringList lista_str;
-    QModelIndexList lista = ui->lvComponentes->selectionModel()->selectedRows();
-    if(lista.length() != 0)
+    list_comps_selected.clear();
+    QStringList list_str;
+    QModelIndexList list = ui->lvComponents->selectionModel()->selectedRows();
+    if(list.length() != 0)
     {
-        qDebug()<<lista.length();
-        for(QModelIndex indice : lista){
-            lista_str = indice.model()->data(indice,Qt::DisplayRole).toString().split(' ',QString::KeepEmptyParts);
-            lista_comps_selected.append(lista_str.first());
-            lista_str.clear();
+        qDebug()<<list.length();
+        for(QModelIndex idx : list){
+            list_str = idx.model()->data(idx,Qt::DisplayRole).toString().split(' ',QString::KeepEmptyParts);
+            list_comps_selected.append(list_str.first());
+            list_str.clear();
         }
-        qDebug()<<lista_comps_selected;
+        qDebug()<<list_comps_selected;
         banBOOT = true;
 
     }else{
@@ -403,20 +403,20 @@ void MainWindow::lvComponentesSelected(){
     isLVSelected();
 }
 
-void MainWindow::lvConfiguracionesSelected(){
+void MainWindow::lvConfigurationsSelected(){
 
-    lista_config_selected.clear();
-    QStringList lista_str;
-    QModelIndexList lista = ui->lvConfiguraciones->selectionModel()->selectedRows();
-    if(lista.length() != 0)
+    list_config_selected.clear();
+    QStringList list_str;
+    QModelIndexList list = ui->lvConfigurations->selectionModel()->selectedRows();
+    if(list.length() != 0)
     {
-        qDebug()<<lista.length();
-        for(QModelIndex indice : lista){
-            lista_str = indice.model()->data(indice,Qt::DisplayRole).toString().split(' ',QString::KeepEmptyParts);
-            lista_config_selected.append(lista_str.first());
-            lista_str.clear();
+        qDebug()<<list.length();
+        for(QModelIndex idx : list){
+            list_str = idx.model()->data(idx,Qt::DisplayRole).toString().split(' ',QString::KeepEmptyParts);
+            list_config_selected.append(list_str.first());
+            list_str.clear();
         }
-        qDebug()<<lista_config_selected;
+        qDebug()<<list_config_selected;
         banCONFIG = true;
 
     }else{
@@ -425,7 +425,7 @@ void MainWindow::lvConfiguracionesSelected(){
     isLVSelected();
 }
 
-void MainWindow::estadoTransicion(){
+void MainWindow::statusTransition(){
 
     if(banRUNNING){
         ui->bStart->setEnabled(false);
@@ -477,12 +477,12 @@ void MainWindow::isLVSelected(){
     }
 }
 
-void MainWindow::setBotonesDAQInterfaceInicializado(){
+void MainWindow::setButtonsDAQInterfaceInitialized(){
 
     ui->bDAQInterface->setEnabled(false);
     ui->bDAQcomp->setEnabled(true);
     ui->bDAQconf->setEnabled(true);
-    ui->bFinalizarSesion->setEnabled(true);
+    ui->bEndSession->setEnabled(true);
     timer.start(500);
 }
 
@@ -532,11 +532,11 @@ void MainWindow::DAQInterfaceOutput(){
 void MainWindow::lvComps(){
 
     QStringListModel* model = new QStringListModel(this);
-    QStringList lista = daq_string.split('\n', QString::SkipEmptyParts);
-    lista.removeFirst();
-    model->setStringList(lista);
-    ui->lvComponentes->setModel(model);
-    ui->lvComponentes->setSelectionMode(QAbstractItemView::MultiSelection);
+    QStringList list = daq_string.split('\n', QString::SkipEmptyParts);
+    list.removeFirst();
+    model->setStringList(list);
+    ui->lvComponents->setModel(model);
+    ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
     DAQState = 0;
 }
 
@@ -550,17 +550,17 @@ void MainWindow::bListDAQComps(){
 void MainWindow::lvConfigs(){
 
     QStringListModel* model = new QStringListModel(this);
-    QStringList lista = daq_string.split("\n\n", QString::SkipEmptyParts);
-    //qDebug()<<lista.at(0);
-    //lista.removeFirst();
-    //lista.removeLast();
-    QString lista_config = lista.at(0);
-    lista = lista_config.split('\n');
-    //qDebug()<<lista;
-    lista.removeFirst();
-    lista.removeFirst();
-    model->setStringList(lista);
-    ui->lvConfiguraciones->setModel(model);
+    QStringList list = daq_string.split("\n\n", QString::SkipEmptyParts);
+    //qDebug()<<list.at(0);
+    //list.removeFirst();
+    //list.removeLast();
+    QString list_config = list.at(0);
+    list = list_config.split('\n');
+    //qDebug()<<list;
+    list.removeFirst();
+    list.removeFirst();
+    model->setStringList(list);
+    ui->lvConfigurations->setModel(model);
     DAQState = 0;
 }
 
@@ -573,15 +573,15 @@ void MainWindow::bListDAQConfigs(){
     QString env_str = env.value("ARTDAQ_DAQINTERFACE_DIR","DEFAULT");
     QDirIterator dirIt(env_str + "/docs");
     QString str;
-    QStringList lista_str, lista_config;
+    QStringList list_str, list_config;
     while(dirIt.hasNext()){
         str = dirIt.next();
         if(reg.exactMatch(str)){
 
             qDebug()<<"config file "<<str;
-            lista_str = str.split('/', QString::SkipEmptyParts);
-            qDebug()<<lista_str.last();
-            lista_config.append(lista_str.last());
+            list_str = str.split('/', QString::SkipEmptyParts);
+            qDebug()<<list_str.last();
+            list_config.append(list_str.last());
         }else{
             qDebug()<<"not config file";
         }
@@ -589,14 +589,14 @@ void MainWindow::bListDAQConfigs(){
     }
 
     QStringListModel* model = new QStringListModel(this);
-    model->setStringList(lista_config);
+    model->setStringList(list_config);
     ui->lvConfigBOOT->setModel(model);
 
     QThread::msleep(100);
 }
 
 void MainWindow::MensajeParaBelen(){
-
+    // podemos dejar esto ;)
     ui->taDAQInterface->document()->setPlainText("Sos la mujer mas hermosa, no puedo dejar de amarte. Sos una bendicion en mi vida. Te quiero muchisimo");
 
 }

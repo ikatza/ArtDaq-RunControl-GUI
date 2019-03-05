@@ -35,7 +35,7 @@ public:
 
 private slots:
 
-    void bFinalizarSesionPressed();
+    void bEndSessionPressed();
     void bDAQInterfacePressed();
     void DAQInterfaceOutput();
     void MensajeParaBelen();
@@ -43,21 +43,21 @@ private slots:
     void bListDAQConfigs();
     void lvComps();
     void lvConfigs();
-    void inicializarBotones();
-    void setBotonesDAQInterfaceInicializado();
+    void initializeButtons();
+    void setButtonsDAQInterfaceInitialized();
     void isLVSelected();
-    void lvComponentesSelected();
-    void lvConfiguracionesSelected();
+    void lvComponentsSelected();
+    void lvConfigurationsSelected();
     void bBOOTPressed();
     void lvBOOTConfigSelected();
     void bCONFIGPressed();
     void bSTARTPressed();
-    void estado(QString estado);
+    void status(QString status);
     void checkStatus();
-    void estadoTransicion();
+    void statusTransition();
     void bSTOPPressed();
     void bTERMINATEPressed();
-    void configurarVentana();
+    void configurateWindow();
     //void menuSourceConfigFilePressed();
 private:
     Ui::MainWindow *ui;
@@ -65,7 +65,7 @@ private:
     QProcess daq_commands;
     QProcessEnvironment env;
     QString daq_string;
-    QStringList lista_comps_selected, lista_config_selected, lista_BOOTConfig_selected;
+    QStringList list_comps_selected, list_config_selected, list_BOOTConfig_selected;
     int DAQState;
     bool banBOOT,banCONFIG,banBOOTCONFIG, banBOOTED,banCONFIGURED,banRUNNING,banPAUSED;
     QTimer timer;
