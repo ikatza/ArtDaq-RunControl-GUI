@@ -498,7 +498,7 @@ void MainWindow::bDAQInterfacePressed(){
     QStringList daqinterface_start_commands;
     QString partition_number_str = env.value("DAQINTERFACE_PARTITION_NUMBER","DEFAULT");
     QString rpc_port_str = env.value("DAQINTERFACE_PORT","DEFAULT");
-    daqinterface_start_commands <<"./rc/control/daqinterface.py --partition-number"<<partition_number_str<<"--rpc-port"<<rpc_port_str;
+    daqinterface_start_commands <<"stdbuf -oL ./rc/control/daqinterface.py --partition-number"<<partition_number_str<<"--rpc-port"<<rpc_port_str;
     daq_interface.start(daqinterface_start_commands.join(" "));
     /*daq_interface.start("python",QStringList()<<"/root/artdaq-demo-base/artdaq-utilities-daqinterface/rc/control/daqinterface.py");
     bool started = daq_interface.waitForStarted();
