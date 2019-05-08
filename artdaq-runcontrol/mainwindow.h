@@ -20,6 +20,7 @@
 #include <QMessageBox>
 #include <QProcessEnvironment>
 #include <QFileDialog>
+#include "daqinterfacestate.h"
 
 namespace Ui {
 class MainWindow;
@@ -86,8 +87,15 @@ private:
                                             {"booted",2},
                                             {"ready",3},
                                             {"running",4},
-                                            {"paused",5}
+                                            {"paused",5},
+                                            {"booting",6},
+                                            {"configuring",7},
+                                            {"starting",8},
+                                            {"stopping",9},
+                                            {"terminating",10},
+                                            {"offline",99}
                                            };
+    daqInterfaceState state_diagram;
 };
 
 #endif // MAINWINDOW_H

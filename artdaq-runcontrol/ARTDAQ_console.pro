@@ -24,8 +24,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    daqinterfacestate.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    daqinterfacestate.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    daqinterfacestate.ui

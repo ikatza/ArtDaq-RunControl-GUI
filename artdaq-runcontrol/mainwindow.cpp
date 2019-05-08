@@ -15,11 +15,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QProcess* daqinterface_pointer = new QProcess(this);
     daqinterface_pointer = &daq_interface;
     ui->lbStatus->setText("");
-    QProcess* kill_proc = new QProcess(this);
+    /*QProcess* kill_proc = new QProcess(this);
     kill_proc->start("pkill",QStringList()<<"-f"<<"pmt.rb");
     kill_proc->execute("pkill",QStringList()<<"-f"<<"daqinterface.py");
     kill_proc->waitForFinished();
-    kill_proc->~QProcess();
+    kill_proc->~QProcess();*/
     connect(ui->bDAQInterface,SIGNAL(clicked(bool)),this,SLOT(bDAQInterfacePressed()));
     connect(daqinterface_pointer,SIGNAL(readyReadStandardOutput()),this,SLOT(DAQInterfaceOutput()));
     connect(daqinterface_pointer,SIGNAL(started()),this,SLOT(setButtonsDAQInterfaceInitialized()));
@@ -39,6 +39,8 @@ MainWindow::MainWindow(QWidget *parent) :
     env = QProcessEnvironment::systemEnvironment();
     //connect(ui->actionSource_config_file,SIGNAL(triggered()),this,SLOT(menuSourceConfigFilePressed()));
     initializeButtons();
+    state_diagram.setWindowTitle("DAQInterface State Diagram");
+    state_diagram.show();
 
 }
 
@@ -127,10 +129,21 @@ void MainWindow::checkStatus(){
     QByteArray byte_status = daq_commands.readAll();
     QTextCodec* codec;
     QStringList daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("'",QString::KeepEmptyParts);
-    QString str_status = daq_string.at(1);
-    qDebug()<<str_status;
-    ui->lbStatus->setText(status_map.value(str_status).toUpper());
-    status(str_status);
+    if(daq_string.count()>1){
+        state_diagram.isOnline();
+        QString str_status = daq_string.at(1);
+        qDebug()<<str_status;
+        ui->lbStatus->setText(status_map.value(str_status).toUpper());
+        status(str_status);
+    }
+    else{
+        state_diagram.isOffline();
+        state_diagram.setStateDiagramOff();
+        state_diagram.setOnlineButtonRed();
+        ui->taDAQInterface->document()->setPlainText(daq_string.at(0));
+        status("offline");
+    }
+
 }
 
 void MainWindow::status(QString status){
@@ -148,6 +161,8 @@ void MainWindow::status(QString status){
         banPAUSED = false;
         isLVSelected();
         statusTransition();
+        state_diagram.setStateDiagramStopped();
+        state_diagram.setOnlineButtonGreen();
         break;
     case 2: //booted
         //banBOOT = false;
@@ -159,6 +174,8 @@ void MainWindow::status(QString status){
         banPAUSED = false;
         isLVSelected();
         statusTransition();
+        state_diagram.setStateDiagramBooted();
+        state_diagram.setOnlineButtonGreen();
         break;
     case 3: //ready
         //banBOOT = false;
@@ -170,15 +187,43 @@ void MainWindow::status(QString status){
         banPAUSED = false;
         isLVSelected();
         statusTransition();
+        state_diagram.setStateDiagramReady();
+        state_diagram.setOnlineButtonGreen();
         break;
     case 4: // running
         banRUNNING = true;
         banPAUSED = false;
         statusTransition();
+        state_diagram.setStateDiagramRunning();
+        state_diagram.setOnlineButtonGreen();
         break;
     case 5: // pause
         banRUNNING = false;
         banPAUSED = true;
+        break;
+    case 6: // booting
+        state_diagram.setStateDiagramBooting();
+        state_diagram.setOnlineButtonGreen();
+        break;
+    case 7: // configuring
+        state_diagram.setStateDiagramConfiguring();
+        state_diagram.setOnlineButtonGreen();
+        break;
+    case 8: // starting
+        state_diagram.setStateDiagramStartingRun();
+        state_diagram.setOnlineButtonGreen();
+        break;
+    case 9: // stopping
+        state_diagram.setStateDiagramStoppingRun();
+        state_diagram.setOnlineButtonGreen();
+        break;
+    case 10: // terminating
+        state_diagram.setStateDiagramTerminating();
+        state_diagram.setOnlineButtonGreen();
+        break;
+    case 99:
+        initializeButtons();
+        timer.stop();
         break;
     default:
         break;
@@ -273,7 +318,7 @@ void MainWindow::bBOOTPressed(){
     ui->lbStatus->setText(status_map.value(str_status).toUpper());
     QRegExp reg("booting");
     reg.setPatternSyntax(QRegExp::Wildcard);
-    while(reg.exactMatch(str_status)){
+    /*while(reg.exactMatch(str_status)){
 
         daq_string.clear();
         daq_commands.start("status.sh",QStringList()<<"");
@@ -299,7 +344,7 @@ void MainWindow::bBOOTPressed(){
         isLVSelected();
 
     }
-    qDebug()<<str_status;
+    qDebug()<<str_status;*/
     list_BOOTConfig_selected.removeFirst();
 
 }
@@ -320,7 +365,7 @@ void MainWindow::bCONFIGPressed(){
     ui->lbStatus->setText(status_map.value(str_status).toUpper());
     QRegExp reg("configuring");
     reg.setPatternSyntax(QRegExp::Wildcard);
-    while(reg.exactMatch(str_status)){
+    /*while(reg.exactMatch(str_status)){
 
         daq_string.clear();
         daq_commands.start("status.sh",QStringList()<<"");
@@ -353,7 +398,7 @@ void MainWindow::bCONFIGPressed(){
         banCONFIGURED = false;
         isLVSelected();
     }
-    qDebug()<<str_status;
+    qDebug()<<str_status;*/
     list_config_selected.removeFirst();
 
 }
@@ -484,7 +529,7 @@ void MainWindow::setButtonsDAQInterfaceInitialized(){
     ui->bDAQcomp->setEnabled(true);
     ui->bDAQconf->setEnabled(true);
     ui->bEndSession->setEnabled(true);
-    timer.start(500);
+    timer.start(1000);
 }
 
 void MainWindow::bDAQInterfacePressed(){
@@ -498,8 +543,11 @@ void MainWindow::bDAQInterfacePressed(){
     QStringList daqinterface_start_commands;
     QString partition_number_str = env.value("DAQINTERFACE_PARTITION_NUMBER","DEFAULT");
     QString rpc_port_str = env.value("DAQINTERFACE_PORT","DEFAULT");
-    daqinterface_start_commands <<"stdbuf -oL ./rc/control/daqinterface.py --partition-number"<<partition_number_str<<"--rpc-port"<<rpc_port_str;
+    //daqinterface_start_commands <<"stdbuf -oL ./rc/control/daqinterface.py --partition-number"<<partition_number_str<<"--rpc-port"<<rpc_port_str;
+    daqinterface_start_commands <<"stdbuf -oL ./rc/control/daqinterface.py --rpc-port"<<rpc_port_str; // solo para prubeas en mi compu local
     daq_interface.start(daqinterface_start_commands.join(" "));
+    state_diagram.setLCDPartitionNumber(partition_number_str.toInt());
+    state_diagram.setLCDPortNumber(rpc_port_str.toInt());
     /*daq_interface.start("python",QStringList()<<"/root/artdaq-demo-base/artdaq-utilities-daqinterface/rc/control/daqinterface.py");
     bool started = daq_interface.waitForStarted();
     

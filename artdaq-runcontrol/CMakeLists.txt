@@ -16,6 +16,8 @@ find_package(Qt5Widgets CONFIG REQUIRED)
 set(artdaq-runcontrol_srcs
     mainwindow.ui
     mainwindow.cpp
+    daqinterfacestate.cpp
+    daqinterfacestate.ui		
     main.cpp
 )
 # Tell CMake to create the helloworld executable
