@@ -1,6 +1,6 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent run_control_gui 		v0_00_01
+parent artdaq_runcontrol_gui 		v0_00_01
 defaultqual	e17
 
 # These optional lines define the installed directories where
@@ -18,20 +18,17 @@ fcldir      -
 
 #
 product			version	       optional
-
-gcc         		v6_4_0
-# qt !!!
-# cetbuildtools   	v7_02_01       -       only_for_build
-
+qt         		v5_10_1a
+cetbuildtools   	v7_02_01       -       only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
-qualifier			 gcc
-e15:prof			 e15:prof	
-e15:debug			 e15:debug      
-e17:prof			 e17:prof	
-e17:debug			 e17:debug      
+qualifier			 qt
+e15:prof			 e15
+e15:debug			 e15
+e17:prof			 e17
+e17:debug			 e17
 # Preserve tabs and formatting in emacs and vi / vim:
 
 ### Local Variables:
