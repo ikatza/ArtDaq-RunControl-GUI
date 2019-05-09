@@ -9,6 +9,8 @@ set(CMAKE_AUTOMOC ON)
 # Create code from a list of Qt designer ui files
 set(CMAKE_AUTOUIC ON)
 
+add_subdirectory(resources)
+
 # Find the QtWidgets library
 find_package(Qt5Widgets CONFIG REQUIRED)
 
@@ -20,6 +22,7 @@ set(artdaq-runcontrol_srcs
     daqinterfacestate.ui		
     main.cpp
 )
+
 # Tell CMake to create the helloworld executable
 add_executable(artdaqRunControl ${artdaq-runcontrol_srcs})
 # Use the Widgets module from Qt 5

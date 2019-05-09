@@ -6,7 +6,8 @@ daqInterfaceState::daqInterfaceState(QWidget *parent) :
     ui(new Ui::daqInterfaceState)
 {
     ui->setupUi(this);
-    imagesDirectory = QCoreApplication::applicationDirPath() + "/Images/";
+    imagesDirectory = QCoreApplication::applicationDirPath() + "/../resources/images/";
+    //qDebug()<<imagesDirectory;
     QGraphicsScene *scene = new QGraphicsScene();
     QPixmap m(imagesDirectory + "StateDiagram_all_off.png");
     scene->addPixmap(m);
