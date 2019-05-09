@@ -543,8 +543,7 @@ void MainWindow::bDAQInterfacePressed(){
     QStringList daqinterface_start_commands;
     QString partition_number_str = env.value("DAQINTERFACE_PARTITION_NUMBER","DEFAULT");
     QString rpc_port_str = env.value("DAQINTERFACE_PORT","DEFAULT");
-    //daqinterface_start_commands <<"stdbuf -oL ./rc/control/daqinterface.py --partition-number"<<partition_number_str<<"--rpc-port"<<rpc_port_str;
-    daqinterface_start_commands <<"stdbuf -oL ./rc/control/daqinterface.py --rpc-port"<<rpc_port_str; // solo para prubeas en mi compu local
+    daqinterface_start_commands <<"stdbuf -oL ./rc/control/daqinterface.py --partition-number"<<partition_number_str<<"--rpc-port"<<rpc_port_str;
     daq_interface.start(daqinterface_start_commands.join(" "));
     state_diagram.setLCDPartitionNumber(partition_number_str.toInt());
     state_diagram.setLCDPortNumber(rpc_port_str.toInt());
