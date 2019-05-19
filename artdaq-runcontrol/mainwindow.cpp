@@ -36,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->bStop,SIGNAL(clicked(bool)),this,SLOT(bSTOPPressed()));
     connect(ui->bTerminate,SIGNAL(clicked(bool)),this,SLOT(bTERMINATEPressed()));
     connect(ui->bEndSession,SIGNAL(clicked(bool)),this,SLOT(bEndSessionPressed()));
+    connect(ui->bDebug,SIGNAL(clicked(bool)),this,SLOT(bDebugPressed()));
     env = QProcessEnvironment::systemEnvironment();
     //connect(ui->actionSource_config_file,SIGNAL(triggered()),this,SLOT(menuSourceConfigFilePressed()));
     initializeButtons();
@@ -100,6 +101,7 @@ void MainWindow::bEndSessionPressed(){
       default:
           break;
     }
+    status("offline");
 
 }
 
@@ -129,17 +131,15 @@ void MainWindow::checkStatus(){
     QByteArray byte_status = daq_commands.readAll();
     QTextCodec* codec;
     QStringList daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("'",QString::KeepEmptyParts);
+    qDebug()<<"xmlrpc_c: "<<commDAQInterface.getDAQInterfaceStatus();
     if(daq_string.count()>1){
-        state_diagram.isOnline();
+        state_diagram.setOnline();
         QString str_status = daq_string.at(1);
         qDebug()<<str_status;
         ui->lbStatus->setText(status_map.value(str_status).toUpper());
         status(str_status);
     }
     else{
-        state_diagram.isOffline();
-        state_diagram.setStateDiagramOff();
-        state_diagram.setOnlineButtonRed();
         ui->taDAQInterface->document()->setPlainText(daq_string.at(0));
         status("offline");
     }
@@ -224,6 +224,9 @@ void MainWindow::status(QString status){
     case 99:
         initializeButtons();
         timer.stop();
+        state_diagram.setOffline();
+        state_diagram.setStateDiagramOff();
+        state_diagram.setOnlineButtonRed();
         break;
     default:
         break;
@@ -233,173 +236,34 @@ void MainWindow::status(QString status){
 
 void MainWindow::bSTOPPressed(){
 
-    daq_commands.start("send_transition.sh",QStringList()<<"stop");
-    daq_commands.waitForFinished();
+    commDAQInterface.sendTransitionSTOP();
 
 }
 
 void MainWindow::bTERMINATEPressed(){
 
-    daq_commands.start("send_transition.sh",QStringList()<<"terminate");
-    daq_commands.waitForFinished();
+    commDAQInterface.sendTransitionTERMINATE();
 
 }
 
 void MainWindow::bSTARTPressed(){
 
-    daq_commands.start("send_transition.sh",QStringList()<<"start");
-    daq_commands.waitForFinished();
-    /*QThread::msleep(500);
-    QByteArray byte_status;
-    QTextCodec* codec;
-    QStringList daq_string;
-    QString str_status;
-    QRegExp reg;
-    reg.setPattern("running");
-    bool nullbyte = true;
-    byte_status = daq_commands.readAll();
-    byte_status.clear();
-    while(nullbyte)
-    {
-       daq_commands.start("status.sh",QStringList()<<"");
-       daq_commands.waitForFinished();
-       byte_status = daq_commands.readAll();
-       daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("'",QString::KeepEmptyParts);
+    commDAQInterface.sendTransitionSTART();
 
-       if(daq_string.length() != 0){
-        str_status = daq_string.at(1);
-        qDebug()<<str_status;
-        ui->lbStatus->setText(status_map.value(str_status).toUpper());
-        this->repaint();
-        reg.setPatternSyntax(QRegExp::Wildcard);
-        if(reg.exactMatch(str_status)){
-
-                nullbyte = false;
-                ui->bStart->setEnabled(false);
-                ui->bStop->setEnabled(true);
-                //ui->bPause->setEnabled(true);
-                banRUNNING = true;
-        }else{
-            status(str_status);
-        }
-       }
-
-    }*/
-    /*daq_commands.execute("status.sh",QStringList()<<"");
-    daq_commands.waitForBytesWritten();
-    byte_status = daq_commands.readAll();
-    QTextCodec* codec;
-    QStringList daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("'",QString::KeepEmptyParts);
-    QString str_status = daq_string.at(1);
-    ui->lbStatus->setText(str_status.toUpper());
-    QRegExp reg("running");
-    reg.setPatternSyntax(QRegExp::Wildcard);
-    if(reg.exactMatch(str_status)){
-
-
-    }*/
 }
 
 void MainWindow::bBOOTPressed(){
 
-    daq_commands.start("setdaqcomps.sh",list_comps_selected);
-    daq_commands.waitForFinished(30000);
-    QThread::msleep(100);
-    list_BOOTConfig_selected.push_front("boot");
+    commDAQInterface.setDAQInterfaceComponents(list_comps_selected);
     qDebug()<<list_BOOTConfig_selected;
-    daq_commands.execute("send_transition.sh",list_BOOTConfig_selected);
-    daq_commands.waitForFinished(30000);
-    daq_commands.start("status.sh",QStringList()<<"");
-    daq_commands.waitForFinished();
-    QByteArray byte_status = daq_commands.readAll();
-    QTextCodec* codec;
-    QStringList daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("'",QString::KeepEmptyParts);
-    QString str_status = daq_string.at(1);
-    ui->lbStatus->setText(status_map.value(str_status).toUpper());
-    QRegExp reg("booting");
-    reg.setPatternSyntax(QRegExp::Wildcard);
-    /*while(reg.exactMatch(str_status)){
-
-        daq_string.clear();
-        daq_commands.start("status.sh",QStringList()<<"");
-        daq_commands.waitForFinished();
-        byte_status = daq_commands.readAll();
-        daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("'",QString::KeepEmptyParts);
-        str_status = daq_string.at(1);
-        ui->lbStatus->setText(status_map.value(str_status).toUpper());
-        this->repaint();
-        //DAQInterfaceOutput();
-
-    }
-    reg.setPattern("booted");
-    ui->lbStatus->setText(status_map.value(str_status).toUpper());
-    if(reg.exactMatch(str_status)){
-
-        banBOOTED = true;
-        isLVSelected();
-
-    }else{
-
-        banBOOTED = false;
-        isLVSelected();
-
-    }
-    qDebug()<<str_status;*/
-    list_BOOTConfig_selected.removeFirst();
+    commDAQInterface.sendTransitionBOOT(list_BOOTConfig_selected);
 
 }
 
 void MainWindow::bCONFIGPressed(){
 
-    list_config_selected.push_front("config");
-    qDebug()<<list_config_selected;
-    daq_commands.start("send_transition.sh",list_config_selected);
-    daq_commands.waitForFinished(30000);
-    daq_commands.start("status.sh",QStringList()<<"");
-    daq_commands.waitForFinished();
-    QByteArray byte_status = daq_commands.readAll();
-    QTextCodec* codec;
-    QStringList daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("'",QString::KeepEmptyParts);
-    QString str_status = daq_string.at(1);
-    qDebug()<<str_status;
-    ui->lbStatus->setText(status_map.value(str_status).toUpper());
-    QRegExp reg("configuring");
-    reg.setPatternSyntax(QRegExp::Wildcard);
-    /*while(reg.exactMatch(str_status)){
-
-        daq_string.clear();
-        daq_commands.start("status.sh",QStringList()<<"");
-        daq_commands.waitForFinished();
-        byte_status = daq_commands.readAll();
-        daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("'",QString::KeepEmptyParts);
-        str_status = daq_string.at(1);
-        ui->lbStatus->setText(status_map.value(str_status).toUpper());
-        this->repaint();
-        //DAQInterfaceOutput();
-
-    }
-    reg.setPattern("ready");
-    ui->lbStatus->setText(status_map.value(str_status).toUpper());
-    if(reg.exactMatch(str_status)){
-
-        banCONFIGURED = true;
-        isLVSelected();
-
-    }
-    reg.setPattern("booted");
-    if(reg.exactMatch(str_status)){
-        banBOOTED = true;
-        banCONFIGURED = false;
-        isLVSelected();
-    }
-    reg.setPattern("stopped");
-    if(reg.exactMatch(str_status)){
-        banBOOTED = false;
-        banCONFIGURED = false;
-        isLVSelected();
-    }
-    qDebug()<<str_status;*/
-    list_config_selected.removeFirst();
+    commDAQInterface.sendTransitionCONFIG(list_config_selected);
+    qDebug()<<list_config_selected; 
 
 }
 
@@ -591,7 +455,8 @@ void MainWindow::lvComps(){
 
 void MainWindow::bListDAQComps(){
 
-    daq_commands.start("listdaqcomps.sh");
+    //daq_commands.start("listdaqcomps.sh");
+    commDAQInterface.listDAQInterfaceComponents();
     DAQState = 1;
     QThread::msleep(100);
 }
@@ -642,6 +507,14 @@ void MainWindow::bListDAQConfigs(){
     ui->lvConfigBOOT->setModel(model);
 
     QThread::msleep(100);
+}
+
+void MainWindow::bDebugPressed(){
+
+    //commDAQInterface.setDAQInterfaceComponents(list_comps_selected);
+    //commDAQInterface.sendTransitionBOOT(list_BOOTConfig_selected);
+    //commDAQInterface.sendTransitionCONFIG(list_config_selected);
+   //commDAQInterface.sendTransitionSTART();
 }
 
 void MainWindow::MensajeParaBelen(){

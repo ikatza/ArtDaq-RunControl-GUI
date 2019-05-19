@@ -25,10 +25,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    daqinterfacestate.cpp
+    daqinterfacestate.cpp \
+    xmlrpc_gui_comm.cpp
 
 HEADERS  += mainwindow.h \
-    daqinterfacestate.h
+    daqinterfacestate.h \
+    xmlrpc_gui_comm.h
 
 FORMS    += mainwindow.ui \
     daqinterfacestate.ui
+
+INCLUDEPATH += /root/artdaq-demo-base/products/xmlrpc_c/v1_39_10d/Linux64bit+3.10-2.17-e15-prof/include
+
+LIBS += -L/root/artdaq-demo-base/products/xmlrpc_c/v1_39_10d/Linux64bit+3.10-2.17-e15-prof/lib -lxmlrpc -lxmlrpc++ -lxmlrpc_abyss -lxmlrpc_abyss++ \
+        -lxmlrpc_client -lxmlrpc_client++ -lxmlrpc_cpp -lxmlrpc_packetsocket -lxmlrpc_server -lxmlrpc_server++ -lxmlrpc_server_abyss -lxmlrpc_server_abyss++ \
+        -lxmlrpc_server_cgi -lxmlrpc_server_cgi++ -lxmlrpc_server_pstream++ -lxmlrpc_util -lxmlrpc_util++ -lxmlrpc_xmlparse -lxmlrpc_xmltok \
+        -L/usr/local/lib

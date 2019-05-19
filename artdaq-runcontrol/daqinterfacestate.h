@@ -8,6 +8,7 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QTimer>
+#include <string.h>
 
 namespace Ui {
 class daqInterfaceState;
@@ -32,8 +33,8 @@ public:
     void setOnlineButtonGreen();
     void setLCDPartitionNumber(int number);
     void setLCDPortNumber(int number);
-    void isOnline();
-    void isOffline();
+    void setOnline();
+    void setOffline();
     void setOnlineButtonRed();
 public slots:
     void setStateDiagramOff();

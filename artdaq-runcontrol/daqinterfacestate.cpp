@@ -148,7 +148,7 @@ void daqInterfaceState::setLCDPortNumber(int number){
     ui->lcdPortNumber->display(number);
 }
 
-void daqInterfaceState::isOnline(){
+void daqInterfaceState::setOnline(){
 
     QPalette palette = ui->lcdPartitionNumber->palette();
     palette.setColor(QPalette::WindowText,Qt::darkGreen);
@@ -165,7 +165,10 @@ void daqInterfaceState::isOnline(){
     ui->labelOnline->setPalette(palette);
 }
 
-void daqInterfaceState::isOffline(){
+void daqInterfaceState::setOffline(){
+
+    timerOnline.stop();
+    timerTransition.stop();
 
     QPalette palette = ui->lcdPartitionNumber->palette();
     palette.setColor(QPalette::WindowText,Qt::red);

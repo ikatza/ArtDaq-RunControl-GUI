@@ -21,6 +21,7 @@
 #include <QProcessEnvironment>
 #include <QFileDialog>
 #include "daqinterfacestate.h"
+#include "xmlrpc_gui_comm.h"
 
 namespace Ui {
 class MainWindow;
@@ -60,6 +61,7 @@ private slots:
     void bTERMINATEPressed();
     void configurateWindow();
     //void menuSourceConfigFilePressed();
+    void bDebugPressed();
 private:
     Ui::MainWindow *ui;
     QProcess daq_interface;
@@ -96,6 +98,7 @@ private:
                                             {"offline",99}
                                            };
     daqInterfaceState state_diagram;
+    xmlrpc_gui_comm commDAQInterface;
 };
 
 #endif // MAINWINDOW_H
