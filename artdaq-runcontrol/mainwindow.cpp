@@ -12,14 +12,16 @@ MainWindow::MainWindow(QWidget *parent) :
     DAQState = 0;
     banBOOT = false,banCONFIG = false,banBOOTCONFIG = false, banBOOTED = false, banCONFIGURED = false;
     banRUNNING = false, banPAUSED = false;
+    env = QProcessEnvironment::systemEnvironment();
     QProcess* daqinterface_pointer = new QProcess(this);
     daqinterface_pointer = &daq_interface;
     ui->lbStatus->setText("");
-    /*QProcess* kill_proc = new QProcess(this);
-    kill_proc->start("pkill",QStringList()<<"-f"<<"pmt.rb");
-    kill_proc->execute("pkill",QStringList()<<"-f"<<"daqinterface.py");
+    QProcess* kill_proc = new QProcess(this);
+    QString user_str = env.value("USER","DEFAULT");
+    kill_proc->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << user_str);
+    kill_proc->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << user_str);
     kill_proc->waitForFinished();
-    kill_proc->~QProcess();*/
+    kill_proc->~QProcess();
     connect(ui->bDAQInterface,SIGNAL(clicked(bool)),this,SLOT(bDAQInterfacePressed()));
     connect(daqinterface_pointer,SIGNAL(readyReadStandardOutput()),this,SLOT(DAQInterfaceOutput()));
     connect(daqinterface_pointer,SIGNAL(started()),this,SLOT(setButtonsDAQInterfaceInitialized()));
@@ -88,11 +90,11 @@ void MainWindow::bEndSessionPressed(){
     msgBox.setDefaultButton(QMessageBox::No);
     int ret = msgBox.exec();
     QProcess* kill_p = new QProcess(this);
+    QString user_str = env.value("USER", "DEFAULT");
     switch (ret) {
       case QMessageBox::Yes:
-
-            kill_p->start("pkill",QStringList()<<"-f"<<"pmt.rb");
-            kill_p->execute("pkill",QStringList()<<"-f"<<"daqinterface.py");
+            kill_p->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << user_str);
+            kill_p->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << user_str);
             initializeButtons();
             timer.stop();
             break;
@@ -398,26 +400,26 @@ void MainWindow::setButtonsDAQInterfaceInitialized(){
 
 void MainWindow::bDAQInterfacePressed(){
 
-    QString env_str = env.value("ARTDAQ_DAQINTERFACE_DIR","DEFAULT");
-    //qDebug()<<env_str;
-    //QString wd = "/home/nfs/ecristal/sbnd-daq/localProducts_sbndaq_v0_01_03_debug_e15/artdaq_daqinterface/v3_03_02";
-    QString wd = env_str;
+    QString wd = env.value("ARTDAQ_DAQINTERFACE_DIR","DEFAULT");
     daq_interface.setWorkingDirectory(wd);
     daq_commands.setWorkingDirectory(wd);
     QStringList daqinterface_start_commands;
+    QString base_port_str = env.value("ARTDAQ_BASE_PORT","DEFAULT");
+    QString ports_per_partition_str = env.value("ARTDAQ_PORTS_PER_PARTITION","DEFAULT");
     QString partition_number_str = env.value("DAQINTERFACE_PARTITION_NUMBER","DEFAULT");
-    QString rpc_port_str = env.value("DAQINTERFACE_PORT","DEFAULT");
-    //daqinterface_start_commands <<"stdbuf -oL ./rc/control/daqinterface.py --partition-number"<<partition_number_str<<"--rpc-port"<<rpc_port_str;
-    daqinterface_start_commands <<"stdbuf -oL ./rc/control/daqinterface.py --rpc-port"<<rpc_port_str; // solo para prubeas en mi compu local
+    QString rpc_port_str = QString::number(base_port_str.toInt() + partition_number_str.toInt()*ports_per_partition_str.toInt());
+    daqinterface_start_commands << "stdbuf -oL ./rc/control/daqinterface.py --partition-number"
+                                << partition_number_str
+                                << "--rpc-port" << rpc_port_str;
     daq_interface.start(daqinterface_start_commands.join(" "));
+
     state_diagram.setLCDPartitionNumber(partition_number_str.toInt());
     state_diagram.setLCDPortNumber(rpc_port_str.toInt());
     /*daq_interface.start("python",QStringList()<<"/root/artdaq-demo-base/artdaq-utilities-daqinterface/rc/control/daqinterface.py");
     bool started = daq_interface.waitForStarted();
-    
+
     if (started){qDebug("Started");}else{qDebug("Fallo"); return;}*/
 
-   
     return;
 }
 
