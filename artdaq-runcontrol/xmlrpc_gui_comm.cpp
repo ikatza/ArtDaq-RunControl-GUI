@@ -4,6 +4,8 @@
 xmlrpc_gui_comm::xmlrpc_gui_comm()
 {
     env = QProcessEnvironment::systemEnvironment();
+    QString daqInterfacePort = env.value("DAQINTERFACE_PORT","NOT FOUND");
+    serverUrl = "http://localhost:" + daqInterfacePort + "/RPC2";	
 }
 
 QString xmlrpc_gui_comm::getDAQInterfaceStatus(){
