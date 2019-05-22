@@ -100,7 +100,7 @@ void xmlrpc_gui_comm::sendTransitionBOOT(QStringList selected_boot_file){
         QString boot_file = selected_boot_file.at(0);
 
         std::map<std::string, xmlrpc_c::value> structData;
-        std::pair<std::string, xmlrpc_c::value> member("daqinterface_config", xmlrpc_c::value_string(boot_file.toStdString()));
+        std::pair<std::string, xmlrpc_c::value> member("boot_filename", xmlrpc_c::value_string(boot_file.toStdString()));
         structData.insert(member);
 
         params.add(xmlrpc_c::value_string(b.toStdString()));
