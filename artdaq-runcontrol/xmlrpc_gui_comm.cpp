@@ -126,7 +126,9 @@ void xmlrpc_gui_comm::sendTransitionCONFIG(QStringList selected_config){
         QString selected_config_ = selected_config.at(0);
 
         std::map<std::string, xmlrpc_c::value> structData;
-        std::pair<std::string, xmlrpc_c::value> member("config", xmlrpc_c::value_string(selected_config_.toStdString()));
+	std::vector<xmlrpc_c::value> array_list;
+        array_list.push_back(xmlrpc_c::value_string(selected_config_.toStdString()));
+        std::pair<std::string, xmlrpc_c::value> member("config", xmlrpc_c::value_array(array_list));
         structData.insert(member);
 
         params.add(xmlrpc_c::value_string(b.toStdString()));
