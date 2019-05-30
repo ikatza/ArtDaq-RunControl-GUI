@@ -71,7 +71,7 @@ void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components){
                     array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
                     cmd = comp_line.at(2);
                     array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
-                    cmd = "BoardReader";
+                    cmd = "1";
                     array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
                     std::pair<std::string, xmlrpc_c::value> member(comp.toStdString(), xmlrpc_c::value_array(array_list));
                     structData.insert(member);
