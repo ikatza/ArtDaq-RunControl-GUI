@@ -37,6 +37,17 @@ void xmlrpc_gui_comm::listDAQInterfaceComponents(){
     }
 }
 
+void xmlrpc_gui_comm::listDAQInterfaceConfigs(){
+    try{
+        xmlrpc_c::value result;
+        QString a = "listconfigs";
+        guiClient.call(serverUrl.toStdString(),a.toStdString(),&result);
+    } catch(std::exception const e){
+        qDebug()<< "Call to DAQInterface failed because: "
+            << e.what();
+    }
+}
+
 void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components){
 
     try{

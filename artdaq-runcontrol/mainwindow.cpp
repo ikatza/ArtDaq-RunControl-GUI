@@ -6,7 +6,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    //QTimer *ptimer = new QTimer(timer);
     ui->setupUi(this);
     configurateWindow();
     DAQState = 0;
@@ -17,13 +16,14 @@ MainWindow::MainWindow(QWidget *parent) :
     daqinterface_pointer = &daq_interface;
     ui->lbStatus->setText("");
     QProcess* kill_proc = new QProcess(this);
-    QString user_str = env.value("USER","DEFAULT");
+    user_str = env.value("USER","DEFAULT");
     kill_proc->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << user_str);
     kill_proc->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << user_str);
     kill_proc->waitForFinished();
     kill_proc->~QProcess();
     connect(ui->bDAQInterface,SIGNAL(clicked(bool)),this,SLOT(bDAQInterfacePressed()));
     connect(daqinterface_pointer,SIGNAL(readyReadStandardOutput()),this,SLOT(DAQInterfaceOutput()));
+    connect(&DAQInterface_logwatcher,SIGNAL(fileChanged(QString)),this,SLOT(bDebugPressed()));
     connect(daqinterface_pointer,SIGNAL(started()),this,SLOT(setButtonsDAQInterfaceInitialized()));
     connect(ui->bBelen,SIGNAL(clicked(bool)),this,SLOT(MensajeParaBelen()));
     connect(ui->bDAQcomp,SIGNAL(clicked(bool)),this,SLOT(bListDAQComps()));
@@ -39,12 +39,24 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->bTerminate,SIGNAL(clicked(bool)),this,SLOT(bTERMINATEPressed()));
     connect(ui->bEndSession,SIGNAL(clicked(bool)),this,SLOT(bEndSessionPressed()));
     connect(ui->bDebug,SIGNAL(clicked(bool)),this,SLOT(bDebugPressed()));
+    connect(ui->bNewExperiment,SIGNAL(clicked(bool)),this,SLOT(bNewExperimentPressed()));
+    connect(ui->bEditExperiment,SIGNAL(clicked(bool)),this,SLOT(bEditExperimentPressed()));
+    connect(ui->bDeleteExperiment,SIGNAL(clicked(bool)),this,SLOT(bDeleteExperimentPressed()));
+    connect(ui->bNewProfile,SIGNAL(clicked(bool)),this,SLOT(bNewProfilePressed()));
+    connect(ui->bEditProfile,SIGNAL(clicked(bool)),this,SLOT(bEditProfilePressed()));
+    connect(ui->bDeleteProfile,SIGNAL(clicked(bool)),this,SLOT(bDeleteProfilePressed()));
     env = QProcessEnvironment::systemEnvironment();
-    //connect(ui->actionSource_config_file,SIGNAL(triggered()),this,SLOT(menuSourceConfigFilePressed()));
     initializeButtons();
     state_diagram.setWindowTitle("DAQInterface State Diagram");
+    state_diagram.setFixedSize(state_diagram.geometry().width(),state_diagram.geometry().height());
     state_diagram.show();
+    guiDatabase.start();
 
+    this->populateComboExperiments();
+    this->populateComboProfiles();
+    this->populateListViews();
+    connect(ui->comboExperiment,SIGNAL(currentIndexChanged(int)),this,SLOT(comboExperimentIndexChanged()));
+    connect(ui->comboProfiles,SIGNAL(currentTextChanged(QString)),this,SLOT(populateListViews()));
 }
 
 MainWindow::~MainWindow()
@@ -61,25 +73,6 @@ void MainWindow::configurateWindow(){
 
 }
 
-/*void MainWindow::menuSourceConfigFilePressed(){
-    qDebug()<<"menuSourceConfigFilePressed";
-    QString home_str = env.value("HOME","DEFAULT");
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Source configuration file"), home_str, tr("Source Files (*.sh)"));
-    QProcess source;
-    char x = '"';
-    QString source_str = tr("\"source");
-    QString quote = QString(x);
-    fileName = quote + "source " + fileName + quote;
-    qDebug()<<fileName;
-    source.start("bash", QStringList()<<"-c"<<fileName);
-    source.waitForFinished();
-    QByteArray daq_byte_array = source.readAllStandardOutput();
-    //if(daq_byte_array == ""){return;}
-    QTextCodec* codec;
-    daq_string = codec->codecForMib(106)->toUnicode(daq_byte_array);
-    ui->taDAQInterface->document()->setPlainText(daq_string);
-
-}*/
 
 void MainWindow::bEndSessionPressed(){
 
@@ -389,13 +382,14 @@ void MainWindow::isLVSelected(){
     }
 }
 
-void MainWindow::setButtonsDAQInterfaceInitialized(){
-
+void MainWindow::setButtonsDAQInterfaceInitialized(bool started){
+    if(started){
     ui->bDAQInterface->setEnabled(false);
     ui->bDAQcomp->setEnabled(true);
     ui->bDAQconf->setEnabled(true);
     ui->bEndSession->setEnabled(true);
     timer.start(1000);
+    }
 }
 
 void MainWindow::bDAQInterfacePressed(){
@@ -403,23 +397,30 @@ void MainWindow::bDAQInterfacePressed(){
     QString wd = env.value("ARTDAQ_DAQINTERFACE_DIR","DEFAULT");
     daq_interface.setWorkingDirectory(wd);
     daq_commands.setWorkingDirectory(wd);
+    wd = env.value("ARTDAQ_DAQINTERFACE_DIR","DEFAULT");
     QStringList daqinterface_start_commands;
     QString base_port_str = env.value("ARTDAQ_BASE_PORT","DEFAULT");
     QString ports_per_partition_str = env.value("ARTDAQ_PORTS_PER_PARTITION","DEFAULT");
     QString partition_number_str = env.value("DAQINTERFACE_PARTITION_NUMBER","DEFAULT");
+    DAQInterface_logdir = env.value("DAQINTERFACE_LOGDIR","DEFAULT");
+    DAQInterface_logdir = DAQInterface_logdir + "/DAQInterface_partition" + partition_number_str + ".log";
     QString rpc_port_str = QString::number(base_port_str.toInt() + partition_number_str.toInt()*ports_per_partition_str.toInt());
-    daqinterface_start_commands << "stdbuf -oL ./rc/control/daqinterface.py --partition-number"
+    /*daqinterface_start_commands << "stdbuf -oL ./rc/control/daqinterface.py --partition-number"
                                 << partition_number_str
-                                << "--rpc-port" << rpc_port_str;
-    daq_interface.start(daqinterface_start_commands.join(" "));
-
+                                << "--rpc-port" << rpc_port_str;*/
+    daqinterface_start_commands << "stdbuf -oL" << wd + "/rc/control/daqinterface.py --partition-number"
+                                    << partition_number_str
+                                    << "--rpc-port" << rpc_port_str;
+    DAQInterfaceProcess_started = daq_interface.startDetached(daqinterface_start_commands.join(" "));
+    //daq_interface.start(daqinterface_start_commands.join(" "));
+    DAQInterface_PID = daq_interface.processId();
+    setButtonsDAQInterfaceInitialized(DAQInterfaceProcess_started);
+    //setButtonsDAQInterfaceInitialized(true);
     state_diagram.setLCDPartitionNumber(partition_number_str.toInt());
     state_diagram.setLCDPortNumber(rpc_port_str.toInt());
-    /*daq_interface.start("python",QStringList()<<"/root/artdaq-demo-base/artdaq-utilities-daqinterface/rc/control/daqinterface.py");
-    bool started = daq_interface.waitForStarted();
-
-    if (started){qDebug("Started");}else{qDebug("Fallo"); return;}*/
-
+    qDebug()<<daqinterface_start_commands;
+    //DAQInterface_logdir = "/home/ecristal/Debug.log";
+    //DAQInterface_logwatcher.addPath(DAQInterface_logdir);
     return;
 }
 
@@ -482,7 +483,7 @@ void MainWindow::lvConfigs(){
 
 void MainWindow::bListDAQConfigs(){
 
-    daq_commands.start("listconfigs.sh");
+    commDAQInterface.listDAQInterfaceConfigs();
     DAQState = 2;
     QRegExp reg("*.txt");
     reg.setPatternSyntax(QRegExp::Wildcard);
@@ -512,11 +513,215 @@ void MainWindow::bListDAQConfigs(){
 }
 
 void MainWindow::bDebugPressed(){
+    qDebug()<<"Debug";
+    QString experimentName = ui->comboExperiment->currentText();
+    guiDatabase.saveExperimentProfileView(experimentName);
+    guiDatabase.updateExperimentProfiles(experimentName);
+}
 
-    //commDAQInterface.setDAQInterfaceComponents(list_comps_selected);
-    //commDAQInterface.sendTransitionBOOT(list_BOOTConfig_selected);
-    //commDAQInterface.sendTransitionCONFIG(list_config_selected);
-   //commDAQInterface.sendTransitionSTART();
+void MainWindow::bNewExperimentPressed(){
+
+    newExperimentDialog *dialogNewExperiment = new newExperimentDialog(this);
+    dialogNewExperiment->setWindowTitle("New Experiment");
+    int result = dialogNewExperiment->exec();
+    if(result == QDialog::Accepted){
+        QString experimentName = dialogNewExperiment->getExperimentName();
+        QVector<QStringList> componentList = dialogNewExperiment->getComponentsList();
+        QStringList configurationList = dialogNewExperiment->getConfigurationsList();
+        QStringList bootFiles = dialogNewExperiment->getBootFilesList();
+        guiDatabase.uploadNewExperiment(experimentName,componentList,configurationList);
+        guiDatabase.addProfileToExperiment(experimentName,"default",configurationList,componentList,bootFiles);
+        ui->comboExperiment->addItem(experimentName);
+        this->populateComboProfiles();
+    }else if(result == QDialog::Rejected){
+
+    }
+
+}
+
+void MainWindow::bEditExperimentPressed(){
+
+    QVector<QStringList> componentList;
+    QStringList configurationList;
+    int index = ui->comboExperiment->currentIndex();
+    QString experimentName = ui->comboExperiment->itemText(index);
+    guiDatabase.retreiveExperiment(experimentName, &componentList, &configurationList);
+    newExperimentDialog *dialogNewExperiment = new newExperimentDialog(this);
+    dialogNewExperiment->setWindowTitle("Edit Experiment");
+    dialogNewExperiment->setLabelTitle("Edit Experiment");
+    dialogNewExperiment->setExperimentDialog(experimentName, componentList, configurationList);
+    int result = dialogNewExperiment->exec();
+    if(result == QDialog::Accepted){
+        ui->comboExperiment->removeItem(ui->comboExperiment->currentIndex());
+        experimentName = dialogNewExperiment->getExperimentName();
+        componentList = dialogNewExperiment->getComponentsList();
+        configurationList = dialogNewExperiment->getConfigurationsList();
+        QStringList bootFiles = dialogNewExperiment->getBootFilesList();
+        guiDatabase.removeExperiment(experimentName);
+        guiDatabase.saveExperimentProfileView(experimentName);
+        guiDatabase.uploadNewExperiment(experimentName,componentList,configurationList);
+        guiDatabase.addProfileToExperiment(experimentName,"default",configurationList,componentList,bootFiles);
+        guiDatabase.updateExperimentProfiles(experimentName);
+        ui->comboExperiment->insertItem(index,experimentName);
+    }else if(result == QDialog::Rejected){
+
+    }
+
+}
+
+void MainWindow::bDeleteExperimentPressed(){
+    QMessageBox msgBox;
+    int index = ui->comboExperiment->currentIndex();
+    QString experimentName = ui->comboExperiment->itemText(index);
+    msgBox.setText("Delete experiment " + experimentName + " from Database");
+    msgBox.setInformativeText("Do you really wish to delete the current experiment information from the database?");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::No);
+    int ret = msgBox.exec();
+    switch (ret) {
+      case QMessageBox::Yes:
+            guiDatabase.removeExperiment(experimentName);
+            ui->comboExperiment->removeItem(index);
+            break;
+      case QMessageBox::No:
+            break;
+      default:
+          break;
+    }
+}
+
+void MainWindow::populateComboExperiments(){
+    QStringList experimentList;
+    guiDatabase.findExperiments(&experimentList);
+    for(QString experimentName : experimentList){
+        ui->comboExperiment->addItem(experimentName);
+    }
+
+}
+
+void MainWindow::bNewProfilePressed(){
+
+    newProfileDialog *profileDialog = new newProfileDialog();
+    profileDialog->setWindowTitle("New Profile");
+    QVector<QStringList> componentList;
+    QStringList configurationList;
+    int index = ui->comboExperiment->currentIndex();
+    QString experimentName = ui->comboExperiment->itemText(index);
+    guiDatabase.retreiveExperiment(experimentName, &componentList, &configurationList);
+    profileDialog->populateComboConfigurations(configurationList);
+    profileDialog->populateLVInExperiment(componentList);
+    int result = profileDialog->exec();
+    if(result == QDialog::Accepted){
+        QString profileName = profileDialog->getProfileName();
+        QStringList selectedComponents = profileDialog->getComponentsToBeAdded();
+        QString selectedConfiguration = profileDialog->getSelectedConfiguration();
+        QString bootFile = profileDialog->getSelectedBootFile();
+        guiDatabase.addProfileToExperiment(experimentName,profileName,selectedConfiguration,selectedComponents,bootFile);
+        ui->comboProfiles->addItem(profileName);
+    }else if(result == QDialog::Rejected){
+
+    }
+
+}
+
+void MainWindow::populateComboProfiles(){
+    QString experimentName = ui->comboExperiment->currentText();
+    if(experimentName != ""){
+        QStringList profileList = guiDatabase.retrieveExperimentProfiles(experimentName);
+        QStringListModel *model = new QStringListModel(this);
+        model->setStringList(profileList);
+        ui->comboProfiles->setModel(model);
+    }
+}
+
+void MainWindow::comboExperimentIndexChanged(){
+    this->populateComboProfiles();
+}
+
+void MainWindow::populateListViews(){
+
+    if(ui->comboProfiles->currentText() == "default"){
+        ui->bEditProfile->setEnabled(false);
+        ui->bDeleteProfile->setEnabled(false);
+    }else{
+        ui->bEditProfile->setEnabled(true);
+        ui->bDeleteProfile->setEnabled(true);
+    }
+
+    QString experimentName = ui->comboExperiment->currentText();
+    QString profileName = ui->comboProfiles->currentText();
+    QStringList components = guiDatabase.retreiveProfileComponents(experimentName,profileName);
+    QStringListModel* model = new QStringListModel(this);
+    model->setStringList(components);
+    ui->lvComponents->setModel(model);
+    QStringList configurations = guiDatabase.retreiveProfileConfiguration(experimentName,profileName);
+    QStringListModel* model2 = new QStringListModel(this);
+    model2->setStringList(configurations);
+    ui->lvConfigurations->setModel(model2);
+    QStringList bootfiles = guiDatabase.retreiveProfileBootFiles(experimentName,profileName);
+    QStringListModel* model3 = new QStringListModel(this);
+    model3->setStringList(bootfiles);
+    ui->lvConfigBOOT->setModel(model3);
+    //qDebug()<< configurations << bootfiles;
+}
+
+void MainWindow::bEditProfilePressed(){
+
+    QVector<QStringList> componentList_;
+    QStringList componentList;
+    QStringList configurationList;
+    QStringList bootfileList;
+    QStringList profileComponents;
+    QString experimentName = ui->comboExperiment->currentText();
+    QString profileName = ui->comboProfiles->currentText();
+    guiDatabase.retreiveExperiment(experimentName, &componentList_, &configurationList, &bootfileList);
+    componentList = guiDatabase.retreiveProfileComponents(experimentName,"default");
+    profileComponents = guiDatabase.retreiveProfileComponents(experimentName,profileName);
+    newProfileDialog *dialogNewProfile = new newProfileDialog(this);
+    dialogNewProfile->setWindowTitle("Edit Profile");
+    dialogNewProfile->setLabelTitle("Edit Profile");
+    dialogNewProfile->setProfileDialog(profileName, componentList, profileComponents, configurationList, bootfileList);
+    int result = dialogNewProfile->exec();
+    if(result == QDialog::Accepted){
+        ui->comboProfiles->removeItem(ui->comboProfiles->currentIndex());
+        profileName = dialogNewProfile->getProfileName();
+        componentList = dialogNewProfile->getComponentsToBeAdded();
+        QString configuration = dialogNewProfile->getSelectedConfiguration();
+        QString bootfile = dialogNewProfile->getSelectedBootFile();
+        //guiDatabase.removeExperiment(experimentName);
+        //guiDatabase.uploadNewExperiment(experimentName,componentList,configurationList);
+        ui->comboExperiment->insertItem(ui->comboProfiles->currentIndex(),profileName);
+    }else if(result == QDialog::Rejected){
+
+    }
+
+}
+
+void MainWindow::bDeleteProfilePressed(){
+    QMessageBox msgBox;
+    int index = ui->comboProfiles->currentIndex();
+    QString experimentName = ui->comboExperiment->currentText();
+    QString profileName = ui->comboProfiles->itemText(index);
+    msgBox.setText("Delete experiment " + profileName + " from Database");
+    msgBox.setInformativeText("Do you really wish to delete the current profile information from the database?");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::No);
+    int ret = msgBox.exec();
+    switch (ret) {
+      case QMessageBox::Yes:
+            guiDatabase.removeProfileFromExperiment(experimentName,profileName);
+            ui->comboProfiles->removeItem(index);
+            break;
+      case QMessageBox::No:
+            break;
+      default:
+          break;
+    }
+}
+
+
+QProcessEnvironment MainWindow::getQProcessEnvironment(){
+    return this->env;
 }
 
 void MainWindow::MensajeParaBelen(){

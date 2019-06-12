@@ -20,8 +20,13 @@
 #include <QMessageBox>
 #include <QProcessEnvironment>
 #include <QFileDialog>
+#include <QFileSystemWatcher>
+#include <QVector>
 #include "daqinterfacestate.h"
 #include "xmlrpc_gui_comm.h"
+#include "newexperimentdialog.h"
+#include "guimongodb.h"
+#include "newprofiledialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -35,6 +40,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    QProcessEnvironment getQProcessEnvironment();
 private slots:
 
     void bEndSessionPressed();
@@ -46,7 +52,7 @@ private slots:
     void lvComps();
     void lvConfigs();
     void initializeButtons();
-    void setButtonsDAQInterfaceInitialized();
+    void setButtonsDAQInterfaceInitialized(bool started);
     void isLVSelected();
     void lvComponentsSelected();
     void lvConfigurationsSelected();
@@ -62,16 +68,30 @@ private slots:
     void configurateWindow();
     //void menuSourceConfigFilePressed();
     void bDebugPressed();
+    void bNewExperimentPressed();
+    void bEditExperimentPressed();
+    void bDeleteExperimentPressed();
+    void bNewProfilePressed();
+    void populateComboProfiles();
+    void comboExperimentIndexChanged();
+    void populateListViews();
+    void bEditProfilePressed();
+    void bDeleteProfilePressed();
+protected:
+    QProcessEnvironment env;
 private:
     Ui::MainWindow *ui;
     QProcess daq_interface;
     QProcess daq_commands;
-    QProcessEnvironment env;
-    QString daq_string;
+    QString daq_string, user_str;
+    QString DAQInterface_logdir;
     QStringList list_comps_selected, list_config_selected, list_BOOTConfig_selected;
     int DAQState;
+    int DAQInterface_PID;
+    bool DAQInterfaceProcess_started;
     bool banBOOT,banCONFIG,banBOOTCONFIG, banBOOTED,banCONFIGURED,banRUNNING,banPAUSED;
     QTimer timer;
+    QFileSystemWatcher DAQInterface_logwatcher;
     QMap<QString,QString> status_map = {{"stopped","stopped"},
                                             {"booting","booting"},
                                             {"booted","booted"},
@@ -99,6 +119,9 @@ private:
                                            };
     daqInterfaceState state_diagram;
     xmlrpc_gui_comm commDAQInterface;
+    guiMongoDB guiDatabase;
+
+    void populateComboExperiments();
 };
 
 #endif // MAINWINDOW_H

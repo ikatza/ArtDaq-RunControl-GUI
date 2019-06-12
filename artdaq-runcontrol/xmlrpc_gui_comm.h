@@ -23,6 +23,7 @@ public:
     void sendTransitionSTOP();
     void sendTransitionTERMINATE();
     void sendTransitionSTART();
+    void listDAQInterfaceConfigs();
 private:
     unsigned int port_number;
     QString serverUrl = "http://localhost:5570/RPC2";
