@@ -15,6 +15,7 @@ void guiMongoDB::start(){
 
 void guiMongoDB::uploadNewExperiment(QString name, QVector<QStringList> componentsList, QStringList configurations){
 
+    try{
     using namespace bsoncxx;
     QString componentName, componentPort, componentHost, componentSubsystem;
     builder::stream::document builder{};
@@ -51,11 +52,16 @@ void guiMongoDB::uploadNewExperiment(QString name, QVector<QStringList> componen
 
     bsoncxx::document::view view_ = doc_value.view();
     guiCollection.insert_one(view_);
+    }catch(bsoncxx::exception e){
+        qDebug()<<"Exception thrown in method : \nguiMongoDB::uploadNewExperiment(QString name, QVector<QStringList> componentsList, QStringList configurations)"
+               <<"\nException info: " << e.what();
+    }
 
 }
 
 void guiMongoDB::retreiveExperiment(QString name, QVector<QStringList> *componentList, QStringList *configurationList){
 
+    try{
     QString str;
     QStringList componentList_;
     mongocxx::cursor query_result = guiCollection.find(guiDocument << "name" << name.toStdString() << bsoncxx::builder::stream::finalize);
@@ -84,6 +90,10 @@ void guiMongoDB::retreiveExperiment(QString name, QVector<QStringList> *componen
         for(auto ele:configurations_){
             configurationList->append(str.fromStdString(ele.get_utf8().value.to_string()));
         }
+    }
+    }catch(bsoncxx::exception e){
+    qDebug()<<"Exception thrown in method : \nguiMongoDB::retreiveExperiment(QString name, QVector<QStringList> *componentList, QStringList *configurationList)"
+           <<"\nException info: " << e.what();
     }
 
 }
@@ -124,31 +134,41 @@ void guiMongoDB::retreiveExperiment(QString name, QVector<QStringList> *componen
             bootfileList->append(bootfile);
         }
     }
-    }
-    catch(bsoncxx::exception e){
-        qDebug()<<e.what();
+    }catch(bsoncxx::exception e){
+    qDebug()<<"Exception thrown in method : \nguiMongoDB::retreiveExperiment(QString name, QVector<QStringList> *componentList, QStringList *configurationList, QStringList *bootfileList)"
+           <<"\nException info: " << e.what();
     }
 
 }
 
 void guiMongoDB::removeExperiment(QString experimentName){
-
+    try{
     guiCollection.delete_one(guiDocument << "name" << experimentName.toStdString() << bsoncxx::builder::stream::finalize);
+    }catch(bsoncxx::exception e){
+    qDebug()<<"Exception thrown in method : \nguiMongoDB::removeExperiment(QString experimentName)"
+           <<"\nException info: " << e.what();
+    }
 
 }
 
 void guiMongoDB::findExperiments(QStringList *experiments){
 
+    try{
     mongocxx::cursor query_result = guiCollection.find(guiDocument << bsoncxx::builder::stream::finalize);
     for(auto doc:query_result){
         auto name_view = doc["name"];
         QString experimentName = QString::fromStdString(name_view.get_utf8().value.to_string());
         experiments->append(experimentName);
     }
+    }catch(bsoncxx::exception e){
+    qDebug()<<"Exception thrown in method : \nguiMongoDB::findExperiments(QStringList *experiments)"
+            <<"\nException info: " << e.what();
+    }
 }
 
 void guiMongoDB::addProfileToExperiment(QString experimentName, QString profileName, QString selectedConfiguration, QStringList selectedComponents, QString bootFile){
 
+    try{
     using namespace bsoncxx;
     builder::stream::document builder{};
     auto in_array = builder << "name"
@@ -171,10 +191,17 @@ void guiMongoDB::addProfileToExperiment(QString experimentName, QString profileN
                           << out
                           << bsoncxx::builder::stream::close_document
                           << bsoncxx::builder::stream::finalize);
+    }catch(bsoncxx::exception e){
+    qDebug()<<"Exception thrown in method : \n"
+            <<"guiMongoDB::addProfileToExperiment(QString experimentName, QString profileName, QString selectedConfiguration, QStringList selectedComponents, QString bootFile)"
+            <<"\nException info: " << e.what();
+    }
+
 }
 
 void guiMongoDB::addProfileToExperiment(QString experimentName, QString profileName, QStringList selectedConfiguration, QVector<QStringList> selectedComponents, QStringList bootFiles){
 
+    try{
     using namespace bsoncxx;
     builder::stream::document builder{};
     auto in_array = builder << "name"
@@ -206,10 +233,16 @@ void guiMongoDB::addProfileToExperiment(QString experimentName, QString profileN
                           << out
                           << bsoncxx::builder::stream::close_document
                           << bsoncxx::builder::stream::finalize);
+    }catch(bsoncxx::exception e){
+    qDebug()<<"Exception thrown in method : \n"
+            <<"guiMongoDB::addProfileToExperiment(QString experimentName, QString profileName, QStringList selectedConfiguration, QVector<QStringList> selectedComponents, QStringList bootFiles)"
+            <<"\nException info: " << e.what();
+    }
 }
 
 QStringList guiMongoDB::retrieveExperimentProfiles(QString experimentName){
 
+    try{
     QStringList profileList;
     mongocxx::cursor query_result = guiCollection.find(guiDocument << "name" << experimentName.toStdString() << bsoncxx::builder::stream::finalize);
     for(auto doc:query_result){
@@ -222,10 +255,18 @@ QStringList guiMongoDB::retrieveExperimentProfiles(QString experimentName){
         }
     }
     return profileList;
+    }catch(bsoncxx::exception e){
+    qDebug()<<"Exception thrown in method : \n"
+            <<"guiMongoDB::retrieveExperimentProfiles(QString experimentName)"
+            <<"\nException info: " << e.what();
+            QStringList StringList;
+            return StringList;
+    }
 }
 
 QStringList guiMongoDB::retreiveProfileComponents(QString experimentName, QString profileName){
 
+    try{
     QStringList profileComponentsList;
     mongocxx::cursor query_result = guiCollection.find(guiDocument << "name" << experimentName.toStdString() << bsoncxx::builder::stream::finalize);
     for(auto doc:query_result){
@@ -243,10 +284,18 @@ QStringList guiMongoDB::retreiveProfileComponents(QString experimentName, QStrin
         }
     }
     return profileComponentsList;
+    }catch(bsoncxx::exception e){
+    qDebug()<<"Exception thrown in method : \n"
+            <<"guiMongoDB::retreiveProfileComponents(QString experimentName, QString profileName)"
+            <<"\nException info: " << e.what();
+            QStringList StringList;
+            return StringList;
+    }
 }
 
 QStringList guiMongoDB::retreiveProfileConfiguration(QString experimentName, QString profileName){
 
+    try{
     QStringList profileConfigurationList;
     mongocxx::cursor query_result = guiCollection.find(guiDocument << "name" << experimentName.toStdString() << bsoncxx::builder::stream::finalize);
     for(auto doc:query_result){
@@ -269,10 +318,18 @@ QStringList guiMongoDB::retreiveProfileConfiguration(QString experimentName, QSt
         }
     }
     return profileConfigurationList;
+    }catch(bsoncxx::exception e){
+    qDebug()<<"Exception thrown in method : \n"
+            <<"guiMongoDB::retreiveProfileConfiguration(QString experimentName, QString profileName)"
+            <<"\nException info: " << e.what();
+            QStringList StringList;
+            return StringList;
+    }
 }
 
 QStringList guiMongoDB::retreiveProfileBootFiles(QString experimentName, QString profileName){
 
+    try{
     QStringList profileBootFilesList;
     mongocxx::cursor query_result = guiCollection.find(guiDocument << "name" << experimentName.toStdString() << bsoncxx::builder::stream::finalize);
     for(auto doc:query_result){
@@ -295,114 +352,309 @@ QStringList guiMongoDB::retreiveProfileBootFiles(QString experimentName, QString
         }
     }
     return profileBootFilesList;
+    }catch(bsoncxx::exception e){
+    qDebug()<<"Exception thrown in method : \n"
+            <<"guiMongoDB::retreiveProfileBootFiles(QString experimentName, QString profileName)"
+            <<"\nException info: " << e.what();
+            QStringList StringList;
+            return StringList;
+    }
 }
 
 void guiMongoDB::removeProfileFromExperiment(QString experimentName, QString profileToBeRemoved){
 
+    try{
     this->guiCollection.update_one(guiDocument << "name" << experimentName.toStdString() << bsoncxx::builder::stream::finalize,
                           guiDocument << "$pop" << bsoncxx::builder::stream::open_document
                           << "profiles"
                           << profileToBeRemoved.toStdString()
                           << bsoncxx::builder::stream::close_document
                           << bsoncxx::builder::stream::finalize);
+    }catch(bsoncxx::exception e){
+    qDebug()<<"Exception thrown in method : \n"
+            <<"guiMongoDB::removeProfileFromExperiment(QString experimentName, QString profileToBeRemoved)"
+            <<"\nException info: " << e.what();
+    }
 
 }
 
-void guiMongoDB::saveExperimentProfileView(QString experimentName){
+void guiMongoDB::saveExperimentProfiles(QString experimentName){
 
+    try{
     mongocxx::cursor query_result = guiCollection.find(guiDocument << "name" << experimentName.toStdString() << bsoncxx::builder::stream::finalize);
     for(auto doc:query_result){
-        this->profiles_element_temp = doc["profiles"];
+
+        this->profiles_element_temp = QString::fromStdString(bsoncxx::to_json(doc));
+    }
+    }catch(bsoncxx::exception e){
+    qDebug()<<"Exception thrown in method : \n"
+            <<"guiMongoDB::saveExperimentProfileView(QString experimentName)"
+            <<"\nException info: " << e.what();
     }
 
 }
 
-void guiMongoDB::updateExperimentProfiles(QString experimentName){
+bsoncxx::document::element guiMongoDB::getExperimentProfileView(QString experimentName){
 
-    qDebug()<<experimentName;
-    auto profiles = this->profiles_element_temp.get_array().value;
-    QStringList profileComponents;
-    QStringList profileConfigurations;
-    QStringList profileBootfiles;
-    QStringList profileComponents_;
-    QStringList profileConfigurations_;
-    QStringList profileBootfiles_;
-    for(auto profile : profiles){
-        QString profileName = QString::fromStdString(profile["name"].get_utf8().value.to_string());
-        qDebug()<<profileName;
+    try{
+    mongocxx::cursor query_result = guiCollection.find(guiDocument << "name" << experimentName.toStdString() << bsoncxx::builder::stream::finalize);
+    bsoncxx::document::element profiles_element;
+    for(auto doc:query_result){
+        profiles_element = doc["profiles"];
+    }
+    qDebug()<<"returned element";
+    return profiles_element;
+    }catch(bsoncxx::exception e){
+    qDebug()<<"Exception thrown in method : \n"
+            <<"guiMongoDB::getExperimentProfileView(QString experimentName)"
+            <<"\nException info: " << e.what();
+            bsoncxx::document::element profiles_element;
+            return profiles_element;
+    }
+}
+
+void guiMongoDB::updateExperiment(QString experimentName, QString newExperimentName, QVector<QStringList> componentsList, QStringList configurations, QStringList bootfilesList){
+
+    try{
+        this->guiCollection.update_one(guiDocument << "name" << experimentName.toStdString() << bsoncxx::builder::stream::finalize,
+                              guiDocument << "$set" << bsoncxx::builder::stream::open_document
+                              << "name"
+                              << newExperimentName.toStdString()
+                              << bsoncxx::builder::stream::close_document
+                              << bsoncxx::builder::stream::finalize);
+        QString componentName, componentPort, componentHost, componentSubsystem;
+        bsoncxx::builder::stream::document builder{};
+
+        auto in_array = builder << "components"
+                                << bsoncxx::builder::stream::open_array;
+        QStringList newComponentsList;
+        QStringList newConfigurationsList;
+        for (QStringList component: componentsList) {
+            componentName = component.at(0);
+            newComponentsList.append(componentName);
+            componentHost = component.at(1);
+            componentPort = component.at(2);
+            componentSubsystem = component.at(3);
+            in_array = in_array << bsoncxx::builder::stream::open_document << "name" << componentName.toStdString()
+                                << "host" << componentHost.toStdString()
+                                << "port" << componentPort.toStdString()
+                                << "subsystem" << componentSubsystem.toStdString()
+                                << bsoncxx::builder::stream::close_document;
+        }
+        auto out = in_array << bsoncxx::builder::stream::close_array
+                            << bsoncxx::builder::stream::finalize;
+        this->guiCollection.update_one(guiDocument << "name" << newExperimentName.toStdString() << bsoncxx::builder::stream::finalize,
+                              guiDocument << "$set"
+                              << out
+                              << bsoncxx::builder::stream::finalize);
+        in_array = builder << "configurations"
+                           << bsoncxx::builder::stream::open_array;
+        for(QString configuration : configurations){
+            in_array = in_array << configuration.toStdString();
+            newConfigurationsList.append(configuration);
+        }
+        out = in_array << bsoncxx::builder::stream::close_array
+                       << bsoncxx::builder::stream::finalize;
+        this->guiCollection.update_one(guiDocument << "name" << newExperimentName.toStdString() << bsoncxx::builder::stream::finalize,
+                              guiDocument << "$set"
+                              << out
+                              << bsoncxx::builder::stream::finalize);
+        QStringList oldDefaultComponentsList;
+        QStringList oldDefaultConfigurationsList;
+        QStringList oldDefaultBootfilesList;
+        mongocxx::cursor query_result = guiCollection.find(guiDocument << "name" << newExperimentName.toStdString() << bsoncxx::builder::stream::finalize);
+
+        for(auto doc:query_result){
+            auto profiles_element = doc["profiles"].get_array().value;
+            for(auto profile : profiles_element){
+                QString profileName = QString::fromStdString(profile["name"].get_utf8().value.to_string());
+                if(profileName == "default"){
+                    auto components_view = profile["components"].get_array().value;
+                    for(auto component : components_view){
+                        oldDefaultComponentsList.append(QString::fromStdString(component.get_utf8().value.to_string()));
+                    }
+                    auto configurations_view = profile["configuration"].get_array().value;
+                    for(auto configuration : configurations_view){
+                        oldDefaultConfigurationsList.append(QString::fromStdString(configuration.get_utf8().value.to_string()));
+                    }
+                    auto bootfiles_view = profile["boot file"].get_array().value;
+                    for(auto bootfile : bootfiles_view){
+                        oldDefaultBootfilesList.append(QString::fromStdString(bootfile.get_utf8().value.to_string()));
+                    }
+                }
+            }
+        }
+        qDebug()<<oldDefaultComponentsList<<oldDefaultConfigurationsList<<oldDefaultBootfilesList;
+
+        bool compareFlag = false;
+        for(QString oldComponent : oldDefaultComponentsList){
+            for(QString newComponent : newComponentsList ){
+                if(oldComponent == newComponent){
+                    compareFlag = true;
+                }
+            }
+            if(compareFlag == false){
+                oldDefaultComponentsList.removeAt(oldDefaultComponentsList.indexOf(oldComponent));
+            }
+        }
+
+        compareFlag = false;
+        for(QString oldConfiguration : oldDefaultConfigurationsList){
+            for(QString newConfiguration : newConfigurationsList){
+                if(oldConfiguration == newConfiguration){
+                    compareFlag = true;
+                }
+            }
+            if(compareFlag == false){
+                oldDefaultConfigurationsList.removeAt(oldDefaultConfigurationsList.indexOf(oldConfiguration));
+            }
+        }
+
+        compareFlag = false;
+        for(QString oldBootfile : oldDefaultBootfilesList){
+            for(QString newBootfile : bootfilesList){
+                if(oldBootfile == newBootfile){
+                    compareFlag = true;
+                }
+            }
+            if(compareFlag == false){
+                oldDefaultBootfilesList.removeAt(oldDefaultBootfilesList.indexOf(oldBootfile));
+            }
+        }
+        qDebug()<<"----------------------------------\n"<<oldDefaultComponentsList<<oldDefaultConfigurationsList<<oldDefaultBootfilesList;
+        mongocxx::cursor query_result2 = guiCollection.find(guiDocument << "name" << newExperimentName.toStdString() << bsoncxx::builder::stream::finalize);
+
+        QStringList profileComponents;
+        QStringList profileConfigurations;
+        QStringList profileBootfiles;
+        for(auto doc:query_result2){
+            auto profiles_element = doc["profiles"].get_array().value;
+            for(auto profile : profiles_element){
+                QString profileName = QString::fromStdString(profile["name"].get_utf8().value.to_string());
+                QString configurations_view;
+                QString bootfile_view;
+                qDebug()<<profileName;
+                if(profileName != "default"){
+                    auto components_view = profile["components"].get_array().value;
+                    for(auto component : components_view){
+                        QString component_ = QString::fromStdString(component.get_utf8().value.to_string());
+                        profileComponents.append(component_);
+                    }
+                    configurations_view = QString::fromStdString(profile["configuration"].get_utf8().value.to_string());
+                    bootfile_view = QString::fromStdString(profile["boot file"].get_utf8().value.to_string());
+                }
+                compareFlag = false;
+                for(QString profileComponent : profileComponents){
+                    for(QString oldComponent : oldDefaultComponentsList){
+                        if(oldComponent == profileComponent){
+                            compareFlag = true;
+                        }
+                    }
+                    if(compareFlag == false){
+                        profileComponents.removeAt(profileComponents.indexOf(profileComponent));
+                    }
+                }
+                compareFlag = false;
+                for(QString oldConfiguration : oldDefaultConfigurationsList){
+                    if(oldConfiguration == configurations_view){
+                        compareFlag = true;
+                    }
+                }
+                if(compareFlag == false){
+                    configurations_view = "";
+                }
+                compareFlag = false;
+                for(QString oldBootfile : oldDefaultBootfilesList){
+                    if(oldBootfile == bootfile_view){
+                        compareFlag = true;
+                    }
+                }
+                if(compareFlag == false){
+                    bootfile_view = "";
+                }
+                profileBootfiles.append(bootfile_view);
+                profileConfigurations.append(configurations_view);
+                qDebug()<<profileName<<profileComponents<<profileConfigurations<<profileBootfiles;
+                this->editProfileInExperiment(newExperimentName,profileName,profileName,profileComponents,profileConfigurations,profileBootfiles);
+                profileComponents.clear();
+                profileConfigurations.clear();
+                profileBootfiles.clear();
+            }
+        }
+        this->editProfileInExperiment(newExperimentName,"default","default",oldDefaultComponentsList,oldDefaultConfigurationsList,oldDefaultBootfilesList);
+
+
+    }catch(bsoncxx::exception e){
+    qDebug()<<"Exception thrown in method : \n"
+            <<"guiMongoDB::updateExperimentProfiles(QString experimentName)"
+            <<"\nException info: " << e.what();
+    }
+
+}
+
+void guiMongoDB::editProfileInExperiment(QString experimentName, QString profileName, QString newProfileName, QStringList componentsList, QStringList configurationList, QStringList bootfilesList){
+    try{
+        bsoncxx::builder::stream::document builder{};
         if(profileName == "default"){
-            auto profile_components = profile["components"].get_array().value;
-            for(auto component : profile_components){
-                profileComponents.append(QString::fromStdString(component.get_utf8().value.to_string()));
+            auto in_array = builder << "name"
+                                    << newProfileName.toStdString()
+                                    << "components"
+                                    << bsoncxx::builder::stream::open_array;
+            for(QString component : componentsList){
+                in_array = in_array << component.toStdString();
             }
-            auto profile_configurations = profile["configuration"].get_array().value;
-            for(auto configuration : profile_configurations){
-                profileConfigurations.append(QString::fromStdString(configuration.get_utf8().value.to_string()));
+            in_array = in_array << bsoncxx::builder::stream::close_array
+                                << "configuration"
+                                << bsoncxx::builder::stream::open_array;
+            for(QString configuration : configurationList){
+                in_array = in_array << configuration.toStdString();
             }
-            auto profile_bootfiles = profile["boot file"].get_array().value;
-            for(auto bootfile : profile_bootfiles){
-                profileBootfiles.append(QString::fromStdString(bootfile.get_utf8().value.to_string()));
+            in_array = in_array << bsoncxx::builder::stream::close_array
+                                << "boot file"
+                                << bsoncxx::builder::stream::open_array;
+            for(QString bootfile : bootfilesList){
+                in_array = in_array << bootfile.toStdString();
             }
+            auto out = in_array << bsoncxx::builder::stream::close_array
+                                << bsoncxx::builder::stream::finalize;
+            this->guiCollection.update_one(guiDocument << "name" << experimentName.toStdString() << bsoncxx::builder::stream::finalize,
+                                  guiDocument << "$set" << bsoncxx::builder::stream::open_document
+                                  << QString("profiles.$." + profileName).toStdString()
+                                  << out
+                                  << bsoncxx::builder::stream::close_document
+                                  << bsoncxx::builder::stream::finalize);
+
+
+            qDebug()<<"updated default";
+        }else{
+            auto in_array = builder << "name"
+                                    << newProfileName.toStdString()
+                                    << "components"
+                                    << bsoncxx::builder::stream::open_array;
+            for(QString component : componentsList){
+                in_array = in_array << component.toStdString();
+            }
+            auto out = in_array << bsoncxx::builder::stream::close_array
+                            << "configuration"
+                            << configurationList.at(0).toStdString()
+                            << "boot file"
+                            << bootfilesList.at(0).toStdString()
+                            << bsoncxx::builder::stream::finalize;
+
+            this->guiCollection.update_one(guiDocument << "name" << experimentName.toStdString() << bsoncxx::builder::stream::finalize,
+                                  guiDocument << "$set" << bsoncxx::builder::stream::open_document
+                                  << QString("profiles.$." + profileName).toStdString()
+                                  << out
+                                  << bsoncxx::builder::stream::close_document
+                                  << bsoncxx::builder::stream::finalize);
+
         }
+
+    }catch(bsoncxx::exception e){
+    qDebug()<<"Exception thrown in method : \n"
+            <<"editProfileInExperiment(QString experimentName, QString profileName)"
+            <<"\nException info: " << e.what();
     }
-
-    int compareFlag = 0;
-
-    for(auto profile : profiles){
-        profileComponents_.clear();
-        profileConfigurations_.clear();
-        profileBootfiles_.clear();
-        QString profileName = QString::fromStdString(profile["name"].get_utf8().value.to_string());
-        if(profileName != "default"){
-            auto profile_components = profile["components"].get_array().value;
-            for(auto component : profile_components){
-                profileComponents_.append(QString::fromStdString(component.get_utf8().value.to_string()));
-            }
-            auto profile_configurations = profile["configuration"].get_utf8().value;
-            profileConfigurations_.append(QString::fromStdString(profile_configurations.to_string()));
-            auto profile_bootfiles = profile["boot file"].get_utf8().value;
-            profileBootfiles_.append(QString::fromStdString(profile_bootfiles.to_string()));
-        }
-        for(QString component1 : profileComponents_){
-            compareFlag = 0;
-            for(QString component2 : profileComponents){
-                if(component1 == component2){
-                    compareFlag++;
-                }
-            }
-            qDebug()<<compareFlag;
-            if(compareFlag != 0){
-                profileComponents_.removeAt(profileComponents_.indexOf(component1));
-            }
-        }
-        for(QString configuration1 : profileConfigurations_){
-            compareFlag = 0;
-            for(QString configuration2 : profileConfigurations){
-                if(configuration1 == configuration2){
-                    compareFlag++;
-                }
-            }
-            if(compareFlag != 0){
-                profileConfigurations_.removeAt(profileConfigurations_.indexOf(configuration1));
-            }
-        }
-        for(QString bootfile1 : profileBootfiles_){
-            compareFlag = 0;
-            for(QString bootfile2 : profileBootfiles){
-                if(bootfile1 == bootfile2){
-                    compareFlag++;
-                }
-            }
-            if(compareFlag != 0){
-                profileBootfiles_.removeAt(profileBootfiles_.indexOf(bootfile1));
-            }
-        }
-        QVector<QStringList> profileComponentsVector;
-        profileComponentsVector.append(profileComponents_);
-        qDebug()<<profileComponentsVector<<profileConfigurations_<<profileBootfiles_;
-        //this->addProfileToExperiment(experimentName, profileName, profileConfigurations_, profileComponentsVector, profileBootfiles_);
-    }
-
 }
 
 

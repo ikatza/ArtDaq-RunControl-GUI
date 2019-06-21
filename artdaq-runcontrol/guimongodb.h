@@ -31,14 +31,16 @@ public:
     QStringList retreiveProfileBootFiles(QString experimentName, QString profileName);
     void retreiveExperiment(QString name, QVector<QStringList> *componentList, QStringList *configurationList, QStringList *bootfileList);
     void removeProfileFromExperiment(QString experimentName, QString profileToBeRemoved);
-    void saveExperimentProfileView(QString experimentName);
-    void updateExperimentProfiles(QString experimentName);
+    void saveExperimentProfiles(QString experimentName);
+    void updateExperiment(QString experimentName, QString newExperimentName, QVector<QStringList> componentsList, QStringList configurations, QStringList bootfilesList);
+    bsoncxx::document::element getExperimentProfileView(QString experimentName);
+    void editProfileInExperiment(QString experimentName, QString profileName, QString newProfileName, QStringList componentsList, QStringList configurationList, QStringList bootfilesList);
 private:
     mongocxx::instance inst{};
     mongocxx::client conn{mongocxx::uri{}};
     mongocxx::collection guiCollection;
     bsoncxx::builder::stream::document guiDocument{};
-    bsoncxx::document::element profiles_element_temp;
+    QString profiles_element_temp;
 };
 
 #endif // GUIMONGODB_H

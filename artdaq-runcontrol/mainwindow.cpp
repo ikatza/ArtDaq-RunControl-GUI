@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     configurateWindow();
+    guiDatabase.start();
     DAQState = 0;
     banBOOT = false,banCONFIG = false,banBOOTCONFIG = false, banBOOTED = false, banCONFIGURED = false;
     banRUNNING = false, banPAUSED = false;
@@ -50,7 +51,6 @@ MainWindow::MainWindow(QWidget *parent) :
     state_diagram.setWindowTitle("DAQInterface State Diagram");
     state_diagram.setFixedSize(state_diagram.geometry().width(),state_diagram.geometry().height());
     state_diagram.show();
-    guiDatabase.start();
 
     this->populateComboExperiments();
     this->populateComboProfiles();
@@ -514,9 +514,9 @@ void MainWindow::bListDAQConfigs(){
 
 void MainWindow::bDebugPressed(){
     qDebug()<<"Debug";
-    QString experimentName = ui->comboExperiment->currentText();
-    guiDatabase.saveExperimentProfileView(experimentName);
-    guiDatabase.updateExperimentProfiles(experimentName);
+    /*QString experimentName = ui->comboExperiment->currentText();
+    guiDatabase.saveExperimentProfiles(experimentName);
+    guiDatabase.updateExperimentProfiles(experimentName);*/
 }
 
 void MainWindow::bNewExperimentPressed(){
@@ -553,16 +553,13 @@ void MainWindow::bEditExperimentPressed(){
     int result = dialogNewExperiment->exec();
     if(result == QDialog::Accepted){
         ui->comboExperiment->removeItem(ui->comboExperiment->currentIndex());
-        experimentName = dialogNewExperiment->getExperimentName();
         componentList = dialogNewExperiment->getComponentsList();
         configurationList = dialogNewExperiment->getConfigurationsList();
         QStringList bootFiles = dialogNewExperiment->getBootFilesList();
-        guiDatabase.removeExperiment(experimentName);
-        guiDatabase.saveExperimentProfileView(experimentName);
-        guiDatabase.uploadNewExperiment(experimentName,componentList,configurationList);
-        guiDatabase.addProfileToExperiment(experimentName,"default",configurationList,componentList,bootFiles);
-        guiDatabase.updateExperimentProfiles(experimentName);
-        ui->comboExperiment->insertItem(index,experimentName);
+        QString newExperimentName = dialogNewExperiment->getExperimentName();
+        guiDatabase.updateExperiment(experimentName,newExperimentName,componentList,configurationList,bootFiles);
+        //ui->comboExperiment->insertItem(index,experimentName);
+        this->populateComboExperiments();
     }else if(result == QDialog::Rejected){
 
     }

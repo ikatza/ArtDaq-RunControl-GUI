@@ -106,8 +106,7 @@ void newExperimentDialog::bAddComponentToListPressed(){
 }
 
 void newExperimentDialog::bBrowseComponentListPressed(){
-    QProcessEnvironment *env = new QProcessEnvironment();
-    QString daqinterface_user_dir = env->value("DAQINTERFACE_USER_DIR","DEFAULT");
+    QString daqinterface_user_dir = QProcessEnvironment::systemEnvironment().value("DAQINTERFACE_USER_DIR","DEFAULT");
     QString fileName = QFileDialog::getOpenFileName(this,
         tr("Open components list file"), daqinterface_user_dir, tr(""));
     ui->tfComponentListFile->setText(fileName);
@@ -158,8 +157,7 @@ void newExperimentDialog::bAddConfigurationToListPressed(){
 }
 
 void newExperimentDialog::bBrowseConfigurationListPressed(){
-    QProcessEnvironment *env = new QProcessEnvironment();
-    QString daqinterface_user_dir = env->value("DAQINTERFACE_USER_DIR","DEFAULT");
+    QString daqinterface_user_dir = QProcessEnvironment::systemEnvironment().value("DAQINTERFACE_USER_DIR","DEFAULT");
     QFileDialog fileDialog;
     fileDialog.setFileMode(QFileDialog::Directory);
     fileDialog.setOption(QFileDialog::ShowDirsOnly);
