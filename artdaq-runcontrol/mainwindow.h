@@ -25,7 +25,7 @@
 #include "daqinterfacestate.h"
 #include "xmlrpc_gui_comm.h"
 #include "newexperimentdialog.h"
-#include "guimongodb.h"
+// #include "guimongodb.h"
 #include "newprofiledialog.h"
 
 namespace Ui {
@@ -119,7 +119,7 @@ private:
                                            };
     daqInterfaceState state_diagram;
     xmlrpc_gui_comm commDAQInterface;
-    guiMongoDB guiDatabase;
+  // guiMongoDB guiDatabase;
 
     void populateComboExperiments();
 };

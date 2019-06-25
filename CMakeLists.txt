@@ -44,7 +44,8 @@ cet_report_compiler_flags()
 # these are minimum required versions, not the actual product versions
 #find_ups_product( TRACE v3_09_01 )
 find_ups_product( cetbuildtools v5_08_01 )
-
+#find_ups_product( artdaq_database v1_04_71 )
+#find_ups_product( mongodb v4_0_8a )
 set(TOP_CMAKE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}) 
 
 include(CetTest)
