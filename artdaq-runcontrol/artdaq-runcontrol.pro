@@ -28,14 +28,12 @@ SOURCES += main.cpp\
     daqinterfacestate.cpp \
     xmlrpc_gui_comm.cpp \
     newexperimentdialog.cpp \
-    guimongodb.cpp \
     newprofiledialog.cpp
 
 HEADERS  += mainwindow.h \
     daqinterfacestate.h \
     xmlrpc_gui_comm.h \
     newexperimentdialog.h \
-    guimongodb.h \
     newprofiledialog.h
 
 FORMS    += mainwindow.ui \

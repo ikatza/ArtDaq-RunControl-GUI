@@ -9,8 +9,6 @@ set(CMAKE_AUTOMOC ON)
 # Create code from a list of Qt designer ui files
 set(CMAKE_AUTOUIC ON)
 
-include_directories($ENV{ARTDAQ_DATABASE_DIR}/include)
-link_directories($ENV{ARTDAQ_DATABASE_FQ_DIR}/lib)
 include_directories($ENV{XMLRPC_C_FQ_DIR}/include)
 link_directories($ENV{XMLRPC_C_FQ_DIR}/lib)
 
@@ -28,7 +26,6 @@ set(artdaq-runcontrol_srcs
     xmlrpc_gui_comm.cpp
     newexperimentdialog.ui
     newexperimentdialog.cpp
-    guimongodb.cpp
     newprofiledialog.cpp
     newprofiledialog.ui			
     main.cpp
@@ -37,7 +34,7 @@ set(artdaq-runcontrol_srcs
 # Tell CMake to create the helloworld executable
 add_executable(artdaqRunControl ${artdaq-runcontrol_srcs})
 # Use the Widgets module from Qt 5
-target_link_libraries(artdaqRunControl Qt5::Widgets xmlrpc_util++ xmlrpc_client++ xmlrpc++ mongocxx bsoncxx)
+target_link_libraries(artdaqRunControl Qt5::Widgets xmlrpc_util++ xmlrpc_client++ xmlrpc++ )
 
 
 install(DIRECTORY ${TOP_CMAKE_BINARY_DIR}/bin DESTINATION  ${flavorqual_dir} FILE_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE )

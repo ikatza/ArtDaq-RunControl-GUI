@@ -20,16 +20,14 @@ fcldir      -
 product			version	       optional
 qt         		v5_12_3
 xmlrpc_c		v1_51_03
-artdaq_database		v1_04_71
-mongodb                 v4_0_8a
 cetbuildtools   	v7_12_01       -       only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
-qualifier			 qt		xmlrpc_c	mongodb		artdaq_database				
-e15:s67:prof			 e15		e15:prof	e15:prof	e15:prof:s67
-e15:s37:debug			 e15		e15:prof	e15:prof	e15:prof:s67
+qualifier			 qt		xmlrpc_c				
+e15:s67:prof			 e15		e15:prof	
+e15:s37:debug			 e15		e15:prof	
 end_qualifier_list
 # Preserve tabs and formatting in emacs and vi / vim:
 
