@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     daqinterface_pointer = &daq_interface;
     ui->lbStatus->setText("");
     QProcess* kill_proc = new QProcess(this);
-    QString user_str = env.value("USER","DEFAULT");
+
     kill_proc->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << user_str);
     kill_proc->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << user_str);
     kill_proc->waitForFinished();
@@ -255,7 +255,8 @@ void MainWindow::bSTARTPressed(){
 }
 
 void MainWindow::bBOOTPressed(){
-
+  
+  qDebug() << "list_comps_selected " << list_comps_selected;
     commDAQInterface.setDAQInterfaceComponents(list_comps_selected);
     qDebug()<<list_BOOTConfig_selected;
     commDAQInterface.sendTransitionBOOT(list_BOOTConfig_selected);
@@ -400,21 +401,20 @@ void MainWindow::setButtonsDAQInterfaceInitialized(){
 
 void MainWindow::bDAQInterfacePressed(){
 
-    QString wd = env.value("ARTDAQ_DAQINTERFACE_DIR","DEFAULT");
     daq_interface.setWorkingDirectory(wd);
     daq_commands.setWorkingDirectory(wd);
     QStringList daqinterface_start_commands;
-    QString base_port_str = env.value("ARTDAQ_BASE_PORT","DEFAULT");
-    QString ports_per_partition_str = env.value("ARTDAQ_PORTS_PER_PARTITION","DEFAULT");
-    QString partition_number_str = env.value("DAQINTERFACE_PARTITION_NUMBER","DEFAULT");
-    QString rpc_port_str = QString::number(base_port_str.toInt() + partition_number_str.toInt()*ports_per_partition_str.toInt());
-    daqinterface_start_commands << "stdbuf -oL ./rc/control/daqinterface.py --partition-number"
-                                << partition_number_str
-                                << "--rpc-port" << rpc_port_str;
+    daqinterface_start_commands << "stdbuf -oL ./rc/control/daqinterface.py"
+                                << "--partition-number" << partition_number_str
+                                << "--rpc-port" << daqinterface_port_str;
+    env.insert("DAQINTERFACE_PORT", daqinterface_port_str);
+    daq_interface.setProcessEnvironment(env);
+    commDAQInterface.initDAQInterface(daqinterface_port_str);
+    //qDebug() << "daqinterface_port_str: " << daqinterface_port_str;
     daq_interface.start(daqinterface_start_commands.join(" "));
 
     state_diagram.setLCDPartitionNumber(partition_number_str.toInt());
-    state_diagram.setLCDPortNumber(rpc_port_str.toInt());
+    state_diagram.setLCDPortNumber(daqinterface_port_str.toInt());
     /*daq_interface.start("python",QStringList()<<"/root/artdaq-demo-base/artdaq-utilities-daqinterface/rc/control/daqinterface.py");
     bool started = daq_interface.waitForStarted();
 

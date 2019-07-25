@@ -18,7 +18,6 @@
 #include <QTimer>
 #include <QSizePolicy>
 #include <QMessageBox>
-#include <QProcessEnvironment>
 #include <QFileDialog>
 #include "daqinterfacestate.h"
 #include "xmlrpc_gui_comm.h"
@@ -66,8 +65,16 @@ private:
     Ui::MainWindow *ui;
     QProcess daq_interface;
     QProcess daq_commands;
-    QProcessEnvironment env;
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     QString daq_string;
+
+    QString user_str = env.value("USER","DEFAULT");
+    QString wd = env.value("ARTDAQ_DAQINTERFACE_DIR","DEFAULT");
+    QString base_port_str = env.value("ARTDAQ_BASE_PORT","DEFAULT");
+    QString ports_per_partition_str = env.value("ARTDAQ_PORTS_PER_PARTITION","DEFAULT");
+    QString partition_number_str = env.value("DAQINTERFACE_PARTITION_NUMBER","DEFAULT");
+    QString daqinterface_port_str = QString::number(base_port_str.toInt() + partition_number_str.toInt()*ports_per_partition_str.toInt());
+
     QStringList list_comps_selected, list_config_selected, list_BOOTConfig_selected;
     int DAQState;
     bool banBOOT,banCONFIG,banBOOTCONFIG, banBOOTED,banCONFIGURED,banRUNNING,banPAUSED;

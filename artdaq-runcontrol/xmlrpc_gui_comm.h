@@ -15,6 +15,7 @@ class xmlrpc_gui_comm
 {
 public:
     xmlrpc_gui_comm();
+  void initDAQInterface(QString daqInterfacePort);
     QString getDAQInterfaceStatus();
     void listDAQInterfaceComponents();
     void setDAQInterfaceComponents(QStringList components);

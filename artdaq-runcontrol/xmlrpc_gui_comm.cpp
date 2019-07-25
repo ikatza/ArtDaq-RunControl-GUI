@@ -3,10 +3,21 @@
 
 xmlrpc_gui_comm::xmlrpc_gui_comm()
 {
-    env = QProcessEnvironment::systemEnvironment();
-    QString daqInterfacePort = env.value("DAQINTERFACE_PORT","NOT FOUND");
-    serverUrl = "http://localhost:" + daqInterfacePort + "/RPC2";	
+//     env = QProcessEnvironment::systemEnvironment();
+//     QString daqInterfacePort = env.value("DAQINTERFACE_PORT","NOT FOUND");
+//     // QString daqInterfacePort = rpc_port_str;
+//     qDebug() << "daqInterfacePort: " << daqInterfacePort;
+//     serverUrl = "http://localhost:" + daqInterfacePort + "/RPC2";
 }
+
+
+void xmlrpc_gui_comm::initDAQInterface(QString daqInterfacePort){
+  // env = QProcessEnvironment::systemEnvironment();
+  // QString daqInterfacePort = env.value("DAQINTERFACE_PORT","NOT FOUND");
+  // qDebug() << "Init daqInterfacePort: " << daqInterfacePort;
+  serverUrl = "http://localhost:" + daqInterfacePort + "/RPC2";
+}
+
 
 QString xmlrpc_gui_comm::getDAQInterfaceStatus(){
     try{
@@ -56,7 +67,7 @@ void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components){
 
         QString line;
 
-        qDebug()<<"Lista de comp: "<<components <<"size: "<<components.size();
+        qDebug()<<"List of comps: "<<components <<"size: "<<components.size();
         std::map<std::string, xmlrpc_c::value> structData;
         std::vector<xmlrpc_c::value> array_list;
 
