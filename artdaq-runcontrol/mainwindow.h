@@ -3,12 +3,12 @@
 
 #include <QMainWindow>
 #include <QProcess>
-#include <QStringList>
 #include <QProcessEnvironment>
+#include <QStringList>
+#include <QStringListModel>
 #include <QDebug>
 #include <QTextCodec>
 #include <QThread>
-#include <QStringListModel>
 #include <QAbstractItemView>
 #include <QDirIterator>
 #include <QRegExp>
@@ -18,8 +18,10 @@
 #include <QTimer>
 #include <QSizePolicy>
 #include <QMessageBox>
-#include <QProcessEnvironment>
 #include <QFileDialog>
+#include <QFileSystemWatcher>
+#include <QVector>
+
 #include "daqinterfacestate.h"
 #include "xmlrpc_gui_comm.h"
 
@@ -34,6 +36,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    QProcessEnvironment getQProcessEnvironment();
 
 private slots:
 
@@ -46,7 +49,7 @@ private slots:
     void lvComps();
     void lvConfigs();
     void initializeButtons();
-    void setButtonsDAQInterfaceInitialized();
+    void setButtonsDAQInterfaceInitialized(bool started);
     void isLVSelected();
     void lvComponentsSelected();
     void lvConfigurationsSelected();
@@ -62,16 +65,23 @@ private slots:
     void configurateWindow();
     //void menuSourceConfigFilePressed();
     void bDebugPressed();
+
+protected:
+    QProcessEnvironment env;
+
 private:
     Ui::MainWindow *ui;
     QProcess daq_interface;
     QProcess daq_commands;
-    QProcessEnvironment env;
-    QString daq_string;
+    QString daq_string, user_str, wd;
+    QString DAQInterface_logdir;
     QStringList list_comps_selected, list_config_selected, list_BOOTConfig_selected;
     int DAQState;
+    int DAQInterface_PID;
+    bool DAQInterfaceProcess_started;
     bool banBOOT,banCONFIG,banBOOTCONFIG, banBOOTED,banCONFIGURED,banRUNNING,banPAUSED;
     QTimer timer;
+    QFileSystemWatcher DAQInterface_logwatcher;
     QMap<QString,QString> status_map = {{"stopped","stopped"},
                                             {"booting","booting"},
                                             {"booted","booted"},

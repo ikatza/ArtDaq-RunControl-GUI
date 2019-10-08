@@ -6,7 +6,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    //QTimer *ptimer = new QTimer(timer);
     ui->setupUi(this);
     configurateWindow();
     DAQState = 0;
@@ -17,13 +16,14 @@ MainWindow::MainWindow(QWidget *parent) :
     daqinterface_pointer = &daq_interface;
     ui->lbStatus->setText("");
     QProcess* kill_proc = new QProcess(this);
-    QString user_str = env.value("USER","DEFAULT");
+    user_str = env.value("USER","DEFAULT");
     kill_proc->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << user_str);
     kill_proc->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << user_str);
     kill_proc->waitForFinished();
     kill_proc->~QProcess();
     connect(ui->bDAQInterface,SIGNAL(clicked(bool)),this,SLOT(bDAQInterfacePressed()));
     connect(daqinterface_pointer,SIGNAL(readyReadStandardOutput()),this,SLOT(DAQInterfaceOutput()));
+    connect(&DAQInterface_logwatcher,SIGNAL(fileChanged(QString)),this,SLOT(bDebugPressed()));
     connect(daqinterface_pointer,SIGNAL(started()),this,SLOT(setButtonsDAQInterfaceInitialized()));
     connect(ui->bBelen,SIGNAL(clicked(bool)),this,SLOT(MensajeParaBelen()));
     connect(ui->bDAQcomp,SIGNAL(clicked(bool)),this,SLOT(bListDAQComps()));
@@ -40,9 +40,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->bEndSession,SIGNAL(clicked(bool)),this,SLOT(bEndSessionPressed()));
     connect(ui->bDebug,SIGNAL(clicked(bool)),this,SLOT(bDebugPressed()));
     env = QProcessEnvironment::systemEnvironment();
-    //connect(ui->actionSource_config_file,SIGNAL(triggered()),this,SLOT(menuSourceConfigFilePressed()));
     initializeButtons();
     state_diagram.setWindowTitle("DAQInterface State Diagram");
+    state_diagram.setFixedSize(state_diagram.geometry().width(),state_diagram.geometry().height());
     state_diagram.show();
 
 }
@@ -61,25 +61,6 @@ void MainWindow::configurateWindow(){
 
 }
 
-/*void MainWindow::menuSourceConfigFilePressed(){
-    qDebug()<<"menuSourceConfigFilePressed";
-    QString home_str = env.value("HOME","DEFAULT");
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Source configuration file"), home_str, tr("Source Files (*.sh)"));
-    QProcess source;
-    char x = '"';
-    QString source_str = tr("\"source");
-    QString quote = QString(x);
-    fileName = quote + "source " + fileName + quote;
-    qDebug()<<fileName;
-    source.start("bash", QStringList()<<"-c"<<fileName);
-    source.waitForFinished();
-    QByteArray daq_byte_array = source.readAllStandardOutput();
-    //if(daq_byte_array == ""){return;}
-    QTextCodec* codec;
-    daq_string = codec->codecForMib(106)->toUnicode(daq_byte_array);
-    ui->taDAQInterface->document()->setPlainText(daq_string);
-
-}*/
 
 void MainWindow::bEndSessionPressed(){
 
@@ -133,7 +114,7 @@ void MainWindow::checkStatus(){
     QByteArray byte_status = daq_commands.readAll();
     QTextCodec* codec;
     QStringList daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("'",QString::KeepEmptyParts);
-    qDebug()<<"xmlrpc_c: "<<commDAQInterface.getDAQInterfaceStatus();
+    qDebug() << "xmlrpc_c: " << commDAQInterface.getDAQInterfaceStatus();
     if(daq_string.count()>1){
         state_diagram.setOnline();
         QString str_status = daq_string.at(1);
@@ -389,36 +370,59 @@ void MainWindow::isLVSelected(){
     }
 }
 
-void MainWindow::setButtonsDAQInterfaceInitialized(){
-
-    ui->bDAQInterface->setEnabled(false);
-    ui->bDAQcomp->setEnabled(true);
-    ui->bDAQconf->setEnabled(true);
-    ui->bEndSession->setEnabled(true);
-    timer.start(1000);
+void MainWindow::setButtonsDAQInterfaceInitialized(bool started){
+    if(started){
+        ui->bDAQInterface->setEnabled(false);
+        ui->bDAQcomp->setEnabled(true);
+        ui->bDAQconf->setEnabled(true);
+        ui->bEndSession->setEnabled(true);
+        timer.start(1000);
+    }
 }
 
 void MainWindow::bDAQInterfacePressed(){
 
-    QString wd = env.value("ARTDAQ_DAQINTERFACE_DIR","DEFAULT");
+    wd = env.value("ARTDAQ_DAQINTERFACE_DIR","DEFAULT");
     daq_interface.setWorkingDirectory(wd);
     daq_commands.setWorkingDirectory(wd);
     QStringList daqinterface_start_commands;
     QString base_port_str = env.value("ARTDAQ_BASE_PORT","DEFAULT");
     QString ports_per_partition_str = env.value("ARTDAQ_PORTS_PER_PARTITION","DEFAULT");
     QString partition_number_str = env.value("DAQINTERFACE_PARTITION_NUMBER","DEFAULT");
+    DAQInterface_logdir = env.value("DAQINTERFACE_LOGDIR","DEFAULT");
+    DAQInterface_logdir = DAQInterface_logdir + "/DAQInterface_partition" + partition_number_str + ".log";
     QString rpc_port_str = QString::number(base_port_str.toInt() + partition_number_str.toInt()*ports_per_partition_str.toInt());
-    daqinterface_start_commands << "stdbuf -oL ./rc/control/daqinterface.py --partition-number"
-                                << partition_number_str
-                                << "--rpc-port" << rpc_port_str;
-    daq_interface.start(daqinterface_start_commands.join(" "));
 
+    // //////// old way
+    // daqinterface_start_commands << "stdbuf -oL ./rc/control/daqinterface.py --partition-number"
+    //                             << partition_number_str
+    //                             << "--rpc-port" << rpc_port_str;
+    // daq_interface.start(daqinterface_start_commands.join(" "));
+    // //////// old way
+
+    
+    // //////// estebans way; sadly not working
+    // daqinterface_start_commands << "stdbuf -oL" << wd + "/rc/control/daqinterface.py --partition-number"
+    //                             << partition_number_str
+    //                             << "--rpc-port" << rpc_port_str;
+    // DAQInterfaceProcess_started = daq_interface.startDetached(daqinterface_start_commands.join(" "));
+    // DAQInterface_PID = daq_interface.processId();
+    // setButtonsDAQInterfaceInitialized(DAQInterfaceProcess_started);
+    // qDebug() << daqinterface_start_commands;
+    // //DAQInterface_logdir = "/home/ecristal/Debug.log";
+    // //DAQInterface_logwatcher.addPath(DAQInterface_logdir);
+
+    // //////// estebans way
+
+    /////// new way; this works... maybe breaking something?
+    daq_interface.start("./bin/DAQInterface.sh");
+    DAQInterfaceProcess_started = true;
+    DAQInterface_PID = daq_interface.processId();
+    setButtonsDAQInterfaceInitialized(DAQInterfaceProcess_started);
+    /////// new way; this works... maybe breaking something?
+    
     state_diagram.setLCDPartitionNumber(partition_number_str.toInt());
     state_diagram.setLCDPortNumber(rpc_port_str.toInt());
-    /*daq_interface.start("python",QStringList()<<"/root/artdaq-demo-base/artdaq-utilities-daqinterface/rc/control/daqinterface.py");
-    bool started = daq_interface.waitForStarted();
-
-    if (started){qDebug("Started");}else{qDebug("Fallo"); return;}*/
 
     return;
 }
@@ -482,7 +486,7 @@ void MainWindow::lvConfigs(){
 
 void MainWindow::bListDAQConfigs(){
 
-    daq_commands.start("listconfigs.sh");
+    commDAQInterface.listDAQInterfaceConfigs();
     DAQState = 2;
     QRegExp reg("*.txt");
     reg.setPatternSyntax(QRegExp::Wildcard);
@@ -512,11 +516,14 @@ void MainWindow::bListDAQConfigs(){
 }
 
 void MainWindow::bDebugPressed(){
+    qDebug() << "Debug";
+//     QString experimentName = ui->comboExperiment->currentText();
+//     guiDatabase.saveExperimentProfileView(experimentName);
+//     guiDatabase.updateExperimentProfiles(experimentName);
+}
 
-    //commDAQInterface.setDAQInterfaceComponents(list_comps_selected);
-    //commDAQInterface.sendTransitionBOOT(list_BOOTConfig_selected);
-    //commDAQInterface.sendTransitionCONFIG(list_config_selected);
-   //commDAQInterface.sendTransitionSTART();
+QProcessEnvironment MainWindow::getQProcessEnvironment(){
+    return this->env;
 }
 
 void MainWindow::MensajeParaBelen(){

@@ -4,8 +4,13 @@
 xmlrpc_gui_comm::xmlrpc_gui_comm()
 {
     env = QProcessEnvironment::systemEnvironment();
-    QString daqInterfacePort = env.value("DAQINTERFACE_PORT","NOT FOUND");
-    serverUrl = "http://localhost:" + daqInterfacePort + "/RPC2";	
+    QString base_port_str = env.value("ARTDAQ_BASE_PORT","DEFAULT");
+    QString ports_per_partition_str = env.value("ARTDAQ_PORTS_PER_PARTITION","DEFAULT");
+    QString partition_number_str = env.value("DAQINTERFACE_PARTITION_NUMBER","DEFAULT");
+    QString rpc_port_str = QString::number(base_port_str.toInt() + partition_number_str.toInt()*ports_per_partition_str.toInt());
+
+    // QString daqInterfacePort = env.value("DAQINTERFACE_PORT","NOT FOUND");
+    serverUrl = "http://localhost:" + rpc_port_str + "/RPC2";	
 }
 
 QString xmlrpc_gui_comm::getDAQInterfaceStatus(){
@@ -15,13 +20,14 @@ QString xmlrpc_gui_comm::getDAQInterfaceStatus(){
         QString a = "state";
         QString b = "daqint";
         params.add(xmlrpc_c::value_string(b.toStdString()));
+        qDebug()<< "serverUrl: " << serverUrl ; 
         guiClient.call(serverUrl.toStdString(),a.toStdString(),params,&result);
         QString result_ = QString::fromStdString(xmlrpc_c::value_string(result));
         return result_;
         //qDebug()<< "from xmlrpc_c: "<<result_;
     } catch(std::exception const e){
         qDebug()<< "Call to DAQInterface failed because: "
-            << e.what();
+                << "crashing here " << e.what();
         return QString::fromUtf8(e.what(),sizeof(e.what()));
     }
 }
@@ -36,6 +42,17 @@ void xmlrpc_gui_comm::listDAQInterfaceComponents(){
             << e.what();
     }
 }
+
+void xmlrpc_gui_comm::listDAQInterfaceConfigs(){
+    try{
+        xmlrpc_c::value result;
+        QString a = "listconfigs";
+        guiClient.call(serverUrl.toStdString(),a.toStdString(),&result);
+        } catch(std::exception const e){
+        qDebug()<< "Call to DAQInterface failed because: "
+                << e.what();
+        }
+    }
 
 void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components){
 

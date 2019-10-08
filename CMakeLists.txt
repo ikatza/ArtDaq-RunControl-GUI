@@ -1,8 +1,15 @@
 # ======================================================================
-#  icartdaq_core main build file
+# artdaq_runcontrol_gui main build file
 #
 #  cd .../path/to/build/directory
-#  source .../path/to/artdaq-demo/ups/setup_for_development
+#  source .../path/to/artdaq_runcontrol_gui/ups/setup_for_development
+#  cmake [-DCMAKE_INSTALL_PREFIX=/install/path]
+#        -DCMAKE_BUILD_TYPE=$CETPKG_TYPE
+#        $CETPKG_SOURCE
+#  make
+#  make test
+#  make install
+#  make package (builds distribution tarfile)
 #  buildtool
 # ======================================================================
 

@@ -23,7 +23,7 @@ set(artdaq-runcontrol_srcs
     mainwindow.cpp
     daqinterfacestate.cpp
     daqinterfacestate.ui
-    xmlrpc_gui_comm.cpp		
+    xmlrpc_gui_comm.cpp
     main.cpp
 )
 

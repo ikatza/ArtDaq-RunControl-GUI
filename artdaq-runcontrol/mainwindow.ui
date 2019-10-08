@@ -258,7 +258,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>BOOT &amp; CONFIG</string>
+      <string>BOOT AND CONFIG</string>
      </property>
     </widget>
     <widget class="QGroupBox" name="groupBox_3">
