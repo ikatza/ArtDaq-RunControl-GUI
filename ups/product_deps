@@ -20,7 +20,7 @@ fcldir      -
 product			version	       optional
 qt         		v5_12_3
 xmlrpc_c		v1_51_03
-cetbuildtools   	v7_02_01       -       only_for_build
+cetbuildtools   	v7_13_02       -       only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
