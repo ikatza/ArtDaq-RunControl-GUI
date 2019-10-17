@@ -16,6 +16,8 @@ set(state_machine_images
 	StateDiagram_starting_run.png
 	StateDiagram_stopping_run.png
 	StateDiagram_terminating.png
+	plus.png
+	minus.png
 	)
 
 foreach(item IN LISTS state_machine_images)

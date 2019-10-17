@@ -24,6 +24,8 @@
 
 #include "daqinterfacestate.h"
 #include "xmlrpc_gui_comm.h"
+#include "newexperimentdialog.h"
+#include "newprofiledialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -64,6 +66,15 @@ private slots:
     void bTERMINATEPressed();
     void configurateWindow();
     //void menuSourceConfigFilePressed();
+    void bNewExperimentPressed();
+    void bEditExperimentPressed();
+    void bDeleteExperimentPressed();
+    void bNewProfilePressed();
+    void populateComboProfiles();
+    void comboExperimentIndexChanged();
+    void populateListViews();
+    void bEditProfilePressed();
+    void bDeleteProfilePressed();
     void bDebugPressed();
 
 protected:
@@ -109,6 +120,7 @@ private:
                                            };
     daqInterfaceState state_diagram;
     xmlrpc_gui_comm commDAQInterface;
+    void populateComboExperiments();
 };
 
 #endif // MAINWINDOW_H

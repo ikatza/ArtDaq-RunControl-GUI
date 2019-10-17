@@ -24,6 +24,10 @@ set(artdaq-runcontrol_srcs
     daqinterfacestate.cpp
     daqinterfacestate.ui
     xmlrpc_gui_comm.cpp
+    newexperimentdialog.ui
+    newexperimentdialog.cpp
+    newprofiledialog.cpp
+    newprofiledialog.ui	
     main.cpp
 )
 
