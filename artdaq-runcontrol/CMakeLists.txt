@@ -27,7 +27,9 @@ set(artdaq-runcontrol_srcs
     newexperimentdialog.ui
     newexperimentdialog.cpp
     newprofiledialog.cpp
-    newprofiledialog.ui	
+    newprofiledialog.ui
+    conftool_import.cpp
+    conftool_import.ui		
     main.cpp
 )
 

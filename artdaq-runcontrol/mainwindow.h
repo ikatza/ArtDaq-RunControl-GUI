@@ -26,6 +26,7 @@
 #include "xmlrpc_gui_comm.h"
 #include "newexperimentdialog.h"
 #include "newprofiledialog.h"
+#include "conftool_import.h"
 
 namespace Ui {
 class MainWindow;

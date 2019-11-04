@@ -527,10 +527,17 @@ void MainWindow::bListDAQConfigs(){
 }
 
 void MainWindow::bDebugPressed(){
+
     qDebug() << "Debug";
-//     QString experimentName = ui->comboExperiment->currentText();
-//     guiDatabase.saveExperimentProfileView(experimentName);
-//     guiDatabase.updateExperimentProfiles(experimentName);
+    conftool_import *dialogConftoolImport = new conftool_import(this);
+    dialogConftoolImport->setWindowTitle("Import configuration from Database");
+    int result = dialogConftoolImport->exec();
+    if(result == QDialog::Accepted){
+
+    }else if(result == QDialog::Rejected){
+
+    }
+
 }
 
 void MainWindow::bNewExperimentPressed(){
