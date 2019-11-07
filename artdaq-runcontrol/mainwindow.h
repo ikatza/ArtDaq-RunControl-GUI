@@ -67,17 +67,18 @@ private slots:
     void bTERMINATEPressed();
     void configurateWindow();
     //void menuSourceConfigFilePressed();
-    void bNewExperimentPressed();
-    void bEditExperimentPressed();
-    void bDeleteExperimentPressed();
-    void bNewProfilePressed();
-    void populateComboProfiles();
-    void comboExperimentIndexChanged();
-    void populateListViews();
-    void bEditProfilePressed();
-    void bDeleteProfilePressed();
+    //void bNewExperimentPressed();
+    //void bEditExperimentPressed();
+    //void bDeleteExperimentPressed();
+    //void bNewProfilePressed();
+    //void populateComboProfiles();
+    //void comboExperimentIndexChanged();
+    //void populateListViews();
+    //void bEditProfilePressed();
+    //void bDeleteProfilePressed();
     void bDebugPressed();
 
+    void bImportFromDatabase();
 protected:
     QProcessEnvironment env;
 

@@ -39,23 +39,24 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->bTerminate,SIGNAL(clicked(bool)),this,SLOT(bTERMINATEPressed()));
     connect(ui->bEndSession,SIGNAL(clicked(bool)),this,SLOT(bEndSessionPressed()));
     connect(ui->bDebug,SIGNAL(clicked(bool)),this,SLOT(bDebugPressed()));
-    connect(ui->bNewExperiment,SIGNAL(clicked(bool)),this,SLOT(bNewExperimentPressed()));
-    connect(ui->bEditExperiment,SIGNAL(clicked(bool)),this,SLOT(bEditExperimentPressed()));
-    connect(ui->bDeleteExperiment,SIGNAL(clicked(bool)),this,SLOT(bDeleteExperimentPressed()));
-    connect(ui->bNewProfile,SIGNAL(clicked(bool)),this,SLOT(bNewProfilePressed()));
-    connect(ui->bEditProfile,SIGNAL(clicked(bool)),this,SLOT(bEditProfilePressed()));
-    connect(ui->bDeleteProfile,SIGNAL(clicked(bool)),this,SLOT(bDeleteProfilePressed()));
+    //connect(ui->bNewExperiment,SIGNAL(clicked(bool)),this,SLOT(bNewExperimentPressed()));
+    //connect(ui->bEditExperiment,SIGNAL(clicked(bool)),this,SLOT(bEditExperimentPressed()));
+    //connect(ui->bDeleteExperiment,SIGNAL(clicked(bool)),this,SLOT(bDeleteExperimentPressed()));
+    //connect(ui->bNewProfile,SIGNAL(clicked(bool)),this,SLOT(bNewProfilePressed()));
+    //connect(ui->bEditProfile,SIGNAL(clicked(bool)),this,SLOT(bEditProfilePressed()));
+    //connect(ui->bDeleteProfile,SIGNAL(clicked(bool)),this,SLOT(bDeleteProfilePressed()));
+    connect(ui->bImportFromDatabase,SIGNAL(clicked(bool)),this,SLOT(bImportFromDatabase()));
     env = QProcessEnvironment::systemEnvironment();
     initializeButtons();
     state_diagram.setWindowTitle("DAQInterface State Diagram");
     state_diagram.setFixedSize(state_diagram.geometry().width(),state_diagram.geometry().height());
     state_diagram.show();
 
-    this->populateComboExperiments();
-    this->populateComboProfiles();
-    this->populateListViews();
-    connect(ui->comboExperiment,SIGNAL(currentIndexChanged(int)),this,SLOT(comboExperimentIndexChanged()));
-    connect(ui->comboProfiles,SIGNAL(currentTextChanged(QString)),this,SLOT(populateListViews()));
+    //this->populateComboExperiments();
+    //this->populateComboProfiles();
+    //this->populateListViews();
+    //connect(ui->comboExperiment,SIGNAL(currentIndexChanged(int)),this,SLOT(comboExperimentIndexChanged()));
+    //connect(ui->comboProfiles,SIGNAL(currentTextChanged(QString)),this,SLOT(populateListViews()));
 }
 
 MainWindow::~MainWindow()
@@ -540,7 +541,20 @@ void MainWindow::bDebugPressed(){
 
 }
 
-void MainWindow::bNewExperimentPressed(){
+void MainWindow::bImportFromDatabase(){
+
+    conftool_import *dialogConftoolImport = new conftool_import(this);
+    dialogConftoolImport->setWindowTitle("Import configuration from Database");
+    int result = dialogConftoolImport->exec();
+    if(result == QDialog::Accepted){
+
+    }else if(result == QDialog::Rejected){
+
+    }
+
+}
+
+/*void MainWindow::bNewExperimentPressed(){
 
     newExperimentDialog *dialogNewExperiment = new newExperimentDialog(this);
     dialogNewExperiment->setWindowTitle("New Experiment");
@@ -670,7 +684,7 @@ void MainWindow::bDeleteProfilePressed(){
           break;
     }
 }
-
+*/
 
 QProcessEnvironment MainWindow::getQProcessEnvironment(){
     return this->env;
