@@ -10,6 +10,9 @@
 #include <QStringList>
 #include <QStringListModel>
 #include <QPushButton>
+#include <QModelIndexList>
+#include <QModelIndex>
+
 
 namespace Ui {
 class conftool_import;
@@ -26,6 +29,7 @@ public:
 private slots:
     void populateLvConfiguration();
     void tfConfigNameModified();
+    void bImportPressed();
 private:
     Ui::conftool_import *ui;
     QProcess conftoolpy;

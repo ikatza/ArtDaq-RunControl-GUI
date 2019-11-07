@@ -8,6 +8,7 @@ conftool_import::conftool_import(QWidget *parent) :
     ui->setupUi(this);
     ui->bOK->button(QDialogButtonBox::Ok)->setText("Import");
     connect(ui->tfConfigName,SIGNAL(textEdited(QString)),this,SLOT(tfConfigNameModified()));
+    connect(ui->bOK->button(QDialogButtonBox::Ok),SIGNAL(clicked(bool)),this,SLOT(bImportPressed()));
     this->populateLvConfiguration();
 }
 
@@ -41,4 +42,13 @@ void conftool_import::tfConfigNameModified(){
     model->setStringList(daq_string);
     ui->lvConfigurationList->setModel(model);
 
+}
+
+void conftool_import::bImportPressed(){
+    QStringList db_profile_stringlist;
+    QModelIndexList list = ui->lvConfigurationList->selectionModel()->selectedRows();
+    for(QModelIndex idx : list){
+        db_profile_stringlist = idx.model()->data(idx,Qt::DisplayRole).toString().split(' ',QString::KeepEmptyParts);
+    }
+    conftoolpy.start("conftool.py",QStringList()<<"exportConfiguration"<<db_profile_stringlist.at(0));
 }
