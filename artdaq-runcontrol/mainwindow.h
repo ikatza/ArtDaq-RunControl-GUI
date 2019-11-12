@@ -21,6 +21,7 @@
 #include <QFileDialog>
 #include <QFileSystemWatcher>
 #include <QVector>
+#include <QScrollBar>
 
 #include "daqinterfacestate.h"
 #include "xmlrpc_gui_comm.h"
@@ -40,6 +41,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     QProcessEnvironment getQProcessEnvironment();
+
+    QString getDBConfigurationFHICL_dir() const;
+    void setDBConfigurationFHICL_dir(const QString &value);
 
 private slots:
 
@@ -77,8 +81,14 @@ private slots:
     //void bEditProfilePressed();
     //void bDeleteProfilePressed();
     void bDebugPressed();
-
     void bImportFromDatabase();
+    void populateComboDBConfigurations();
+    void comboDBConfigurationsItemChanged();
+    void checkBoxDatabaseChanged();
+    void populateLVComponentsFromDatabase();
+    void populateLVConfigurationsFromDatabase();
+    void populateLVBOOTConfigurationsFromDatabase();
+    void initializeLV();
 protected:
     QProcessEnvironment env;
 
@@ -87,7 +97,8 @@ private:
     QProcess daq_interface;
     QProcess daq_commands;
     QString daq_string, user_str, wd;
-    QString DAQInterface_logdir;
+    QString DBConfigurationFHICL_dir,ConfigurationFHICL_default;
+    QString DAQInterface_logdir, daqInterfaceTextAreaLog;
     QStringList list_comps_selected, list_config_selected, list_BOOTConfig_selected;
     int DAQState;
     int DAQInterface_PID;

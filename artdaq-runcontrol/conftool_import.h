@@ -12,6 +12,7 @@
 #include <QPushButton>
 #include <QModelIndexList>
 #include <QModelIndex>
+#include <QCoreApplication>
 
 
 namespace Ui {
@@ -30,9 +31,11 @@ private slots:
     void populateLvConfiguration();
     void tfConfigNameModified();
     void bImportPressed();
+    void listViewClicked();
 private:
     Ui::conftool_import *ui;
     QProcess conftoolpy;
+    QString dbConfig_str;
 };
 
 #endif // CONFTOOL_IMPORT_H

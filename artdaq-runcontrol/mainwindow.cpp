@@ -46,12 +46,14 @@ MainWindow::MainWindow(QWidget *parent) :
     //connect(ui->bEditProfile,SIGNAL(clicked(bool)),this,SLOT(bEditProfilePressed()));
     //connect(ui->bDeleteProfile,SIGNAL(clicked(bool)),this,SLOT(bDeleteProfilePressed()));
     connect(ui->bImportFromDatabase,SIGNAL(clicked(bool)),this,SLOT(bImportFromDatabase()));
+    connect(ui->comboDBConfigurations,SIGNAL(currentIndexChanged(int)),this,SLOT(comboDBConfigurationsItemChanged()));
+    connect(ui->checkBoxDatabase,SIGNAL(toggled(bool)),this,SLOT(checkBoxDatabaseChanged()));
     env = QProcessEnvironment::systemEnvironment();
     initializeButtons();
     state_diagram.setWindowTitle("DAQInterface State Diagram");
     state_diagram.setFixedSize(state_diagram.geometry().width(),state_diagram.geometry().height());
     state_diagram.show();
-
+    this->populateComboDBConfigurations();
     //this->populateComboExperiments();
     //this->populateComboProfiles();
     //this->populateListViews();
@@ -70,7 +72,7 @@ void MainWindow::configurateWindow(){
     this->setWindowTitle("ARTDAQ RUN CONTROL");
     this->setFixedSize(this->geometry().width(),this->geometry().height());
     ui->taDAQInterface->setReadOnly(true);
-
+    this->setDBConfigurationFHICL_dir(QCoreApplication::applicationDirPath() + "/../dbConfigurations");
 }
 
 
@@ -89,7 +91,15 @@ void MainWindow::bEndSessionPressed(){
             kill_p->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << user_str);
             kill_p->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << user_str);
             initializeButtons();
+            initializeLV();
             timer.stop();
+            banBOOT = false;
+            banBOOTCONFIG = false;
+            banBOOTED = false;
+            banCONFIG = false;
+            banCONFIGURED = false;
+            banPAUSED = false;
+            banRUNNING = false;
             break;
       case QMessageBox::No:
             break;
@@ -117,6 +127,23 @@ void MainWindow::initializeButtons(){
     ui->bDAQInterface->setEnabled(true);
     qDebug()<<status_map.value("stopped");
     ui->lbStatus->setText(status_map.value("stopped").toUpper());
+    ui->checkBoxDatabase->setChecked(false);
+    ui->checkBoxDatabase->setEnabled(false);
+    ui->comboDBConfigurations->setEnabled(false);
+    ui->bImportFromDatabase->setEnabled(false);
+    ui->bDebug->setVisible(false);
+
+}
+
+void MainWindow::initializeLV(){
+
+    QStringListModel* model = new QStringListModel(this);
+    QStringList empty;
+    model->setStringList(empty);
+    ui->lvConfigBOOT->setModel(model);
+    ui->lvComponents->setModel(model);
+    ui->lvConfigurations->setModel(model);
+
 }
 
 void MainWindow::checkStatus(){
@@ -222,6 +249,7 @@ void MainWindow::status(QString status){
         state_diagram.setOffline();
         state_diagram.setStateDiagramOff();
         state_diagram.setOnlineButtonRed();
+        DAQInterfaceProcess_started = false;
         break;
     default:
         break;
@@ -288,46 +316,58 @@ void MainWindow::lvBOOTConfigSelected(){
 
 void MainWindow::lvComponentsSelected(){
 
-    list_comps_selected.clear();
-    QStringList list_str;
-    QModelIndexList list = ui->lvComponents->selectionModel()->selectedRows();
-    if(list.length() != 0)
-    {
-        qDebug()<<list.length();
-        for(QModelIndex idx : list){
-            list_str = idx.model()->data(idx,Qt::DisplayRole).toString().split(' ',QString::KeepEmptyParts);
-            list_comps_selected.append(list_str.first());
-            list_str.clear();
-        }
-        qDebug()<<list_comps_selected;
+    if(DAQState == 3){
         banBOOT = true;
+        qDebug()<<list_comps_selected;
+        isLVSelected();
+    }else if(!ui->checkBoxDatabase->isChecked()){
+        list_comps_selected.clear();
+        QStringList list_str;
+        QModelIndexList list = ui->lvComponents->selectionModel()->selectedRows();
+        if(list.length() != 0)
+        {
+            qDebug()<<list.length();
+            for(QModelIndex idx : list){
+                list_str = idx.model()->data(idx,Qt::DisplayRole).toString().split(' ',QString::KeepEmptyParts);
+                list_comps_selected.append(list_str.first());
+                list_str.clear();
+            }
+            qDebug()<<list_comps_selected;
+            banBOOT = true;
 
-    }else{
-        banBOOT = false;
+        }else{
+            banBOOT = false;
+        }
+        isLVSelected();
     }
-    isLVSelected();
 }
 
 void MainWindow::lvConfigurationsSelected(){
 
-    list_config_selected.clear();
-    QStringList list_str;
-    QModelIndexList list = ui->lvConfigurations->selectionModel()->selectedRows();
-    if(list.length() != 0)
-    {
-        qDebug()<<list.length();
-        for(QModelIndex idx : list){
-            list_str = idx.model()->data(idx,Qt::DisplayRole).toString().split(' ',QString::KeepEmptyParts);
-            list_config_selected.append(list_str.first());
-            list_str.clear();
-        }
-        qDebug()<<list_config_selected;
+    if(DAQState == 3){
         banCONFIG = true;
+        qDebug()<<list_config_selected;
+        isLVSelected();
+    }else if(!ui->checkBoxDatabase->isChecked()){
+        list_config_selected.clear();
+        QStringList list_str;
+        QModelIndexList list = ui->lvConfigurations->selectionModel()->selectedRows();
+        if(list.length() != 0)
+        {
+            qDebug()<<list.length();
+            for(QModelIndex idx : list){
+                list_str = idx.model()->data(idx,Qt::DisplayRole).toString().split(' ',QString::KeepEmptyParts);
+                list_config_selected.append(list_str.first());
+                list_str.clear();
+            }
+            qDebug()<<list_config_selected;
+            banCONFIG = true;
 
-    }else{
-        banCONFIG = false;
+        }else{
+            banCONFIG = false;
+        }
+        isLVSelected();
     }
-    isLVSelected();
 }
 
 void MainWindow::statusTransition(){
@@ -388,6 +428,7 @@ void MainWindow::setButtonsDAQInterfaceInitialized(bool started){
         ui->bDAQcomp->setEnabled(true);
         ui->bDAQconf->setEnabled(true);
         ui->bEndSession->setEnabled(true);
+        ui->checkBoxDatabase->setEnabled(true);
         timer.start(1000);
     }
 }
@@ -402,21 +443,22 @@ void MainWindow::bDAQInterfacePressed(){
     QString ports_per_partition_str = env.value("ARTDAQ_PORTS_PER_PARTITION","DEFAULT");
     QString partition_number_str = env.value("DAQINTERFACE_PARTITION_NUMBER","DEFAULT");
     DAQInterface_logdir = env.value("DAQINTERFACE_LOGDIR","DEFAULT");
+    ConfigurationFHICL_default = env.value("DAQINTERFACE_FHICL_DIRECTORY","DEFAULT");
     DAQInterface_logdir = DAQInterface_logdir + "/DAQInterface_partition" + partition_number_str + ".log";
     QString rpc_port_str = QString::number(base_port_str.toInt() + partition_number_str.toInt()*ports_per_partition_str.toInt());
 
     // //////// old way
-    // daqinterface_start_commands << "stdbuf -oL ./rc/control/daqinterface.py --partition-number"
-    //                             << partition_number_str
-    //                             << "--rpc-port" << rpc_port_str;
-    // daq_interface.start(daqinterface_start_commands.join(" "));
+     daqinterface_start_commands << "stdbuf -oL ./rc/control/daqinterface.py --partition-number"
+                                 << partition_number_str
+                                 << "--rpc-port" << rpc_port_str;
+     daq_interface.start(daqinterface_start_commands.join(" "));
     // //////// old way
 
     
     // //////// estebans way; sadly not working
     // daqinterface_start_commands << "stdbuf -oL" << wd + "/rc/control/daqinterface.py --partition-number"
-    //                             << partition_number_str
-    //                             << "--rpc-port" << rpc_port_str;
+    //                            << partition_number_str
+    //                            << "--rpc-port" << rpc_port_str;
     // DAQInterfaceProcess_started = daq_interface.startDetached(daqinterface_start_commands.join(" "));
     // DAQInterface_PID = daq_interface.processId();
     // setButtonsDAQInterfaceInitialized(DAQInterfaceProcess_started);
@@ -427,7 +469,7 @@ void MainWindow::bDAQInterfacePressed(){
     // //////// estebans way
 
     /////// new way; this works... maybe breaking something?
-    daq_interface.start("./bin/DAQInterface.sh");
+    //daq_interface.start("./bin/DAQInterface.sh");
     DAQInterfaceProcess_started = true;
     DAQInterface_PID = daq_interface.processId();
     setButtonsDAQInterfaceInitialized(DAQInterfaceProcess_started);
@@ -435,7 +477,7 @@ void MainWindow::bDAQInterfacePressed(){
     
     state_diagram.setLCDPartitionNumber(partition_number_str.toInt());
     state_diagram.setLCDPortNumber(rpc_port_str.toInt());
-
+    checkBoxDatabaseChanged();
     return;
 }
 
@@ -443,10 +485,13 @@ void MainWindow::DAQInterfaceOutput(){
 
 
     QByteArray daq_byte_array = daq_interface.readAllStandardOutput();
-    //if(daq_byte_array == ""){return;}
+    //daq_interface.waitForFinished();
     QTextCodec* codec;
     daq_string = codec->codecForMib(106)->toUnicode(daq_byte_array);
-    ui->taDAQInterface->document()->setPlainText(daq_string);
+    daqInterfaceTextAreaLog = daqInterfaceTextAreaLog + daq_string;
+    ui->taDAQInterface->document()->setPlainText(daqInterfaceTextAreaLog);
+    QScrollBar* scroll = ui->taDAQInterface->verticalScrollBar();
+    scroll->setValue(scroll->maximum());
     qDebug()<<daq_string;
     switch (DAQState) {
     case 1:
@@ -455,6 +500,13 @@ void MainWindow::DAQInterfaceOutput(){
     case 2:
         lvConfigs();
         break;
+    case 3:
+        populateLVComponentsFromDatabase();
+        populateLVConfigurationsFromDatabase();
+        populateLVBOOTConfigurationsFromDatabase();
+        this->lvComponentsSelected();
+        this->lvConfigurationsSelected();
+        DAQState = 0;
     default:
         break;
     }
@@ -469,6 +521,7 @@ void MainWindow::lvComps(){
     ui->lvComponents->setModel(model);
     ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
     DAQState = 0;
+
 }
 
 void MainWindow::bListDAQComps(){
@@ -517,7 +570,6 @@ void MainWindow::bListDAQConfigs(){
         }else{
             qDebug()<<"not config file";
         }
-
     }
 
     QStringListModel* model = new QStringListModel(this);
@@ -530,14 +582,14 @@ void MainWindow::bListDAQConfigs(){
 void MainWindow::bDebugPressed(){
 
     qDebug() << "Debug";
-    conftool_import *dialogConftoolImport = new conftool_import(this);
+    /*conftool_import *dialogConftoolImport = new conftool_import(this);
     dialogConftoolImport->setWindowTitle("Import configuration from Database");
     int result = dialogConftoolImport->exec();
     if(result == QDialog::Accepted){
 
     }else if(result == QDialog::Rejected){
 
-    }
+    }*/
 
 }
 
@@ -547,11 +599,155 @@ void MainWindow::bImportFromDatabase(){
     dialogConftoolImport->setWindowTitle("Import configuration from Database");
     int result = dialogConftoolImport->exec();
     if(result == QDialog::Accepted){
-
+        this->populateComboDBConfigurations();
     }else if(result == QDialog::Rejected){
 
     }
 
+}
+
+void MainWindow::populateComboDBConfigurations(){
+
+    ui->comboDBConfigurations->clear();
+    QDirIterator dirIt(this->getDBConfigurationFHICL_dir(),QDir::AllDirs | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+    QStringList list_str;
+    QString DBConfiguration;
+    while(dirIt.hasNext()){
+        DBConfiguration = dirIt.next();
+        list_str = DBConfiguration.split('/', QString::SkipEmptyParts);
+        DBConfiguration = list_str.last();
+        ui->comboDBConfigurations->addItem(DBConfiguration);
+    }
+
+}
+
+void MainWindow::comboDBConfigurationsItemChanged(){
+
+    if(ui->checkBoxDatabase->isEnabled()){
+        commDAQInterface.listDAQInterfaceComponents();
+        DAQState = 3;
+        banBOOTCONFIG = false;
+        qDebug()<<"DAQSTATE 3";
+    }
+}
+
+void MainWindow::checkBoxDatabaseChanged(){
+
+    bool checked = ui->checkBoxDatabase->isChecked();
+    if(checked){
+        env.remove("DAQINTERFACE_FHICL_DIRECTORY");
+        env.insert("DAQINTERFACE_FHICL_DIRECTORY",this->getDBConfigurationFHICL_dir());
+        qDebug()<<env.value("DAQINTERFACE_FHICL_DIRECTORY","FHICL_DB not found");
+        ui->comboDBConfigurations->setEnabled(true);
+        ui->bImportFromDatabase->setEnabled(true);
+        ui->bDAQcomp->setEnabled(false);
+        ui->bDAQconf->setEnabled(false);
+        comboDBConfigurationsItemChanged();
+        banBOOTCONFIG = false;
+    }else{
+        env.remove("DAQINTERFACE_FHICL_DIRECTORY");
+        env.insert("DAQINTERFACE_FHICL_DIRECTORY",ConfigurationFHICL_default);
+        qDebug()<<env.value("DAQINTERFACE_FHICL_DIRECTORY","FHICL_DEFAULT not found");
+        ui->comboDBConfigurations->setEnabled(false);
+        ui->bImportFromDatabase->setEnabled(false);
+        ui->bDAQcomp->setEnabled(true);
+        ui->bDAQconf->setEnabled(true);
+        initializeLV();
+        ui->lvConfigurations->setSelectionMode(QAbstractItemView::SingleSelection);
+        ui->lvConfigurations->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
+        ui->lvComponents->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        banBOOTCONFIG = false;
+    }
+
+}
+
+void MainWindow::populateLVComponentsFromDatabase(){
+
+    QString selectedDBConfig_dir = this->getDBConfigurationFHICL_dir() + "/" + ui->comboDBConfigurations->currentText();
+    qDebug()<<selectedDBConfig_dir;
+    QDirIterator dirIt(selectedDBConfig_dir, QDir::AllEntries | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+    QStringList componentlist = daq_string.split('\n', QString::SkipEmptyParts);
+    QStringList lvComponentsList;
+    for(QString component:componentlist){
+        QStringList component_ = component.split(' ', QString::SkipEmptyParts);
+        componentlist.replace(componentlist.indexOf(component),component_.at(0));
+    }
+    componentlist.removeFirst();
+    qDebug()<<"HOLA HOLA HOLA HOLA:"<< componentlist;
+    while (dirIt.hasNext()) {
+        QString fileName = dirIt.next();
+        QStringList fileName_ = fileName.split('/',QString::KeepEmptyParts);
+        fileName = fileName_.last();
+        qDebug()<<fileName;
+        for(QString component:componentlist){
+            QRegExp reg(component + "*");
+            reg.setPatternSyntax(QRegExp::Wildcard);
+            if(reg.exactMatch(fileName)){
+                qDebug()<<"matched" <<fileName;
+                lvComponentsList.append(component);
+            }
+        }
+    }
+
+    QStringListModel* model = new QStringListModel(this);
+    model->setStringList(lvComponentsList);
+    ui->lvComponents->setModel(model);
+    ui->lvComponents->setSelectionMode(QAbstractItemView::NoSelection);
+    ui->lvComponents->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    list_comps_selected = lvComponentsList;
+
+}
+
+void MainWindow::populateLVConfigurationsFromDatabase(){
+
+    QStringList lvConfigurationsList;
+    lvConfigurationsList.append(ui->comboDBConfigurations->currentText());
+    QStringListModel* model = new QStringListModel(this);
+    model->setStringList(lvConfigurationsList);
+    ui->lvConfigurations->setModel(model);
+    ui->lvConfigurations->setSelectionMode(QAbstractItemView::NoSelection);
+    ui->lvConfigurations->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    list_config_selected = lvConfigurationsList;
+
+}
+
+void MainWindow::populateLVBOOTConfigurationsFromDatabase(){
+
+    QRegExp reg("*.txt");
+    reg.setPatternSyntax(QRegExp::Wildcard);
+    QString env_str = env.value("DAQINTERFACE_USER_DIR","DEFAULT");
+    QDirIterator dirIt(env_str);
+    QString str;
+    QStringList list_str, list_config;
+    while(dirIt.hasNext()){
+        str = dirIt.next();
+        if(reg.exactMatch(str)){
+
+            qDebug()<<"config file "<<str;
+            list_str = str.split('/', QString::SkipEmptyParts);
+            qDebug()<<list_str.last();
+            list_config.append(list_str.last());
+        }else{
+            qDebug()<<"not config file";
+        }
+    }
+
+    QStringListModel* model = new QStringListModel(this);
+    model->setStringList(list_config);
+    ui->lvConfigBOOT->setModel(model);
+    ui->lvConfigBOOT->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+}
+
+QString MainWindow::getDBConfigurationFHICL_dir() const
+{
+    return DBConfigurationFHICL_dir;
+}
+
+void MainWindow::setDBConfigurationFHICL_dir(const QString &value)
+{
+    DBConfigurationFHICL_dir = value;
 }
 
 /*void MainWindow::bNewExperimentPressed(){

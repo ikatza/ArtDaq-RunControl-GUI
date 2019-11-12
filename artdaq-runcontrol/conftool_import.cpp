@@ -6,10 +6,14 @@ conftool_import::conftool_import(QWidget *parent) :
     ui(new Ui::conftool_import)
 {
     ui->setupUi(this);
+    QString wd = QCoreApplication::applicationDirPath() + "/../dbConfigurations";
+    conftoolpy.setWorkingDirectory(wd);
     ui->bOK->button(QDialogButtonBox::Ok)->setText("Import");
     connect(ui->tfConfigName,SIGNAL(textEdited(QString)),this,SLOT(tfConfigNameModified()));
     connect(ui->bOK->button(QDialogButtonBox::Ok),SIGNAL(clicked(bool)),this,SLOT(bImportPressed()));
+    connect(ui->lvConfigurationList,SIGNAL(clicked(QModelIndex)),this,SLOT(listViewClicked()));
     this->populateLvConfiguration();
+    ui->lvConfigurationList->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
 
 conftool_import::~conftool_import()
@@ -28,6 +32,7 @@ void conftool_import::populateLvConfiguration(){
     QStringListModel* model = new QStringListModel(this);
     model->setStringList(daq_string);
     ui->lvConfigurationList->setModel(model);
+    this->listViewClicked();
 }
 
 void conftool_import::tfConfigNameModified(){
@@ -51,4 +56,15 @@ void conftool_import::bImportPressed(){
         db_profile_stringlist = idx.model()->data(idx,Qt::DisplayRole).toString().split(' ',QString::KeepEmptyParts);
     }
     conftoolpy.start("conftool.py",QStringList()<<"exportConfiguration"<<db_profile_stringlist.at(0));
+    conftoolpy.waitForFinished();
+}
+
+void conftool_import::listViewClicked(){
+    QModelIndexList selectedList = ui->lvConfigurationList->selectionModel()->selectedRows();
+    int selectedSize = selectedList.size();
+    if(selectedSize == 0){
+        ui->bOK->button(QDialogButtonBox::Ok)->setEnabled(false);
+    }else{
+        ui->bOK->button(QDialogButtonBox::Ok)->setEnabled(true);
+    }
 }
