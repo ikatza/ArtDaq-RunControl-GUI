@@ -1,0 +1,2 @@
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/dbConfigurations")
+set(GUI_DBCONFIGURATIONS_DIRECTORY "${CMAKE_BINARY_DIR}/dbConfigurations")
