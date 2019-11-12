@@ -448,10 +448,10 @@ void MainWindow::bDAQInterfacePressed(){
     QString rpc_port_str = QString::number(base_port_str.toInt() + partition_number_str.toInt()*ports_per_partition_str.toInt());
 
     // //////// old way
-     daqinterface_start_commands << "stdbuf -oL ./rc/control/daqinterface.py --partition-number"
-                                 << partition_number_str
-                                 << "--rpc-port" << rpc_port_str;
-     daq_interface.start(daqinterface_start_commands.join(" "));
+    // daqinterface_start_commands << "stdbuf -oL ./rc/control/daqinterface.py --partition-number"
+    //                             << partition_number_str
+    //                             << "--rpc-port" << rpc_port_str;
+    // daq_interface.start(daqinterface_start_commands.join(" "));
     // //////// old way
 
     
@@ -469,7 +469,7 @@ void MainWindow::bDAQInterfacePressed(){
     // //////// estebans way
 
     /////// new way; this works... maybe breaking something?
-    //daq_interface.start("./bin/DAQInterface.sh");
+    daq_interface.start("./bin/DAQInterface.sh");
     DAQInterfaceProcess_started = true;
     DAQInterface_PID = daq_interface.processId();
     setButtonsDAQInterfaceInitialized(DAQInterfaceProcess_started);
