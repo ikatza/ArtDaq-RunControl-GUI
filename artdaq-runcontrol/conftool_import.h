@@ -13,6 +13,8 @@
 #include <QModelIndexList>
 #include <QModelIndex>
 #include <QCoreApplication>
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
 
 
 namespace Ui {
@@ -32,10 +34,11 @@ private slots:
     void tfConfigNameModified();
     void bImportPressed();
     void listViewClicked();
+    void bRefreshListPressed();
 private:
     Ui::conftool_import *ui;
     QProcess conftoolpy;
-    QString dbConfig_str;
+    QStringList daq_string;
 };
 
 #endif // CONFTOOL_IMPORT_H

@@ -665,7 +665,7 @@ void MainWindow::checkBoxDatabaseChanged(){
 void MainWindow::populateLVComponentsFromDatabase(){
 
     QString selectedDBConfig_dir = this->getDBConfigurationFHICL_dir() + "/" + ui->comboDBConfigurations->currentText();
-    qDebug()<<selectedDBConfig_dir;
+    //qDebug()<<selectedDBConfig_dir;
     QDirIterator dirIt(selectedDBConfig_dir, QDir::AllEntries | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
     QStringList componentlist = daq_string.split('\n', QString::SkipEmptyParts);
     QStringList lvComponentsList;
@@ -674,17 +674,17 @@ void MainWindow::populateLVComponentsFromDatabase(){
         componentlist.replace(componentlist.indexOf(component),component_.at(0));
     }
     componentlist.removeFirst();
-    qDebug()<<"HOLA HOLA HOLA HOLA:"<< componentlist;
+    //qDebug()<<"HOLA HOLA HOLA HOLA:"<< componentlist;
     while (dirIt.hasNext()) {
         QString fileName = dirIt.next();
         QStringList fileName_ = fileName.split('/',QString::KeepEmptyParts);
         fileName = fileName_.last();
-        qDebug()<<fileName;
+        //qDebug()<<fileName;
         for(QString component:componentlist){
             QRegExp reg(component + "*");
             reg.setPatternSyntax(QRegExp::Wildcard);
             if(reg.exactMatch(fileName)){
-                qDebug()<<"matched" <<fileName;
+                //qDebug()<<"matched" <<fileName;
                 lvComponentsList.append(component);
             }
         }

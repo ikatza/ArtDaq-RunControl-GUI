@@ -12,6 +12,7 @@ conftool_import::conftool_import(QWidget *parent) :
     connect(ui->tfConfigName,SIGNAL(textEdited(QString)),this,SLOT(tfConfigNameModified()));
     connect(ui->bOK->button(QDialogButtonBox::Ok),SIGNAL(clicked(bool)),this,SLOT(bImportPressed()));
     connect(ui->lvConfigurationList,SIGNAL(clicked(QModelIndex)),this,SLOT(listViewClicked()));
+    connect(ui->bRefreshList,SIGNAL(clicked(bool)),this,SLOT(bRefreshListPressed()));
     this->populateLvConfiguration();
     ui->lvConfigurationList->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
@@ -27,7 +28,10 @@ void conftool_import::populateLvConfiguration(){
     conftoolpy.waitForFinished();
     QByteArray byte_status = conftoolpy.readAll();
     QTextCodec* codec;
-    QStringList daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("\n",QString::KeepEmptyParts);
+    daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("\n",QString::KeepEmptyParts);
+    daq_string.removeLast();
+    daq_string.sort();
+    //std::sort(daq_string.begin(),daq_string.last(),std::greater);
     qDebug()<<daq_string;
     QStringListModel* model = new QStringListModel(this);
     model->setStringList(daq_string);
@@ -38,14 +42,24 @@ void conftool_import::populateLvConfiguration(){
 void conftool_import::tfConfigNameModified(){
 
     QString comboText = ui->tfConfigName->text();
-    conftoolpy.start("conftool.py",QStringList()<<"getListOfAvailableRunConfigurations"<<comboText);
-    conftoolpy.waitForFinished();
-    QByteArray byte_status = conftoolpy.readAll();
-    QTextCodec* codec;
-    QStringList daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("\n",QString::KeepEmptyParts);
-    QStringListModel* model = new QStringListModel(this);
-    model->setStringList(daq_string);
-    ui->lvConfigurationList->setModel(model);
+    if(comboText.length() != 0){
+        QRegularExpression reg(comboText);
+        QRegularExpressionMatch match;
+        QStringList dBConfigList_filtered;
+        for(QString dBConfig_str : daq_string){
+            match = reg.match(dBConfig_str,0,QRegularExpression::PartialPreferCompleteMatch);
+            if(match.hasMatch()){
+                dBConfigList_filtered.append(dBConfig_str);
+            }
+        }
+        QStringListModel* model = new QStringListModel(this);
+        model->setStringList(dBConfigList_filtered);
+        ui->lvConfigurationList->setModel(model);
+    }else{
+        QStringListModel* model = new QStringListModel(this);
+        model->setStringList(daq_string);
+        ui->lvConfigurationList->setModel(model);
+    }
 
 }
 
@@ -67,4 +81,11 @@ void conftool_import::listViewClicked(){
     }else{
         ui->bOK->button(QDialogButtonBox::Ok)->setEnabled(true);
     }
+}
+
+void conftool_import::bRefreshListPressed(){
+
+    populateLvConfiguration();
+    tfConfigNameModified();
+
 }
