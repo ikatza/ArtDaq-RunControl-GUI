@@ -6,7 +6,8 @@ conftool_import::conftool_import(QWidget *parent) :
     ui(new Ui::conftool_import)
 {
     ui->setupUi(this);
-    QString wd = QCoreApplication::applicationDirPath() + "/../dbConfigurations";
+    env = QProcessEnvironment::systemEnvironment();
+    QString wd = env.value("HOME") + "/work-db-v4-dir";
     conftoolpy.setWorkingDirectory(wd);
     ui->bOK->button(QDialogButtonBox::Ok)->setText("Import");
     connect(ui->tfConfigName,SIGNAL(textEdited(QString)),this,SLOT(tfConfigNameModified()));

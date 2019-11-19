@@ -39,6 +39,7 @@ private:
     Ui::conftool_import *ui;
     QProcess conftoolpy;
     QStringList daq_string;
+    QProcessEnvironment env;
 };
 
 #endif // CONFTOOL_IMPORT_H

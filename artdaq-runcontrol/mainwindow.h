@@ -44,6 +44,7 @@ public:
 
     QString getDBConfigurationFHICL_dir() const;
     void setDBConfigurationFHICL_dir(const QString &value);
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
 
 private slots:
 
@@ -89,8 +90,8 @@ private slots:
     void populateLVConfigurationsFromDatabase();
     void populateLVBOOTConfigurationsFromDatabase();
     void initializeLV();
-protected:
-    QProcessEnvironment env;
+// protected:
+//   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
 
 private:
     Ui::MainWindow *ui;

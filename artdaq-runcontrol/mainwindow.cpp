@@ -72,7 +72,7 @@ void MainWindow::configurateWindow(){
     this->setWindowTitle("ARTDAQ RUN CONTROL");
     this->setFixedSize(this->geometry().width(),this->geometry().height());
     ui->taDAQInterface->setReadOnly(true);
-    this->setDBConfigurationFHICL_dir(QCoreApplication::applicationDirPath() + "/../dbConfigurations");
+    this->setDBConfigurationFHICL_dir(env.value("HOME") + "/work-db-v4-dir");
 }
 
 
@@ -635,7 +635,6 @@ void MainWindow::checkBoxDatabaseChanged(){
 
     bool checked = ui->checkBoxDatabase->isChecked();
     if(checked){
-        env.remove("DAQINTERFACE_FHICL_DIRECTORY");
         env.insert("DAQINTERFACE_FHICL_DIRECTORY",this->getDBConfigurationFHICL_dir());
         qDebug()<<env.value("DAQINTERFACE_FHICL_DIRECTORY","FHICL_DB not found");
         ui->comboDBConfigurations->setEnabled(true);
@@ -645,7 +644,6 @@ void MainWindow::checkBoxDatabaseChanged(){
         comboDBConfigurationsItemChanged();
         banBOOTCONFIG = false;
     }else{
-        env.remove("DAQINTERFACE_FHICL_DIRECTORY");
         env.insert("DAQINTERFACE_FHICL_DIRECTORY",ConfigurationFHICL_default);
         qDebug()<<env.value("DAQINTERFACE_FHICL_DIRECTORY","FHICL_DEFAULT not found");
         ui->comboDBConfigurations->setEnabled(false);
