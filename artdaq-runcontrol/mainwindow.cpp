@@ -608,16 +608,19 @@ void MainWindow::bImportFromDatabase(){
 
 void MainWindow::populateComboDBConfigurations(){
 
+    conftool_import *dialogConftoolImport = new conftool_import(this);
     ui->comboDBConfigurations->clear();
-    QDirIterator dirIt(this->getDBConfigurationFHICL_dir(),QDir::AllDirs | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
-    QStringList list_str;
-    QString DBConfiguration;
-    while(dirIt.hasNext()){
-        DBConfiguration = dirIt.next();
-        list_str = DBConfiguration.split('/', QString::SkipEmptyParts);
-        DBConfiguration = list_str.last();
-        ui->comboDBConfigurations->addItem(DBConfiguration);
-    }
+    QStringList list_of_db_configs = dialogConftoolImport->getListOfDBConfigurations();
+    ui->comboDBConfigurations->addItems(list_of_db_configs);
+    // QDirIterator dirIt(this->getDBConfigurationFHICL_dir(),QDir::AllDirs | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+    // QStringList list_str;
+    // QString DBConfiguration;
+    // while(dirIt.hasNext()){
+    //     DBConfiguration = dirIt.next();
+    //     list_str = DBConfiguration.split('/', QString::SkipEmptyParts);
+    //     DBConfiguration = list_str.last();
+    //     ui->comboDBConfigurations->addItem(DBConfiguration);
+    // }
 
 }
 

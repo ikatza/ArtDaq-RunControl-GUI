@@ -28,6 +28,7 @@ class conftool_import : public QDialog
 public:
     explicit conftool_import(QWidget *parent = 0);
     ~conftool_import();
+    QStringList getListOfDBConfigurations();
 
 private slots:
     void populateLvConfiguration();
@@ -35,6 +36,7 @@ private slots:
     void bImportPressed();
     void listViewClicked();
     void bRefreshListPressed();
+
 private:
     Ui::conftool_import *ui;
     QProcess conftoolpy;

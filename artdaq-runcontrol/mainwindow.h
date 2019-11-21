@@ -134,7 +134,7 @@ private:
                                            };
     daqInterfaceState state_diagram;
     xmlrpc_gui_comm commDAQInterface;
-    void populateComboExperiments();
+  // void populateComboExperiments();
 };
 
 #endif // MAINWINDOW_H
