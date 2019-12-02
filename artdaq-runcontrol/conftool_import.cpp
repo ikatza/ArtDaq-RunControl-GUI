@@ -133,3 +133,7 @@ void conftool_import::setSelectedDBConfig(const QString &value)
 {
   selectedDBConfig = value;
 }
+
+QPair<QString, QString> conftool_import::getSelectedDBConfig() const{
+  return qMakePair(selectedDBConfig, export_dir_base + selectedDBConfig);
+}

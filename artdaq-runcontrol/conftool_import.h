@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QProcess>
 #include <QString>
+#include <QPair>
 #include <QDebug>
 #include <QByteArray>
 #include <QTextCodec>
@@ -29,6 +30,7 @@ public:
     explicit conftool_import(QWidget *parent = 0);
     ~conftool_import();
     QStringList getListOfDBConfigurations();
+  QPair<QString, QString> getSelectedDBConfig() const;
   void setSelectedDBConfig(const QString &value);
 
 private slots:

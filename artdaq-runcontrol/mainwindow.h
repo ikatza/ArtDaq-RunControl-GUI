@@ -20,6 +20,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QFileSystemWatcher>
+#include <QPair>
 #include <QVector>
 #include <QScrollBar>
 
@@ -120,6 +121,7 @@ private:
                                            };
     daqInterfaceState state_diagram;
     xmlrpc_gui_comm commDAQInterface;
+  QPair<QString, QString> dbSelectedConfig;
 };
 
 #endif // MAINWINDOW_H

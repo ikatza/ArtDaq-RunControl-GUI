@@ -585,6 +585,13 @@ void MainWindow::bListDatabaseRunConfigurations(){
     dialogConftoolImport->setWindowTitle("List Of Available Run Configurations");
     int result = dialogConftoolImport->exec();
     if(result == QDialog::Accepted){
+
+      // TODO: do something along the lines of the selected answer here:
+      // https://stackoverflow.com/questions/9194799/how-to-return-data-from-qdialog
+      dbSelectedConfig = dialogConftoolImport->getSelectedDBConfig();
+      qDebug() << "dialog_selected_config: " << dbSelectedConfig;
+      this->populateLVConfigurationsFromDatabase();
+      this->populateLVComponentsFromDatabase();
     }else if(result == QDialog::Rejected){
 
     }
@@ -657,6 +664,7 @@ void MainWindow::populateLVComponentsFromDatabase(){
 void MainWindow::populateLVConfigurationsFromDatabase(){
 
     QStringList lvConfigurationsList;
+    lvConfigurationsList.append(dbSelectedConfig.first);
     QStringListModel* model = new QStringListModel(this);
     model->setStringList(lvConfigurationsList);
     ui->lvConfigurations->setModel(model);
