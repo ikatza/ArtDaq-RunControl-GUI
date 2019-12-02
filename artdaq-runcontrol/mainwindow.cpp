@@ -602,8 +602,6 @@ void MainWindow::checkBoxDatabaseChanged(){
 
     bool checked = ui->checkBoxDatabase->isChecked();
     if(checked){
-        env.insert("DAQINTERFACE_FHICL_DIRECTORY",this->getDBConfigurationFHICL_dir());
-        qDebug()<<env.value("DAQINTERFACE_FHICL_DIRECTORY","FHICL_DB not found");
         ui->bListDatabaseRunConfigurations->setEnabled(true);
         ui->bDAQcomp->setEnabled(false);
         ui->bDAQconf->setEnabled(false);

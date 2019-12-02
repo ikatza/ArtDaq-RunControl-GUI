@@ -7,7 +7,7 @@ conftool_import::conftool_import(QWidget *parent) :
 {
     ui->setupUi(this);
     env = QProcessEnvironment::systemEnvironment();
-    QString wd = env.value("HOME") + "/work-db-v4-dir";
+    QString wd = QCoreApplication::applicationDirPath();
     conftoolpy.setWorkingDirectory(wd);
     ui->bOK->button(QDialogButtonBox::Ok)->setText("Select");
     connect(ui->tfConfigName,SIGNAL(textEdited(QString)),this,SLOT(tfConfigNameModified()));
