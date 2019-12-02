@@ -25,12 +25,8 @@ set(artdaq-runcontrol_srcs
     daqinterfacestate.cpp
     daqinterfacestate.ui
     xmlrpc_gui_comm.cpp
-    newexperimentdialog.ui
-    newexperimentdialog.cpp
-    newprofiledialog.cpp
-    newprofiledialog.ui
     conftool_import.cpp
-    conftool_import.ui		
+    conftool_import.ui
     main.cpp
 )
 
