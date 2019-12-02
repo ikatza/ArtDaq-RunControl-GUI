@@ -20,7 +20,7 @@ QString xmlrpc_gui_comm::getDAQInterfaceStatus(){
         QString a = "state";
         QString b = "daqint";
         params.add(xmlrpc_c::value_string(b.toStdString()));
-        qDebug()<< "serverUrl: " << serverUrl ; 
+        // qDebug()<< "serverUrl: " << serverUrl ; 
         guiClient.call(serverUrl.toStdString(),a.toStdString(),params,&result);
         QString result_ = QString::fromStdString(xmlrpc_c::value_string(result));
         return result_;
@@ -80,7 +80,6 @@ void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components){
         while(!in.atEnd()) {
             line = in.readLine();
             comp_line = line.split(" ");
-            qDebug()<<"Linea: "<<comp_line;
             for(int i=0;i<components.size();i++){
                 comp = components.at(i);
                 if(comp_line.at(0) == comp){
@@ -143,7 +142,7 @@ void xmlrpc_gui_comm::sendTransitionCONFIG(QStringList selected_config){
         QString selected_config_ = selected_config.at(0);
 
         std::map<std::string, xmlrpc_c::value> structData;
-	std::vector<xmlrpc_c::value> array_list;
+        std::vector<xmlrpc_c::value> array_list;
         array_list.push_back(xmlrpc_c::value_string(selected_config_.toStdString()));
         std::pair<std::string, xmlrpc_c::value> member("config", xmlrpc_c::value_array(array_list));
         structData.insert(member);
@@ -157,7 +156,6 @@ void xmlrpc_gui_comm::sendTransitionCONFIG(QStringList selected_config){
         qDebug()<< "Call to DAQInterface failed because: "
             << e.what();
     }
-
 }
 
 void xmlrpc_gui_comm::sendTransitionSTART(){

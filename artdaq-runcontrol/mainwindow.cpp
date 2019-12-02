@@ -139,11 +139,11 @@ void MainWindow::checkStatus(){
     QByteArray byte_status = daq_commands.readAll();
     QTextCodec* codec;
     QStringList daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("'",QString::KeepEmptyParts);
-    qDebug() << "xmlrpc_c: " << commDAQInterface.getDAQInterfaceStatus();
+    // qDebug() << "xmlrpc_c: " << commDAQInterface.getDAQInterfaceStatus();
     if(daq_string.count()>1){
         state_diagram.setOnline();
         QString str_status = daq_string.at(1);
-        qDebug()<<str_status;
+        // qDebug()<<str_status;
         ui->lbStatus->setText(status_map.value(str_status).toUpper());
         status(str_status);
     }
@@ -270,10 +270,7 @@ void MainWindow::bBOOTPressed(){
 }
 
 void MainWindow::bCONFIGPressed(){
-
     commDAQInterface.sendTransitionCONFIG(list_config_selected);
-    qDebug()<<list_config_selected; 
-
 }
 
 void MainWindow::lvBOOTConfigSelected(){
@@ -374,37 +371,37 @@ void MainWindow::isLVSelected(){
         ui->bBOOTandCONFIG->setEnabled(true);
         ui->bTerminate->setEnabled(false);
         ui->bStart->setEnabled(false);
-        qDebug()<<"selected: 1";
+        // qDebug()<<"selected: 1";
     }else if(banBOOT && banBOOTCONFIG && !banBOOTED){
         ui->bBOOT->setEnabled(true);
-        qDebug()<<"selected: 2";
+        // qDebug()<<"selected: 2";
     }else if(!banBOOT || !banBOOTCONFIG){
         ui->bBOOT->setEnabled(false);
         ui->bCONFIG->setEnabled(false);
         ui->bBOOTandCONFIG->setEnabled(false);
-        qDebug()<<"selected: 3";
+        // qDebug()<<"selected: 3";
     }else if(!banCONFIG && banBOOTED){
         ui->bBOOT->setEnabled(false);
         ui->bCONFIG->setEnabled(false);
         ui->bBOOTandCONFIG->setEnabled(false);
-        qDebug()<<"selected: 4";
+        // qDebug()<<"selected: 4";
     }else if(banBOOTED && banCONFIG && !banCONFIGURED){
         ui->bBOOT->setEnabled(false);
         ui->bCONFIG->setEnabled(true);
         ui->bBOOTandCONFIG->setEnabled(false);
         ui->bTerminate->setEnabled(true);
-        qDebug()<<"selected: 5";
+        // qDebug()<<"selected: 5";
     }else if(banBOOTED && banCONFIGURED){
         ui->bBOOT->setEnabled(false);
         ui->bCONFIG->setEnabled(false);
         ui->bBOOTandCONFIG->setEnabled(false);
         ui->bStart->setEnabled(true);
-        qDebug()<<"selected: 6";
+        // qDebug()<<"selected: 6";
     }else if(banBOOTED && !banCONFIGURED){
         ui->bBOOT->setEnabled(false);
         ui->bCONFIG->setEnabled(true);
         ui->bBOOTandCONFIG->setEnabled(false);
-        qDebug()<<"selected: 7";
+        // qDebug()<<"selected: 7";
     }
 }
 
@@ -432,6 +429,11 @@ void MainWindow::bDAQInterfacePressed(){
     ConfigurationFHICL_default = env.value("DAQINTERFACE_FHICL_DIRECTORY","DEFAULT");
     DAQInterface_logdir = DAQInterface_logdir + "/DAQInterface_partition" + partition_number_str + ".log";
     QString rpc_port_str = QString::number(base_port_str.toInt() + partition_number_str.toInt()*ports_per_partition_str.toInt());
+
+    // qDebug() << "All env variables:";
+    // QString env_variable;
+    // QStringList paths_list = env.toStringList();
+    // foreach( env_variable, paths_list ) qDebug() << env_variable;
 
     // //////// old way
     // daqinterface_start_commands << "stdbuf -oL ./rc/control/daqinterface.py --partition-number"
@@ -478,7 +480,7 @@ void MainWindow::DAQInterfaceOutput(){
     ui->taDAQInterface->document()->setPlainText(daqInterfaceTextAreaLog);
     QScrollBar* scroll = ui->taDAQInterface->verticalScrollBar();
     scroll->setValue(scroll->maximum());
-    qDebug()<<daq_string;
+    // qDebug() << "Inside " << __func__ << " , daq_string: " << daq_string << "\n";
     switch (DAQState) {
     case 1:
         lvComps();
@@ -507,11 +509,9 @@ void MainWindow::lvComps(){
     ui->lvComponents->setModel(model);
     ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
     DAQState = 0;
-
 }
 
 void MainWindow::bListDAQComps(){
-
     //daq_commands.start("listdaqcomps.sh");
     commDAQInterface.listDAQInterfaceComponents();
     DAQState = 1;
@@ -519,7 +519,6 @@ void MainWindow::bListDAQComps(){
 }
 
 void MainWindow::lvConfigs(){
-
     QStringListModel* model = new QStringListModel(this);
     QStringList list = daq_string.split("\n\n", QString::SkipEmptyParts);
     //qDebug()<<list.at(0);
@@ -533,6 +532,8 @@ void MainWindow::lvConfigs(){
     model->setStringList(list);
     ui->lvConfigurations->setModel(model);
     DAQState = 0;
+    // qDebug() << "Inside " << __func__ << " , daq_string: " << daq_string;
+    // qDebug() << "Inside " << __func__ << " , list: " << list;
 }
 
 void MainWindow::bListDAQConfigs(){
@@ -548,8 +549,7 @@ void MainWindow::bListDAQConfigs(){
     while(dirIt.hasNext()){
         str = dirIt.next();
         if(reg.exactMatch(str)){
-
-            qDebug()<<"config file "<<str;
+            // qDebug() << "config file " << str;
             list_str = str.split('/', QString::SkipEmptyParts);
             qDebug()<<list_str.last();
             list_config.append(list_str.last());
@@ -592,10 +592,8 @@ void MainWindow::bListDatabaseRunConfigurations(){
       qDebug() << "dialog_selected_config: " << dbSelectedConfig;
       this->populateLVConfigurationsFromDatabase();
       this->populateLVComponentsFromDatabase();
-    }else if(result == QDialog::Rejected){
-
     }
-
+    else if(result == QDialog::Rejected){}
 }
 
 void MainWindow::checkBoxDatabaseChanged(){
@@ -608,7 +606,7 @@ void MainWindow::checkBoxDatabaseChanged(){
         banBOOTCONFIG = false;
     }else{
         env.insert("DAQINTERFACE_FHICL_DIRECTORY",ConfigurationFHICL_default);
-        qDebug()<<env.value("DAQINTERFACE_FHICL_DIRECTORY","FHICL_DEFAULT not found");
+        // qDebug() << env.value("DAQINTERFACE_FHICL_DIRECTORY","FHICL_DEFAULT not found");
         ui->bListDatabaseRunConfigurations->setEnabled(false);
         ui->bDAQcomp->setEnabled(true);
         ui->bDAQconf->setEnabled(true);
@@ -645,17 +643,14 @@ void MainWindow::populateLVComponentsFromDatabase(){
         componentlist.replace(componentlist.indexOf(component),component_.at(0));
     }
     componentlist.removeFirst();
-    //qDebug()<<"HOLA HOLA HOLA HOLA:"<< componentlist;
     while (dirIt.hasNext()) {
         QString fileName = dirIt.next();
         QStringList fileName_ = fileName.split('/',QString::KeepEmptyParts);
         fileName = fileName_.last();
-        //qDebug()<<fileName;
         for(QString component:componentlist){
             QRegExp reg(component + "*");
             reg.setPatternSyntax(QRegExp::Wildcard);
             if(reg.exactMatch(fileName)){
-                //qDebug()<<"matched" <<fileName;
                 lvComponentsList.append(component);
             }
         }
@@ -684,31 +679,30 @@ void MainWindow::populateLVConfigurationsFromDatabase(){
 }
 
 void MainWindow::populateLVBOOTConfigurationsFromDatabase(){
-
     QRegExp reg("*.txt");
     reg.setPatternSyntax(QRegExp::Wildcard);
     QString env_str = env.value("DAQINTERFACE_USER_DIR","DEFAULT");
     QDirIterator dirIt(env_str);
     QString str;
     QStringList list_str, list_config;
+    bool foundMatch = false;
     while(dirIt.hasNext()){
         str = dirIt.next();
         if(reg.exactMatch(str)){
-
-            qDebug()<<"config file "<<str;
+            // qDebug() << "config file "<< str;
             list_str = str.split('/', QString::SkipEmptyParts);
-            qDebug()<<list_str.last();
+            // qDebug() << list_str.last();
             list_config.append(list_str.last());
-        }else{
-            qDebug()<<"not config file";
+            foundMatch = true;
         }
     }
-
+    if (foundMatch){
     QStringListModel* model = new QStringListModel(this);
     model->setStringList(list_config);
     ui->lvConfigBOOT->setModel(model);
     ui->lvConfigBOOT->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
+    }
+    else qInfo() << "No common config files found.";
 }
 
 QString MainWindow::getDBConfigurationFHICL_dir() const

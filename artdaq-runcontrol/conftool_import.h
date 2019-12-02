@@ -29,7 +29,7 @@ class conftool_import : public QDialog
 public:
     explicit conftool_import(QWidget *parent = 0);
     ~conftool_import();
-    QStringList getListOfDBConfigurations();
+  // QStringList getListOfDBConfigurations();
   QPair<QString, QString> getSelectedDBConfig() const;
   void setSelectedDBConfig(const QString &value);
 
@@ -43,6 +43,7 @@ private slots:
 private:
     Ui::conftool_import *ui;
     QProcess conftoolpy;
+  QString wd;
   QProcess conftoolpy_export;
   QString export_dir_base = "/tmp/artdaq-runcontrol-gui/db/";
   QString conftoolpy_export_output;

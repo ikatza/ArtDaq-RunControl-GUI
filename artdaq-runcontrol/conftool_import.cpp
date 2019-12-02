@@ -7,7 +7,7 @@ conftool_import::conftool_import(QWidget *parent) :
 {
     ui->setupUi(this);
     env = QProcessEnvironment::systemEnvironment();
-    QString wd = QCoreApplication::applicationDirPath();
+    wd = QCoreApplication::applicationDirPath();
     conftoolpy.setWorkingDirectory(wd);
     ui->bOK->button(QDialogButtonBox::Ok)->setText("Select");
     connect(ui->tfConfigName,SIGNAL(textEdited(QString)),this,SLOT(tfConfigNameModified()));
@@ -33,30 +33,28 @@ void conftool_import::populateLvConfiguration(){
     daq_string.removeLast();
     daq_string.sort();
     //std::sort(daq_string.begin(),daq_string.last(),std::greater);
-    qDebug()<<daq_string;
     QStringListModel* model = new QStringListModel(this);
     model->setStringList(daq_string);
     ui->lvConfigurationList->setModel(model);
     this->listViewClicked();
 }
 
-QStringList conftool_import::getListOfDBConfigurations(){
-
-    conftoolpy.start("conftool.py",QStringList()<<"getListOfAvailableRunConfigurations");
-    conftoolpy.waitForFinished();
-    QByteArray byte_status = conftoolpy.readAll();
-    QTextCodec* codec;
-    daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("\n",QString::KeepEmptyParts);
-    daq_string.removeLast();
-    daq_string.sort();
-    //std::sort(daq_string.begin(),daq_string.last(),std::greater);
-    qDebug()<<daq_string;
-    // QStringListModel* model = new QStringListModel(this);
-    // model->setStringList(daq_string);
-    // ui->lvConfigurationList->setModel(model);
-    // this->listViewClicked();
-    return daq_string;
-}
+// QStringList conftool_import::getListOfDBConfigurations(){
+//     conftoolpy.start("conftool.py",QStringList()<<"getListOfAvailableRunConfigurations");
+//     conftoolpy.waitForFinished();
+//     QByteArray byte_status = conftoolpy.readAll();
+//     QTextCodec* codec;
+//     daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("\n",QString::KeepEmptyParts);
+//     daq_string.removeLast();
+//     daq_string.sort();
+//     //std::sort(daq_string.begin(),daq_string.last(),std::greater);
+//     qDebug()<<daq_string;
+//     // QStringListModel* model = new QStringListModel(this);
+//     // model->setStringList(daq_string);
+//     // ui->lvConfigurationList->setModel(model);
+//     // this->listViewClicked();
+//     return daq_string;
+// }
 
 void conftool_import::tfConfigNameModified(){
 
@@ -117,9 +115,11 @@ void conftool_import::listViewClicked(){
     int selectedSize = selectedList.size();
     if(selectedSize == 0){
         ui->bOK->button(QDialogButtonBox::Ok)->setEnabled(false);
-    }else{
+    }
+    else if(selectedSize == 1){
         ui->bOK->button(QDialogButtonBox::Ok)->setEnabled(true);
     }
+    else{}
 }
 
 void conftool_import::bRefreshListPressed(){

@@ -27,7 +27,7 @@ public:
 private:
     unsigned int port_number;
     QString serverUrl = "http://localhost:5570/RPC2";
-    QString methodName = "listdaqcomps";
+  // QString methodName = "listdaqcomps";
     xmlrpc_c::clientSimple guiClient;
 
     QProcessEnvironment env;
