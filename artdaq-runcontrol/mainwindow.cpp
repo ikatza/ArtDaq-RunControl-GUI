@@ -487,8 +487,8 @@ void MainWindow::DAQInterfaceOutput(){
         lvConfigs();
         break;
     case 3:
-        populateLVComponentsFromDatabase();
         populateLVConfigurationsFromDatabase();
+        populateLVComponentsFromDatabase();
         populateLVBOOTConfigurationsFromDatabase();
         this->lvComponentsSelected();
         this->lvConfigurationsSelected();
@@ -626,8 +626,19 @@ void MainWindow::checkBoxDatabaseChanged(){
 
 void MainWindow::populateLVComponentsFromDatabase(){
 
-    QString selectedDBConfig_dir = this->getDBConfigurationFHICL_dir() + "/" + ui->comboDBConfigurations->currentText();
-    //qDebug()<<selectedDBConfig_dir;
+  QString config_name = dbSelectedConfig.first;
+  config_name.chop(5); // to remove the numbers // TODO: find a better way
+  QString selectedDBConfig_dir = dbSelectedConfig.second + "/" + config_name;
+  // qDebug() << "selectedDBConfig_dir: " << selectedDBConfig_dir;
+
+  commDAQInterface.listDAQInterfaceComponents();
+  QThread::msleep(100);
+  commDAQInterface.listDAQInterfaceComponents();
+
+  DAQState = 3;
+  banBOOTCONFIG = false;
+
+  // qDebug() << "Inside " << __func__ << " , daq_string: " << daq_string << "\n";
     QDirIterator dirIt(selectedDBConfig_dir, QDir::AllEntries | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
     QStringList componentlist = daq_string.split('\n', QString::SkipEmptyParts);
     QStringList lvComponentsList;
