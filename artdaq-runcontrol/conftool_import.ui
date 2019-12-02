@@ -80,7 +80,7 @@
     </rect>
    </property>
    <property name="title">
-    <string>List of available configurations</string>
+       <string>Select configuration</string>
    </property>
    <widget class="QListView" name="lvConfigurationList">
     <property name="geometry">

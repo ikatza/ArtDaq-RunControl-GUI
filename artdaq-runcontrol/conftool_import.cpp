@@ -9,9 +9,9 @@ conftool_import::conftool_import(QWidget *parent) :
     env = QProcessEnvironment::systemEnvironment();
     QString wd = env.value("HOME") + "/work-db-v4-dir";
     conftoolpy.setWorkingDirectory(wd);
-    ui->bOK->button(QDialogButtonBox::Ok)->setText("Import");
+    ui->bOK->button(QDialogButtonBox::Ok)->setText("Select");
     connect(ui->tfConfigName,SIGNAL(textEdited(QString)),this,SLOT(tfConfigNameModified()));
-    connect(ui->bOK->button(QDialogButtonBox::Ok),SIGNAL(clicked(bool)),this,SLOT(bImportPressed()));
+    connect(ui->bOK->button(QDialogButtonBox::Ok),SIGNAL(clicked(bool)),this,SLOT(bSelectPressed()));
     connect(ui->lvConfigurationList,SIGNAL(clicked(QModelIndex)),this,SLOT(listViewClicked()));
     connect(ui->bRefreshList,SIGNAL(clicked(bool)),this,SLOT(bRefreshListPressed()));
     this->populateLvConfiguration();
@@ -82,14 +82,34 @@ void conftool_import::tfConfigNameModified(){
 
 }
 
-void conftool_import::bImportPressed(){
+void conftool_import::bSelectPressed(){
     QStringList db_profile_stringlist;
     QModelIndexList list = ui->lvConfigurationList->selectionModel()->selectedRows();
     for(QModelIndex idx : list){
         db_profile_stringlist = idx.model()->data(idx,Qt::DisplayRole).toString().split(' ',QString::KeepEmptyParts);
     }
-    // conftoolpy.start("conftool.py",QStringList()<<"exportConfiguration"<<db_profile_stringlist.at(0));
-    // conftoolpy.waitForFinished();
+    QString selected_db_config = db_profile_stringlist.at(0);
+    qDebug() << "selected_db_config: " << selected_db_config;
+
+    QString export_dir = export_dir_base + selected_db_config;
+    conftoolpy_export.start("mkdir", QStringList() << "-vp" << export_dir);
+    conftoolpy_export.waitForFinished();
+    conftoolpy_export_output = conftoolpy_export.readAllStandardOutput();
+    qDebug() << "\n mkdir -vp: " << conftoolpy_export_output;
+
+    conftoolpy_export.setWorkingDirectory(export_dir);
+
+    conftoolpy_export.start("conftool.py",QStringList()<<"exportConfiguration"<< selected_db_config);
+    conftoolpy_export.waitForFinished();
+    conftoolpy_export_output = conftoolpy_export.readAllStandardOutput();
+    qDebug()  << "\n conftool.py exportConfiguration" << conftoolpy_export_output;
+
+    // conftoolpy_export.start("ls");
+    // conftoolpy_export.waitForFinished();
+    // conftoolpy_export_output = conftoolpy_export.readAllStandardOutput();
+    // qDebug()  << "\n ls" << conftoolpy_export_output;
+
+    this->setSelectedDBConfig(selected_db_config);
 }
 
 void conftool_import::listViewClicked(){
@@ -107,4 +127,9 @@ void conftool_import::bRefreshListPressed(){
     populateLvConfiguration();
     tfConfigNameModified();
 
+}
+
+void conftool_import::setSelectedDBConfig(const QString &value)
+{
+  selectedDBConfig = value;
 }
