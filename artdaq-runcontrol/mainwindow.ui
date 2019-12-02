@@ -344,29 +344,21 @@
      <property name="title">
       <string>Database</string>
      </property>
-     <widget class="QComboBox" name="comboDBConfigurations">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>40</y>
-        <width>331</width>
-        <height>28</height>
-       </rect>
-      </property>
+
+     <widget class="QPushButton" name="bListDatabaseRunConfigurations">
+         <property name="geometry">
+             <rect>
+                 <x>10</x>
+                 <y>40</y>
+                 <width>400</width>
+                 <height>28</height>
+             </rect>
+         </property>
+         <property name="text">
+             <string>Database Run Configurations</string>
+         </property>
      </widget>
-     <widget class="QPushButton" name="bImportFromDatabase">
-      <property name="geometry">
-       <rect>
-        <x>360</x>
-        <y>40</y>
-        <width>84</width>
-        <height>28</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Import</string>
-      </property>
-     </widget>
+
      <widget class="QCheckBox" name="checkBoxDatabase">
       <property name="geometry">
        <rect>

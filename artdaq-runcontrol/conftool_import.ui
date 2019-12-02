@@ -34,7 +34,7 @@
     <rect>
      <x>20</x>
      <y>10</y>
-     <width>241</width>
+     <width>450</width>
      <height>41</height>
     </rect>
    </property>
@@ -44,7 +44,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Database Import</string>
+       <string>Database Run Configurations</string>
    </property>
   </widget>
   <widget class="QGroupBox" name="groupBox">

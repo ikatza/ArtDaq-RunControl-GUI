@@ -39,26 +39,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->bTerminate,SIGNAL(clicked(bool)),this,SLOT(bTERMINATEPressed()));
     connect(ui->bEndSession,SIGNAL(clicked(bool)),this,SLOT(bEndSessionPressed()));
     connect(ui->bDebug,SIGNAL(clicked(bool)),this,SLOT(bDebugPressed()));
-    //connect(ui->bNewExperiment,SIGNAL(clicked(bool)),this,SLOT(bNewExperimentPressed()));
-    //connect(ui->bEditExperiment,SIGNAL(clicked(bool)),this,SLOT(bEditExperimentPressed()));
-    //connect(ui->bDeleteExperiment,SIGNAL(clicked(bool)),this,SLOT(bDeleteExperimentPressed()));
-    //connect(ui->bNewProfile,SIGNAL(clicked(bool)),this,SLOT(bNewProfilePressed()));
-    //connect(ui->bEditProfile,SIGNAL(clicked(bool)),this,SLOT(bEditProfilePressed()));
-    //connect(ui->bDeleteProfile,SIGNAL(clicked(bool)),this,SLOT(bDeleteProfilePressed()));
-    connect(ui->bImportFromDatabase,SIGNAL(clicked(bool)),this,SLOT(bImportFromDatabase()));
-    connect(ui->comboDBConfigurations,SIGNAL(currentIndexChanged(int)),this,SLOT(comboDBConfigurationsItemChanged()));
+    connect(ui->bListDatabaseRunConfigurations,SIGNAL(clicked(bool)),this,SLOT(bListDatabaseRunConfigurations()));
     connect(ui->checkBoxDatabase,SIGNAL(toggled(bool)),this,SLOT(checkBoxDatabaseChanged()));
     env = QProcessEnvironment::systemEnvironment();
     initializeButtons();
     state_diagram.setWindowTitle("DAQInterface State Diagram");
     state_diagram.setFixedSize(state_diagram.geometry().width(),state_diagram.geometry().height());
     state_diagram.show();
-    this->populateComboDBConfigurations();
-    //this->populateComboExperiments();
-    //this->populateComboProfiles();
-    //this->populateListViews();
-    //connect(ui->comboExperiment,SIGNAL(currentIndexChanged(int)),this,SLOT(comboExperimentIndexChanged()));
-    //connect(ui->comboProfiles,SIGNAL(currentTextChanged(QString)),this,SLOT(populateListViews()));
 }
 
 MainWindow::~MainWindow()
@@ -129,8 +116,7 @@ void MainWindow::initializeButtons(){
     ui->lbStatus->setText(status_map.value("stopped").toUpper());
     ui->checkBoxDatabase->setChecked(false);
     ui->checkBoxDatabase->setEnabled(false);
-    ui->comboDBConfigurations->setEnabled(false);
-    ui->bImportFromDatabase->setEnabled(false);
+    ui->bListDatabaseRunConfigurations->setEnabled(false);
     ui->bDebug->setVisible(false);
 
 }
@@ -593,45 +579,16 @@ void MainWindow::bDebugPressed(){
 
 }
 
-void MainWindow::bImportFromDatabase(){
+void MainWindow::bListDatabaseRunConfigurations(){
 
     conftool_import *dialogConftoolImport = new conftool_import(this);
-    dialogConftoolImport->setWindowTitle("Import configuration from Database");
+    dialogConftoolImport->setWindowTitle("List Of Available Run Configurations");
     int result = dialogConftoolImport->exec();
     if(result == QDialog::Accepted){
-        this->populateComboDBConfigurations();
     }else if(result == QDialog::Rejected){
 
     }
 
-}
-
-void MainWindow::populateComboDBConfigurations(){
-
-    conftool_import *dialogConftoolImport = new conftool_import(this);
-    ui->comboDBConfigurations->clear();
-    QStringList list_of_db_configs = dialogConftoolImport->getListOfDBConfigurations();
-    ui->comboDBConfigurations->addItems(list_of_db_configs);
-    // QDirIterator dirIt(this->getDBConfigurationFHICL_dir(),QDir::AllDirs | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
-    // QStringList list_str;
-    // QString DBConfiguration;
-    // while(dirIt.hasNext()){
-    //     DBConfiguration = dirIt.next();
-    //     list_str = DBConfiguration.split('/', QString::SkipEmptyParts);
-    //     DBConfiguration = list_str.last();
-    //     ui->comboDBConfigurations->addItem(DBConfiguration);
-    // }
-
-}
-
-void MainWindow::comboDBConfigurationsItemChanged(){
-
-    if(ui->checkBoxDatabase->isEnabled()){
-        commDAQInterface.listDAQInterfaceComponents();
-        DAQState = 3;
-        banBOOTCONFIG = false;
-        qDebug()<<"DAQSTATE 3";
-    }
 }
 
 void MainWindow::checkBoxDatabaseChanged(){
@@ -640,17 +597,14 @@ void MainWindow::checkBoxDatabaseChanged(){
     if(checked){
         env.insert("DAQINTERFACE_FHICL_DIRECTORY",this->getDBConfigurationFHICL_dir());
         qDebug()<<env.value("DAQINTERFACE_FHICL_DIRECTORY","FHICL_DB not found");
-        ui->comboDBConfigurations->setEnabled(true);
-        ui->bImportFromDatabase->setEnabled(true);
+        ui->bListDatabaseRunConfigurations->setEnabled(true);
         ui->bDAQcomp->setEnabled(false);
         ui->bDAQconf->setEnabled(false);
-        comboDBConfigurationsItemChanged();
         banBOOTCONFIG = false;
     }else{
         env.insert("DAQINTERFACE_FHICL_DIRECTORY",ConfigurationFHICL_default);
         qDebug()<<env.value("DAQINTERFACE_FHICL_DIRECTORY","FHICL_DEFAULT not found");
-        ui->comboDBConfigurations->setEnabled(false);
-        ui->bImportFromDatabase->setEnabled(false);
+        ui->bListDatabaseRunConfigurations->setEnabled(false);
         ui->bDAQcomp->setEnabled(true);
         ui->bDAQconf->setEnabled(true);
         initializeLV();
@@ -703,7 +657,6 @@ void MainWindow::populateLVComponentsFromDatabase(){
 void MainWindow::populateLVConfigurationsFromDatabase(){
 
     QStringList lvConfigurationsList;
-    lvConfigurationsList.append(ui->comboDBConfigurations->currentText());
     QStringListModel* model = new QStringListModel(this);
     model->setStringList(lvConfigurationsList);
     ui->lvConfigurations->setModel(model);
@@ -750,138 +703,6 @@ void MainWindow::setDBConfigurationFHICL_dir(const QString &value)
 {
     DBConfigurationFHICL_dir = value;
 }
-
-/*void MainWindow::bNewExperimentPressed(){
-
-    newExperimentDialog *dialogNewExperiment = new newExperimentDialog(this);
-    dialogNewExperiment->setWindowTitle("New Experiment");
-    int result = dialogNewExperiment->exec();
-    if(result == QDialog::Accepted){
-
-    }else if(result == QDialog::Rejected){
-
-    }
-
-}
-
-void MainWindow::bEditExperimentPressed(){
-
-    QVector<QStringList> componentList;
-    QStringList configurationList;
-    int index = ui->comboExperiment->currentIndex();
-    QString experimentName = ui->comboExperiment->itemText(index);
-    newExperimentDialog *dialogNewExperiment = new newExperimentDialog(this);
-    dialogNewExperiment->setWindowTitle("Edit Experiment");
-    dialogNewExperiment->setLabelTitle("Edit Experiment");
-    dialogNewExperiment->setExperimentDialog(experimentName, componentList, configurationList);
-    int result = dialogNewExperiment->exec();
-    if(result == QDialog::Accepted){
-
-    }else if(result == QDialog::Rejected){
-
-    }
-
-}
-
-void MainWindow::bDeleteExperimentPressed(){
-    QMessageBox msgBox;
-    int index = ui->comboExperiment->currentIndex();
-    QString experimentName = ui->comboExperiment->itemText(index);
-    msgBox.setText("Delete experiment " + experimentName + " from Database");
-    msgBox.setInformativeText("Do you really wish to delete the current experiment information from the database?");
-    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    msgBox.setDefaultButton(QMessageBox::No);
-    int ret = msgBox.exec();
-    switch (ret) {
-      case QMessageBox::Yes:
-            break;
-      case QMessageBox::No:
-            break;
-      default:
-          break;
-    }
-}
-
-void MainWindow::populateComboExperiments(){
-
-}
-
-void MainWindow::bNewProfilePressed(){
-
-    newProfileDialog *profileDialog = new newProfileDialog();
-    profileDialog->setWindowTitle("New Profile");
-    int result = profileDialog->exec();
-    if(result == QDialog::Accepted){
-    }else if(result == QDialog::Rejected){
-
-    }
-
-}
-
-void MainWindow::populateComboProfiles(){
-
-}
-
-void MainWindow::comboExperimentIndexChanged(){
-    this->populateComboProfiles();
-}
-
-void MainWindow::populateListViews(){
-
-    if(ui->comboProfiles->currentText() == "default"){
-        ui->bEditProfile->setEnabled(false);
-        ui->bDeleteProfile->setEnabled(false);
-    }else{
-        ui->bEditProfile->setEnabled(true);
-        ui->bDeleteProfile->setEnabled(true);
-    }
-
-    QStringList components;
-    QStringListModel* model = new QStringListModel(this);
-    model->setStringList(components);
-    ui->lvComponents->setModel(model);
-    QStringList configurations;
-    QStringListModel* model2 = new QStringListModel(this);
-    model2->setStringList(configurations);
-    ui->lvConfigurations->setModel(model2);
-    QStringList bootfiles;
-    QStringListModel* model3 = new QStringListModel(this);
-    model3->setStringList(bootfiles);
-    ui->lvConfigBOOT->setModel(model3);
-    //qDebug()<< configurations << bootfiles;
-}
-
-void MainWindow::bEditProfilePressed(){
-
-    newProfileDialog *dialogNewProfile = new newProfileDialog(this);
-    dialogNewProfile->setWindowTitle("Edit Profile");
-    dialogNewProfile->setLabelTitle("Edit Profile");
-    int result = dialogNewProfile->exec();
-    if(result == QDialog::Accepted){
-    }else if(result == QDialog::Rejected){
-
-    }
-
-}
-
-void MainWindow::bDeleteProfilePressed(){
-    QMessageBox msgBox;
-    int index = ui->comboProfiles->currentIndex();
-    QString profileName = ui->comboProfiles->itemText(index);
-    msgBox.setText("Delete experiment " + profileName + " from Database");
-    msgBox.setInformativeText("Do you really wish to delete the current profile information from the database?");
-    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    msgBox.setDefaultButton(QMessageBox::No);
-    int ret = msgBox.exec();
-    switch (ret) {
-      case QMessageBox::Yes:
-      case QMessageBox::No:
-            break;
-      default:
-          break;
-    }
-}
-*/
 
 QProcessEnvironment MainWindow::getQProcessEnvironment(){
     return this->env;
