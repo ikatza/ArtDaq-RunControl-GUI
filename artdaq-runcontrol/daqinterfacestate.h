@@ -14,37 +14,36 @@ namespace Ui {
 class daqInterfaceState;
 }
 
-class daqInterfaceState : public QWidget
-{
-    Q_OBJECT
+class daqInterfaceState : public QWidget {
+  Q_OBJECT
 
 public:
-    explicit daqInterfaceState(QWidget *parent = 0);
-    ~daqInterfaceState();
-    void setStateDiagramStopped();
-    void setStateDiagramReady();
-    void setStateDiagramRunning();
-    void setStateDiagramBooted();
-    void setStateDiagramBooting();
-    void setStateDiagramConfiguring();
-    void setStateDiagramStartingRun();
-    void setStateDiagramStoppingRun();
-    void setStateDiagramTerminating();
-    void setOnlineButtonGreen();
-    void setLCDPartitionNumber(int number);
-    void setLCDPortNumber(int number);
-    void setOnline();
-    void setOffline();
-    void setOnlineButtonRed();
+  explicit daqInterfaceState(QWidget *parent = 0);
+  ~daqInterfaceState();
+  void setStateDiagramStopped();
+  void setStateDiagramReady();
+  void setStateDiagramRunning();
+  void setStateDiagramBooted();
+  void setStateDiagramBooting();
+  void setStateDiagramConfiguring();
+  void setStateDiagramStartingRun();
+  void setStateDiagramStoppingRun();
+  void setStateDiagramTerminating();
+  void setOnlineButtonGreen();
+  void setLCDPartitionNumber(int number);
+  void setLCDPortNumber(int number);
+  void setOnline();
+  void setOffline();
+  void setOnlineButtonRed();
 public slots:
-    void setStateDiagramOff();
+  void setStateDiagramOff();
 private slots:
-    void setOnlineButtonLightGreen();
+  void setOnlineButtonLightGreen();
 private:
-    Ui::daqInterfaceState *ui;
-    QString imagesDirectory;
-    QTimer timerTransition;
-    QTimer timerOnline;
+  Ui::daqInterfaceState *ui;
+  QString imagesDirectory;
+  QTimer timerTransition;
+  QTimer timerOnline;
 };
 
 #endif // DAQINTERFACESTATE_H

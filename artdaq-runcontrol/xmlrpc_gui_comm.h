@@ -11,26 +11,25 @@
 #include <vector>
 #include <QDirIterator>
 
-class xmlrpc_gui_comm
-{
+class xmlrpc_gui_comm {
 public:
-    xmlrpc_gui_comm();
-    QString getDAQInterfaceStatus();
-    void listDAQInterfaceComponents();
-    void setDAQInterfaceComponents(QStringList components);
-    void sendTransitionBOOT(QStringList selected_boot_file);
-    void sendTransitionCONFIG(QStringList selected_config);
-    void sendTransitionSTOP();
-    void sendTransitionTERMINATE();
-    void sendTransitionSTART();
-    void listDAQInterfaceConfigs();
+  xmlrpc_gui_comm();
+  QString getDAQInterfaceStatus();
+  void listDAQInterfaceComponents();
+  void setDAQInterfaceComponents(QStringList components);
+  void sendTransitionBOOT(QStringList selected_boot_file);
+  void sendTransitionCONFIG(QStringList selected_config);
+  void sendTransitionSTOP();
+  void sendTransitionTERMINATE();
+  void sendTransitionSTART();
+  void listDAQInterfaceConfigs();
 private:
-    unsigned int port_number;
-    QString serverUrl = "http://localhost:5570/RPC2";
+  unsigned int port_number;
+  QString serverUrl = "http://localhost:5570/RPC2";
   // QString methodName = "listdaqcomps";
-    xmlrpc_c::clientSimple guiClient;
+  xmlrpc_c::clientSimple guiClient;
 
-    QProcessEnvironment env;
+  QProcessEnvironment env;
 };
 
 #endif // XMLRPC_GUI_COMM_H

@@ -3,259 +3,270 @@
 
 xmlrpc_gui_comm::xmlrpc_gui_comm()
 {
-    env = QProcessEnvironment::systemEnvironment();
-    QString base_port_str = env.value("ARTDAQ_BASE_PORT","DEFAULT");
-    QString ports_per_partition_str = env.value("ARTDAQ_PORTS_PER_PARTITION","DEFAULT");
-    QString partition_number_str = env.value("DAQINTERFACE_PARTITION_NUMBER","DEFAULT");
-    QString rpc_port_str = QString::number(base_port_str.toInt() + partition_number_str.toInt()*ports_per_partition_str.toInt());
+  env = QProcessEnvironment::systemEnvironment();
+  QString base_port_str = env.value("ARTDAQ_BASE_PORT", "DEFAULT");
+  QString ports_per_partition_str = env.value("ARTDAQ_PORTS_PER_PARTITION", "DEFAULT");
+  QString partition_number_str = env.value("DAQINTERFACE_PARTITION_NUMBER", "DEFAULT");
+  QString rpc_port_str = QString::number(base_port_str.toInt() + partition_number_str.toInt() * ports_per_partition_str.toInt());
 
-    // QString daqInterfacePort = env.value("DAQINTERFACE_PORT","NOT FOUND");
-    serverUrl = "http://localhost:" + rpc_port_str + "/RPC2";	
+  // QString daqInterfacePort = env.value("DAQINTERFACE_PORT","NOT FOUND");
+  serverUrl = "http://localhost:" + rpc_port_str + "/RPC2";
 }
 
-QString xmlrpc_gui_comm::getDAQInterfaceStatus(){
-    try{
-        xmlrpc_c::value result;
-        xmlrpc_c::paramList params;
-        QString a = "state";
-        QString b = "daqint";
-        params.add(xmlrpc_c::value_string(b.toStdString()));
-        // qDebug()<< "serverUrl: " << serverUrl ; 
-        guiClient.call(serverUrl.toStdString(),a.toStdString(),params,&result);
-        QString result_ = QString::fromStdString(xmlrpc_c::value_string(result));
-        return result_;
-        //qDebug()<< "from xmlrpc_c: "<<result_;
-    } catch(std::exception const e){
-        qDebug()<< "Call to DAQInterface failed because: "
-                << "crashing here " << e.what();
-        return QString::fromUtf8(e.what(),sizeof(e.what()));
-    }
+QString xmlrpc_gui_comm::getDAQInterfaceStatus()
+{
+  try {
+    xmlrpc_c::value result;
+    xmlrpc_c::paramList params;
+    QString a = "state";
+    QString b = "daqint";
+    params.add(xmlrpc_c::value_string(b.toStdString()));
+    // qDebug()<< "serverUrl: " << serverUrl ;
+    guiClient.call(serverUrl.toStdString(), a.toStdString(), params, &result);
+    QString result_ = QString::fromStdString(xmlrpc_c::value_string(result));
+    return result_;
+    //qDebug()<< "from xmlrpc_c: "<<result_;
+  }
+  catch(std::exception const e) {
+    qDebug() << "Call to DAQInterface failed because: "
+             << "crashing here " << e.what();
+    return QString::fromUtf8(e.what(), sizeof(e.what()));
+  }
 }
 
-void xmlrpc_gui_comm::listDAQInterfaceComponents(){
-    try{
-        xmlrpc_c::value result;
-        QString a = "listdaqcomps";
-        guiClient.call(serverUrl.toStdString(),a.toStdString(),&result);
-    } catch(std::exception const e){
-        qDebug()<< "Call to DAQInterface failed because: "
-            << e.what();
-    }
+void xmlrpc_gui_comm::listDAQInterfaceComponents()
+{
+  try {
+    xmlrpc_c::value result;
+    QString a = "listdaqcomps";
+    guiClient.call(serverUrl.toStdString(), a.toStdString(), &result);
+  }
+  catch(std::exception const e) {
+    qDebug() << "Call to DAQInterface failed because: "
+             << e.what();
+  }
 }
 
-void xmlrpc_gui_comm::listDAQInterfaceConfigs(){
-    try{
-        xmlrpc_c::value result;
-        QString a = "listconfigs";
-        guiClient.call(serverUrl.toStdString(),a.toStdString(),&result);
-        } catch(std::exception const e){
-        qDebug()<< "Call to DAQInterface failed because: "
-                << e.what();
+void xmlrpc_gui_comm::listDAQInterfaceConfigs()
+{
+  try {
+    xmlrpc_c::value result;
+    QString a = "listconfigs";
+    guiClient.call(serverUrl.toStdString(), a.toStdString(), &result);
+  }
+  catch(std::exception const e) {
+    qDebug() << "Call to DAQInterface failed because: "
+             << e.what();
+  }
+}
+
+void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components)
+{
+
+  try {
+    xmlrpc_c::value result;
+    xmlrpc_c::paramList params;
+    QString a = "setdaqcomps";
+
+    QString boardreader_list_file = env.value("DAQINTERFACE_KNOWN_BOARDREADERS_LIST", "NOT FOUND");
+    //qDebug()<<boardreader_list_file;
+    QFile file(boardreader_list_file);
+    file.open(QIODevice::ReadOnly);
+
+    QTextStream in(&file);
+    QString cmd = "";
+    QString comp = "";
+    QStringList comp_line;
+
+    QString line;
+
+    qDebug() << "Lista de comp: " << components << "size: " << components.size();
+    std::map<std::string, xmlrpc_c::value> structData;
+    std::vector<xmlrpc_c::value> array_list;
+
+    while(!in.atEnd()) {
+      line = in.readLine();
+      comp_line = line.split(" ");
+      for(int i = 0; i < components.size(); i++) {
+        comp = components.at(i);
+        if(comp_line.at(0) == comp) {
+          cmd = comp_line.at(1);
+          array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
+          cmd = comp_line.at(2);
+          array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
+          cmd = "1";
+          array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
+          std::pair<std::string, xmlrpc_c::value> member(comp.toStdString(), xmlrpc_c::value_array(array_list));
+          structData.insert(member);
+          array_list.clear();
         }
+      }
     }
 
-void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components){
+    params.add(xmlrpc_c::value_struct(structData));
+    guiClient.call(serverUrl.toStdString(), a.toStdString(), params, &result);
 
-    try{
-        xmlrpc_c::value result;
-        xmlrpc_c::paramList params;
-        QString a = "setdaqcomps";
-
-        QString boardreader_list_file = env.value("DAQINTERFACE_KNOWN_BOARDREADERS_LIST","NOT FOUND");
-        //qDebug()<<boardreader_list_file;
-        QFile file(boardreader_list_file);
-        file.open(QIODevice::ReadOnly);
-
-        QTextStream in(&file);
-        QString cmd = "";
-        QString comp = "";
-        QStringList comp_line;
-
-        QString line;
-
-        qDebug()<<"Lista de comp: "<<components <<"size: "<<components.size();
-        std::map<std::string, xmlrpc_c::value> structData;
-        std::vector<xmlrpc_c::value> array_list;
-
-        while(!in.atEnd()) {
-            line = in.readLine();
-            comp_line = line.split(" ");
-            for(int i=0;i<components.size();i++){
-                comp = components.at(i);
-                if(comp_line.at(0) == comp){
-                    cmd = comp_line.at(1);
-                    array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
-                    cmd = comp_line.at(2);
-                    array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
-                    cmd = "1";
-                    array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
-                    std::pair<std::string, xmlrpc_c::value> member(comp.toStdString(), xmlrpc_c::value_array(array_list));
-                    structData.insert(member);
-                    array_list.clear();
-                }
-            }
-        }
-
-        params.add(xmlrpc_c::value_struct(structData));
-        guiClient.call(serverUrl.toStdString(),a.toStdString(),params,&result);
-
-    } catch(std::exception const e){
-        qDebug()<< "Call to DAQInterface failed because: "
-            << e.what();
-    }
+  }
+  catch(std::exception const e) {
+    qDebug() << "Call to DAQInterface failed because: "
+             << e.what();
+  }
 }
 
-void xmlrpc_gui_comm::sendTransitionBOOT(QStringList selected_boot_file){
+void xmlrpc_gui_comm::sendTransitionBOOT(QStringList selected_boot_file)
+{
 
-    try{
-        xmlrpc_c::value result;
-        xmlrpc_c::paramList params;
-        QString a = "state_change";
-        QString b = "daqint";
-        QString c = "booting";
-        QString boot_file = selected_boot_file.at(0);
+  try {
+    xmlrpc_c::value result;
+    xmlrpc_c::paramList params;
+    QString a = "state_change";
+    QString b = "daqint";
+    QString c = "booting";
+    QString boot_file = selected_boot_file.at(0);
 
-        std::map<std::string, xmlrpc_c::value> structData;
-        std::pair<std::string, xmlrpc_c::value> member("boot_filename", xmlrpc_c::value_string(boot_file.toStdString()));
-        structData.insert(member);
+    std::map<std::string, xmlrpc_c::value> structData;
+    std::pair<std::string, xmlrpc_c::value> member("boot_filename", xmlrpc_c::value_string(boot_file.toStdString()));
+    structData.insert(member);
 
-        params.add(xmlrpc_c::value_string(b.toStdString()));
-        params.add(xmlrpc_c::value_string(c.toStdString()));
-        params.add(xmlrpc_c::value_struct(structData));
-        guiClient.call(serverUrl.toStdString(),a.toStdString(),params,&result);
+    params.add(xmlrpc_c::value_string(b.toStdString()));
+    params.add(xmlrpc_c::value_string(c.toStdString()));
+    params.add(xmlrpc_c::value_struct(structData));
+    guiClient.call(serverUrl.toStdString(), a.toStdString(), params, &result);
 
-    } catch(std::exception const e){
-        qDebug()<< "Call to DAQInterface failed because: "
-            << e.what();
-    }
-
+  }
+  catch(std::exception const e) {
+    qDebug() << "Call to DAQInterface failed because: "
+             << e.what();
+  }
 }
 
-void xmlrpc_gui_comm::sendTransitionCONFIG(QStringList selected_config){
+void xmlrpc_gui_comm::sendTransitionCONFIG(QStringList selected_config)
+{
 
-    try{
-        xmlrpc_c::value result;
-        xmlrpc_c::paramList params;
-        QString a = "state_change";
-        QString b = "daqint";
-        QString c = "configuring";
-        QString selected_config_ = selected_config.at(0);
+  try {
+    xmlrpc_c::value result;
+    xmlrpc_c::paramList params;
+    QString a = "state_change";
+    QString b = "daqint";
+    QString c = "configuring";
+    QString selected_config_ = selected_config.at(0);
 
-        std::map<std::string, xmlrpc_c::value> structData;
-        std::vector<xmlrpc_c::value> array_list;
-        array_list.push_back(xmlrpc_c::value_string(selected_config_.toStdString()));
-        std::pair<std::string, xmlrpc_c::value> member("config", xmlrpc_c::value_array(array_list));
-        structData.insert(member);
+    std::map<std::string, xmlrpc_c::value> structData;
+    std::vector<xmlrpc_c::value> array_list;
+    array_list.push_back(xmlrpc_c::value_string(selected_config_.toStdString()));
+    std::pair<std::string, xmlrpc_c::value> member("config", xmlrpc_c::value_array(array_list));
+    structData.insert(member);
 
-        params.add(xmlrpc_c::value_string(b.toStdString()));
-        params.add(xmlrpc_c::value_string(c.toStdString()));
-        params.add(xmlrpc_c::value_struct(structData));
-        guiClient.call(serverUrl.toStdString(),a.toStdString(),params,&result);
+    params.add(xmlrpc_c::value_string(b.toStdString()));
+    params.add(xmlrpc_c::value_string(c.toStdString()));
+    params.add(xmlrpc_c::value_struct(structData));
+    guiClient.call(serverUrl.toStdString(), a.toStdString(), params, &result);
 
-    } catch(std::exception const e){
-        qDebug()<< "Call to DAQInterface failed because: "
-            << e.what();
-    }
+  }
+  catch(std::exception const e) {
+    qDebug() << "Call to DAQInterface failed because: "
+             << e.what();
+  }
 }
 
-void xmlrpc_gui_comm::sendTransitionSTART(){
+void xmlrpc_gui_comm::sendTransitionSTART()
+{
 
-    try{
-        xmlrpc_c::value result;
-        xmlrpc_c::paramList params;
-        QString a = "state_change";
-        QString b = "daqint";
-        QString c = "starting";
-        QStringList run_number_str_list;
-        QString run_number_str;
-        int run_number = 0;
+  try {
+    xmlrpc_c::value result;
+    xmlrpc_c::paramList params;
+    QString a = "state_change";
+    QString b = "daqint";
+    QString c = "starting";
+    QStringList run_number_str_list;
+    QString run_number_str;
+    int run_number = 0;
 
-        QStringList comp_line;
-        QString line, record_directory;
+    QStringList comp_line;
+    QString line, record_directory;
 
-        QString boardreader_list_file = env.value("DAQINTERFACE_SETTINGS","NOT FOUND");
-        QFile file(boardreader_list_file);
-        file.open(QIODevice::ReadOnly);
+    QString boardreader_list_file = env.value("DAQINTERFACE_SETTINGS", "NOT FOUND");
+    QFile file(boardreader_list_file);
+    file.open(QIODevice::ReadOnly);
 
-        QTextStream in(&file);
+    QTextStream in(&file);
 
-        while(!in.atEnd()) {
-            line = in.readLine();
-            comp_line = line.split(":");
-            if(comp_line.size()>0 && (comp_line.at(0) == "record_directory")){
-                record_directory = comp_line.at(1);
-                break;
-            }
-        }
-
-        QDirIterator it(record_directory.right(record_directory.size() - 1), QDirIterator::NoIteratorFlags);
-        while (it.hasNext()) {
-            run_number_str_list = it.next().split("/");
-            run_number_str = run_number_str_list.at(run_number_str_list.size()-1);
-            run_number = run_number_str.toInt();
-        }
-
-        std::map<std::string, xmlrpc_c::value> structData;
-        std::pair<std::string, xmlrpc_c::value> member("run_number", xmlrpc_c::value_int(run_number + 1));
-        structData.insert(member);
-
-        params.add(xmlrpc_c::value_string(b.toStdString()));
-        params.add(xmlrpc_c::value_string(c.toStdString()));
-        params.add(xmlrpc_c::value_struct(structData));
-        guiClient.call(serverUrl.toStdString(),a.toStdString(),params,&result);
-
-    } catch(std::exception const e){
-        qDebug()<< "Call to DAQInterface failed because: "
-            << e.what();
+    while(!in.atEnd()) {
+      line = in.readLine();
+      comp_line = line.split(":");
+      if(comp_line.size() > 0 && (comp_line.at(0) == "record_directory")) {
+        record_directory = comp_line.at(1);
+        break;
+      }
     }
 
+    QDirIterator it(record_directory.right(record_directory.size() - 1), QDirIterator::NoIteratorFlags);
+    while (it.hasNext()) {
+      run_number_str_list = it.next().split("/");
+      run_number_str = run_number_str_list.at(run_number_str_list.size() - 1);
+      run_number = run_number_str.toInt();
+    }
+
+    std::map<std::string, xmlrpc_c::value> structData;
+    std::pair<std::string, xmlrpc_c::value> member("run_number", xmlrpc_c::value_int(run_number + 1));
+    structData.insert(member);
+
+    params.add(xmlrpc_c::value_string(b.toStdString()));
+    params.add(xmlrpc_c::value_string(c.toStdString()));
+    params.add(xmlrpc_c::value_struct(structData));
+    guiClient.call(serverUrl.toStdString(), a.toStdString(), params, &result);
+
+  }
+  catch(std::exception const e) {
+    qDebug() << "Call to DAQInterface failed because: "
+             << e.what();
+  }
 }
 
-void xmlrpc_gui_comm::sendTransitionSTOP(){
+void xmlrpc_gui_comm::sendTransitionSTOP()
+{
+  try {
+    xmlrpc_c::value result;
+    xmlrpc_c::paramList params;
+    QString a = "state_change";
+    QString b = "daqint";
+    QString c = "stopping";
 
-    try{
-        xmlrpc_c::value result;
-        xmlrpc_c::paramList params;
-        QString a = "state_change";
-        QString b = "daqint";
-        QString c = "stopping";
+    std::map<std::string, xmlrpc_c::value> structData;
+    std::pair<std::string, xmlrpc_c::value> member("ignored_variable", xmlrpc_c::value_int(999));
+    structData.insert(member);
 
-        std::map<std::string, xmlrpc_c::value> structData;
-        std::pair<std::string, xmlrpc_c::value> member("ignored_variable", xmlrpc_c::value_int(999));
-        structData.insert(member);
-
-        params.add(xmlrpc_c::value_string(b.toStdString()));
-        params.add(xmlrpc_c::value_string(c.toStdString()));
-        params.add(xmlrpc_c::value_struct(structData));
-        guiClient.call(serverUrl.toStdString(),a.toStdString(),params,&result);
-    } catch(std::exception const e){
-        qDebug()<< "Call to DAQInterface failed because: "
-            << e.what();
-    }
-
+    params.add(xmlrpc_c::value_string(b.toStdString()));
+    params.add(xmlrpc_c::value_string(c.toStdString()));
+    params.add(xmlrpc_c::value_struct(structData));
+    guiClient.call(serverUrl.toStdString(), a.toStdString(), params, &result);
+  }
+  catch(std::exception const e) {
+    qDebug() << "Call to DAQInterface failed because: "
+             << e.what();
+  }
 }
 
-void xmlrpc_gui_comm::sendTransitionTERMINATE(){
+void xmlrpc_gui_comm::sendTransitionTERMINATE()
+{
+  try {
+    xmlrpc_c::value result;
+    xmlrpc_c::paramList params;
+    QString a = "state_change";
+    QString b = "daqint";
+    QString c = "terminating";
 
-    try{
-        xmlrpc_c::value result;
-        xmlrpc_c::paramList params;
-        QString a = "state_change";
-        QString b = "daqint";
-        QString c = "terminating";
+    std::map<std::string, xmlrpc_c::value> structData;
+    std::pair<std::string, xmlrpc_c::value> member("ignored_variable", xmlrpc_c::value_int(999));
+    structData.insert(member);
 
-        std::map<std::string, xmlrpc_c::value> structData;
-        std::pair<std::string, xmlrpc_c::value> member("ignored_variable", xmlrpc_c::value_int(999));
-        structData.insert(member);
-
-        params.add(xmlrpc_c::value_string(b.toStdString()));
-        params.add(xmlrpc_c::value_string(c.toStdString()));
-        params.add(xmlrpc_c::value_struct(structData));
-        guiClient.call(serverUrl.toStdString(),a.toStdString(),params,&result);
-
-    } catch(std::exception const e){
-        qDebug()<< "Call to DAQInterface failed because: "
-            << e.what();
-    }
-
+    params.add(xmlrpc_c::value_string(b.toStdString()));
+    params.add(xmlrpc_c::value_string(c.toStdString()));
+    params.add(xmlrpc_c::value_struct(structData));
+    guiClient.call(serverUrl.toStdString(), a.toStdString(), params, &result);
+  }
+  catch(std::exception const e) {
+    qDebug() << "Call to DAQInterface failed because: "
+             << e.what();
+  }
 }
