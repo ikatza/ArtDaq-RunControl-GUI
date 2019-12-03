@@ -13,7 +13,6 @@ include_directories($ENV{XMLRPC_C_FQ_DIR}/include)
 link_directories($ENV{XMLRPC_C_FQ_DIR}/lib)
 
 add_subdirectory(resources)
-add_subdirectory(dbConfigurations)
 
 # Find the QtWidgets library
 find_package(Qt5Widgets CONFIG REQUIRED)
@@ -25,8 +24,8 @@ set(artdaq-runcontrol_srcs
     daqinterfacestate.cpp
     daqinterfacestate.ui
     xmlrpc_gui_comm.cpp
-    conftool_import.cpp
-    conftool_import.ui
+    db_dialog.cpp
+    db_dialog.ui
     main.cpp
 )
 

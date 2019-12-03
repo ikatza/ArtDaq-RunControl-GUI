@@ -1,9 +1,9 @@
-#include "conftool_import.h"
-#include "ui_conftool_import.h"
+#include "db_dialog.h"
+#include "ui_db_dialog.h"
 
-conftool_import::conftool_import(QWidget *parent) :
+db_dialog::db_dialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::conftool_import)
+    ui(new Ui::db_dialog)
 {
     ui->setupUi(this);
     env = QProcessEnvironment::systemEnvironment();
@@ -18,12 +18,12 @@ conftool_import::conftool_import(QWidget *parent) :
     ui->lvConfigurationList->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
 
-conftool_import::~conftool_import()
+db_dialog::~db_dialog()
 {
     delete ui;
 }
 
-void conftool_import::populateLvConfiguration(){
+void db_dialog::populateLvConfiguration(){
 
     conftoolpy.start("conftool.py",QStringList()<<"getListOfAvailableRunConfigurations");
     conftoolpy.waitForFinished();
@@ -39,7 +39,7 @@ void conftool_import::populateLvConfiguration(){
     this->listViewClicked();
 }
 
-// QStringList conftool_import::getListOfDBConfigurations(){
+// QStringList db_dialog::getListOfDBConfigurations(){
 //     conftoolpy.start("conftool.py",QStringList()<<"getListOfAvailableRunConfigurations");
 //     conftoolpy.waitForFinished();
 //     QByteArray byte_status = conftoolpy.readAll();
@@ -56,7 +56,7 @@ void conftool_import::populateLvConfiguration(){
 //     return daq_string;
 // }
 
-void conftool_import::tfConfigNameModified(){
+void db_dialog::tfConfigNameModified(){
 
     QString comboText = ui->tfConfigName->text();
     if(comboText.length() != 0){
@@ -80,7 +80,7 @@ void conftool_import::tfConfigNameModified(){
 
 }
 
-void conftool_import::bSelectPressed(){
+void db_dialog::bSelectPressed(){
     QStringList db_profile_stringlist;
     QModelIndexList list = ui->lvConfigurationList->selectionModel()->selectedRows();
     for(QModelIndex idx : list){
@@ -110,7 +110,7 @@ void conftool_import::bSelectPressed(){
     this->setSelectedDBConfig(selected_db_config);
 }
 
-void conftool_import::listViewClicked(){
+void db_dialog::listViewClicked(){
     QModelIndexList selectedList = ui->lvConfigurationList->selectionModel()->selectedRows();
     int selectedSize = selectedList.size();
     if(selectedSize == 0){
@@ -122,18 +122,18 @@ void conftool_import::listViewClicked(){
     else{}
 }
 
-void conftool_import::bRefreshListPressed(){
+void db_dialog::bRefreshListPressed(){
 
     populateLvConfiguration();
     tfConfigNameModified();
 
 }
 
-void conftool_import::setSelectedDBConfig(const QString &value)
+void db_dialog::setSelectedDBConfig(const QString &value)
 {
   selectedDBConfig = value;
 }
 
-QPair<QString, QString> conftool_import::getSelectedDBConfig() const{
+QPair<QString, QString> db_dialog::getSelectedDBConfig() const{
   return qMakePair(selectedDBConfig, export_dir_base + selectedDBConfig);
 }

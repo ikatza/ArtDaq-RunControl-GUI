@@ -25,24 +25,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    	daqinterfacestate.cpp \
-    	xmlrpc_gui_comm.cpp \
-	newexperimentdialog.cpp \
-	newprofiledialog.cpp \	
-    conftool_import.cpp
+        daqinterfacestate.cpp \
+        xmlrpc_gui_comm.cpp \
+        newexperimentdialog.cpp \
+        newprofiledialog.cpp \
+        db_dialog.cpp
 
 HEADERS  += mainwindow.h \
-    	daqinterfacestate.h \
-	xmlrpc_gui_comm.h \
-	newexperimentdialog.h \
-	newprofiledialog.h \
-    conftool_import.h
+         daqinterfacestate.h \
+         xmlrpc_gui_comm.h \
+         newexperimentdialog.h \
+         newprofiledialog.h \
+         db_dialog.h
 
 FORMS    += mainwindow.ui \
-    	daqinterfacestate.ui \
-	newexperimentdialog.ui \
-	newprofiledialog.ui \
-    conftool_import.ui
+         daqinterfacestate.ui \
+         newexperimentdialog.ui \
+         newprofiledialog.ui \
+         db_dialog.ui
 
 INCLUDEPATH += /root/artdaq-demo-base/products/xmlrpc_c/v1_39_10d/Linux64bit+3.10-2.17-e15-prof/include
 

@@ -26,7 +26,7 @@
 
 #include "daqinterfacestate.h"
 #include "xmlrpc_gui_comm.h"
-#include "conftool_import.h"
+#include "db_dialog.h"
 
 namespace Ui {
 class MainWindow;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>conftool_import</class>
- <widget class="QDialog" name="conftool_import">
+ <class>db_dialog</class>
+ <widget class="QDialog" name="db_dialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -117,7 +117,7 @@
   <connection>
    <sender>bOK</sender>
    <signal>accepted()</signal>
-   <receiver>conftool_import</receiver>
+   <receiver>db_dialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -133,7 +133,7 @@
   <connection>
    <sender>bOK</sender>
    <signal>rejected()</signal>
-   <receiver>conftool_import</receiver>
+   <receiver>db_dialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

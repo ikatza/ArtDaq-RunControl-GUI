@@ -1,5 +1,5 @@
-#ifndef CONFTOOL_IMPORT_H
-#define CONFTOOL_IMPORT_H
+#ifndef DB_DIALOG_H
+#define DB_DIALOG_H
 
 #include <QDialog>
 #include <QProcess>
@@ -19,16 +19,16 @@
 
 
 namespace Ui {
-class conftool_import;
+class db_dialog;
 }
 
-class conftool_import : public QDialog
+class db_dialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit conftool_import(QWidget *parent = 0);
-    ~conftool_import();
+    explicit db_dialog(QWidget *parent = 0);
+    ~db_dialog();
   // QStringList getListOfDBConfigurations();
   QPair<QString, QString> getSelectedDBConfig() const;
   void setSelectedDBConfig(const QString &value);
@@ -41,7 +41,7 @@ private slots:
     void bRefreshListPressed();
 
 private:
-    Ui::conftool_import *ui;
+    Ui::db_dialog *ui;
     QProcess conftoolpy;
   QString wd;
   QProcess conftoolpy_export;
@@ -53,4 +53,4 @@ private:
     QProcessEnvironment env;
 };
 
-#endif // CONFTOOL_IMPORT_H
+#endif // DB_DIALOG_H

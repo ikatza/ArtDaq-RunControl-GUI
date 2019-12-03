@@ -568,7 +568,7 @@ void MainWindow::bListDAQConfigs(){
 void MainWindow::bDebugPressed(){
 
     qDebug() << "Debug";
-    /*conftool_import *dialogConftoolImport = new conftool_import(this);
+    /*db_dialog *dialogConftoolImport = new db_dialog(this);
     dialogConftoolImport->setWindowTitle("Import configuration from Database");
     int result = dialogConftoolImport->exec();
     if(result == QDialog::Accepted){
@@ -581,14 +581,14 @@ void MainWindow::bDebugPressed(){
 
 void MainWindow::bListDatabaseRunConfigurations(){
 
-    conftool_import *dialogConftoolImport = new conftool_import(this);
-    dialogConftoolImport->setWindowTitle("List Of Available Run Configurations");
-    int result = dialogConftoolImport->exec();
+  db_dialog *dbDialog = new db_dialog(this);
+  dbDialog->setWindowTitle("List Of Available Run Configurations");
+  int result = dbDialog->exec();
     if(result == QDialog::Accepted){
 
       // TODO: do something along the lines of the selected answer here:
       // https://stackoverflow.com/questions/9194799/how-to-return-data-from-qdialog
-      dbSelectedConfig = dialogConftoolImport->getSelectedDBConfig();
+      dbSelectedConfig = dbDialog->getSelectedDBConfig();
       qDebug() << "dialog_selected_config: " << dbSelectedConfig;
       this->populateLVConfigurationsFromDatabase();
       this->populateLVComponentsFromDatabase();
