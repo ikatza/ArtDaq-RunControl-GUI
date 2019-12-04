@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(ui->bDebug, SIGNAL(clicked(bool)), this, SLOT(bDebugPressed()));
   connect(ui->bListDatabaseRunConfigurations, SIGNAL(clicked(bool)), this, SLOT(bListDatabaseRunConfigurations()));
   connect(ui->checkBoxDatabase, SIGNAL(toggled(bool)), this, SLOT(checkBoxDatabaseChanged()));
+  connect(ui->bStartRun,SIGNAL(clicked(bool)),this,SLOT(bStartRunPressed()));
   env = QProcessEnvironment::systemEnvironment();
   initializeButtons();
   state_diagram.setWindowTitle("DAQInterface State Diagram");
@@ -87,6 +88,7 @@ void MainWindow::bEndSessionPressed()
     banCONFIGURED = false;
     banPAUSED = false;
     banRUNNING = false;
+    banStartRunPressed = false;
     break;
   case QMessageBox::No:
     break;
@@ -105,7 +107,7 @@ void MainWindow::initializeButtons()
   ui->bBelen->setEnabled(false);
   ui->bCONFIG->setEnabled(false);
   ui->bBOOT->setEnabled(false);
-  ui->bBOOTandCONFIG->setEnabled(false);
+  ui->bStartRun->setEnabled(false);
   ui->bStart->setEnabled(false);
   ui->bStop->setEnabled(false);
   ui->bTerminate->setEnabled(false);
@@ -117,6 +119,13 @@ void MainWindow::initializeButtons()
   ui->checkBoxDatabase->setEnabled(false);
   ui->bListDatabaseRunConfigurations->setEnabled(false);
   ui->bDebug->setVisible(false);
+  ui->bStartRun->setText("  START RUN");
+
+  QString imagesDirectory = QCoreApplication::applicationDirPath() + "/../resources/images/";
+  QPixmap button_image(imagesDirectory + "start_run.png");
+  QIcon ButtonIcon(button_image);
+  ui->bStartRun->setIcon(ButtonIcon);
+  ui->bStartRun->setIconSize(button_image.rect().size());
 }
 
 void MainWindow::initializeLV()
@@ -143,6 +152,7 @@ void MainWindow::checkStatus()
     // qDebug()<<str_status;
     ui->lbStatus->setText(status_map.value(str_status).toUpper());
     status(str_status);
+    checkTransitionStartRunPressed(str_status);
   }
   else {
     ui->taDAQInterface->document()->setPlainText(daq_string.at(0));
@@ -360,7 +370,7 @@ void MainWindow::isLVSelected()
   if(banBOOT && banCONFIG && banBOOTCONFIG && !banBOOTED && !banCONFIGURED) {
     ui->bBOOT->setEnabled(true);
     ui->bCONFIG->setEnabled(false);
-    ui->bBOOTandCONFIG->setEnabled(true);
+    ui->bStartRun->setEnabled(true);
     ui->bTerminate->setEnabled(false);
     ui->bStart->setEnabled(false);
     // qDebug()<<"selected: 1";
@@ -372,33 +382,33 @@ void MainWindow::isLVSelected()
   else if(!banBOOT || !banBOOTCONFIG) {
     ui->bBOOT->setEnabled(false);
     ui->bCONFIG->setEnabled(false);
-    ui->bBOOTandCONFIG->setEnabled(false);
+    ui->bStartRun->setEnabled(false);
     // qDebug()<<"selected: 3";
   }
   else if(!banCONFIG && banBOOTED) {
     ui->bBOOT->setEnabled(false);
     ui->bCONFIG->setEnabled(false);
-    ui->bBOOTandCONFIG->setEnabled(false);
+    ui->bStartRun->setEnabled(false);
     // qDebug()<<"selected: 4";
   }
   else if(banBOOTED && banCONFIG && !banCONFIGURED) {
     ui->bBOOT->setEnabled(false);
     ui->bCONFIG->setEnabled(true);
-    ui->bBOOTandCONFIG->setEnabled(false);
+    ui->bStartRun->setEnabled(false);
     ui->bTerminate->setEnabled(true);
     // qDebug()<<"selected: 5";
   }
   else if(banBOOTED && banCONFIGURED) {
     ui->bBOOT->setEnabled(false);
     ui->bCONFIG->setEnabled(false);
-    ui->bBOOTandCONFIG->setEnabled(false);
+    ui->bStartRun->setEnabled(false);
     ui->bStart->setEnabled(true);
     // qDebug()<<"selected: 6";
   }
   else if(banBOOTED && !banCONFIGURED) {
     ui->bBOOT->setEnabled(false);
     ui->bCONFIG->setEnabled(true);
-    ui->bBOOTandCONFIG->setEnabled(false);
+    ui->bStartRun->setEnabled(false);
     // qDebug()<<"selected: 7";
   }
 }
@@ -435,10 +445,10 @@ void MainWindow::bDAQInterfacePressed()
   // foreach( env_variable, paths_list ) qDebug() << env_variable;
 
   // //////// old way
-  // daqinterface_start_commands << "stdbuf -oL ./rc/control/daqinterface.py --partition-number"
-  //                             << partition_number_str
-  //                             << "--rpc-port" << rpc_port_str;
-  // daq_interface.start(daqinterface_start_commands.join(" "));
+   daqinterface_start_commands << "stdbuf -oL ./rc/control/daqinterface.py --partition-number"
+                               << partition_number_str
+                               << "--rpc-port" << rpc_port_str;
+   daq_interface.start(daqinterface_start_commands.join(" "));
   // //////// old way
 
 
@@ -456,7 +466,7 @@ void MainWindow::bDAQInterfacePressed()
   // //////// estebans way
 
   /////// new way; this works... maybe breaking something?
-  daq_interface.start("./bin/DAQInterface.sh");
+  //daq_interface.start("./bin/DAQInterface.sh");
   DAQInterfaceProcess_started = true;
   DAQInterface_PID = daq_interface.processId();
   setButtonsDAQInterfaceInitialized(DAQInterfaceProcess_started);
@@ -564,6 +574,58 @@ void MainWindow::bListDAQConfigs()
   ui->lvConfigBOOT->setModel(model);
 
   QThread::msleep(100);
+}
+
+void MainWindow::bStartRunPressed(){
+
+  banStartRunPressed = true;
+  this->bBOOTPressed();
+}
+
+void MainWindow::checkTransitionStartRunPressed(QString status){
+
+  int est = status_map_int.value(status);
+
+  if(banStartRunPressed){
+    switch(est){
+    case 1: //stopped
+        banStartRunPressed = false;
+      break;
+    case 2: //booted
+      this->bCONFIGPressed();
+      break;
+    case 3: //ready
+      this->bSTARTPressed();
+      break;
+    case 4: // running
+
+      break;
+    case 5: // pause
+
+      break;
+    case 6: // booting
+
+      break;
+    case 7: // configuring
+
+      break;
+    case 8: // starting
+
+      break;
+    case 9: // stopping
+        banStartRunPressed = false;
+      break;
+    case 10: // terminating
+        banStartRunPressed = false;
+      break;
+    case 99:
+
+      break;
+    default:
+      break;
+    }
+  }
+
 }
 
 void MainWindow::bDebugPressed()

@@ -79,6 +79,8 @@ private slots:
   // protected:
   //   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
 
+  void bStartRunPressed();
+  void checkTransitionStartRunPressed(QString status);
 private:
   Ui::MainWindow *ui;
   QProcess daq_interface;
@@ -90,7 +92,7 @@ private:
   int DAQState;
   int DAQInterface_PID;
   bool DAQInterfaceProcess_started;
-  bool banBOOT, banCONFIG, banBOOTCONFIG, banBOOTED, banCONFIGURED, banRUNNING, banPAUSED;
+  bool banBOOT, banCONFIG, banBOOTCONFIG, banBOOTED, banCONFIGURED, banRUNNING, banPAUSED, banStartRunPressed;
   QTimer timer;
   QFileSystemWatcher DAQInterface_logwatcher;
   QMap<QString, QString> status_map = {{"stopped", "stopped"},
