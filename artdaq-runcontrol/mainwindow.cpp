@@ -119,7 +119,7 @@ void MainWindow::initializeButtons()
   ui->checkBoxDatabase->setEnabled(false);
   ui->bListDatabaseRunConfigurations->setEnabled(false);
   ui->bDebug->setVisible(false);
-  ui->bStartRun->setText("  START RUN");
+  ui->bStartRun->setText("  RUN");
 
   QString imagesDirectory = QCoreApplication::applicationDirPath() + "/../resources/images/";
   QPixmap button_image(imagesDirectory + "start_run.png");
