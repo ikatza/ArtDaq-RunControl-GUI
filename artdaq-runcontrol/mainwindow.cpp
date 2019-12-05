@@ -125,7 +125,7 @@ void MainWindow::initializeButtons()
   QPixmap button_image(imagesDirectory + "start_run.png");
   QIcon ButtonIcon(button_image);
   ui->bStartRun->setIcon(ButtonIcon);
-  ui->bStartRun->setIconSize(button_image.rect().size());
+  ui->bStartRun->setIconSize(0.9*button_image.rect().size());
 }
 
 void MainWindow::initializeLV()
