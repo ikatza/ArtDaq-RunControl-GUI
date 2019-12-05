@@ -41,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(ui->bDebug, SIGNAL(clicked(bool)), this, SLOT(bDebugPressed()));
   connect(ui->bListDatabaseRunConfigurations, SIGNAL(clicked(bool)), this, SLOT(bListDatabaseRunConfigurations()));
   connect(ui->checkBoxDatabase, SIGNAL(toggled(bool)), this, SLOT(checkBoxDatabaseChanged()));
-  connect(ui->bStartRun,SIGNAL(clicked(bool)),this,SLOT(bStartRunPressed()));
+  connect(ui->bStartRun, SIGNAL(clicked(bool)), this, SLOT(bStartRunPressed()));
   env = QProcessEnvironment::systemEnvironment();
   initializeButtons();
   state_diagram.setWindowTitle("DAQInterface State Diagram");
@@ -125,7 +125,7 @@ void MainWindow::initializeButtons()
   QPixmap button_image(imagesDirectory + "start_run.png");
   QIcon ButtonIcon(button_image);
   ui->bStartRun->setIcon(ButtonIcon);
-  ui->bStartRun->setIconSize(0.9*button_image.rect().size());
+  ui->bStartRun->setIconSize(0.9 * button_image.rect().size());
 }
 
 void MainWindow::initializeLV()
@@ -445,10 +445,10 @@ void MainWindow::bDAQInterfacePressed()
   // foreach( env_variable, paths_list ) qDebug() << env_variable;
 
   // //////// old way
-   daqinterface_start_commands << "stdbuf -oL ./rc/control/daqinterface.py --partition-number"
-                               << partition_number_str
-                               << "--rpc-port" << rpc_port_str;
-   daq_interface.start(daqinterface_start_commands.join(" "));
+  // daqinterface_start_commands << "stdbuf -oL ./rc/control/daqinterface.py --partition-number"
+  //                             << partition_number_str
+  //                             << "--rpc-port" << rpc_port_str;
+  // daq_interface.start(daqinterface_start_commands.join(" "));
   // //////// old way
 
 
@@ -466,7 +466,7 @@ void MainWindow::bDAQInterfacePressed()
   // //////// estebans way
 
   /////// new way; this works... maybe breaking something?
-  //daq_interface.start("./bin/DAQInterface.sh");
+  daq_interface.start("./bin/DAQInterface.sh");
   DAQInterfaceProcess_started = true;
   DAQInterface_PID = daq_interface.processId();
   setButtonsDAQInterfaceInitialized(DAQInterfaceProcess_started);
@@ -576,20 +576,22 @@ void MainWindow::bListDAQConfigs()
   QThread::msleep(100);
 }
 
-void MainWindow::bStartRunPressed(){
+void MainWindow::bStartRunPressed()
+{
 
   banStartRunPressed = true;
   this->bBOOTPressed();
 }
 
-void MainWindow::checkTransitionStartRunPressed(QString status){
+void MainWindow::checkTransitionStartRunPressed(QString status)
+{
 
   int est = status_map_int.value(status);
 
-  if(banStartRunPressed){
-    switch(est){
+  if(banStartRunPressed) {
+    switch(est) {
     case 1: //stopped
-        banStartRunPressed = false;
+      banStartRunPressed = false;
       break;
     case 2: //booted
       this->bCONFIGPressed();
@@ -613,10 +615,10 @@ void MainWindow::checkTransitionStartRunPressed(QString status){
 
       break;
     case 9: // stopping
-        banStartRunPressed = false;
+      banStartRunPressed = false;
       break;
     case 10: // terminating
-        banStartRunPressed = false;
+      banStartRunPressed = false;
       break;
     case 99:
 
