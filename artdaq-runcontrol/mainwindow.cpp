@@ -143,7 +143,7 @@ void MainWindow::checkStatus()
   daq_commands.start("status.sh", QStringList() << "");
   daq_commands.waitForFinished();
   QByteArray byte_status = daq_commands.readAll();
-  QTextCodec* codec;
+  QTextCodec* codec = QTextCodec::codecForName("UTF-8");
   QStringList daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("'", QString::KeepEmptyParts);
   // qDebug() << "xmlrpc_c: " << commDAQInterface.getDAQInterfaceStatus();
   if(daq_string.count() > 1) {
@@ -482,7 +482,7 @@ void MainWindow::DAQInterfaceOutput()
 {
   QByteArray daq_byte_array = daq_interface.readAllStandardOutput();
   //daq_interface.waitForFinished();
-  QTextCodec* codec;
+  QTextCodec* codec = QTextCodec::codecForName("UTF-8");
   daq_string = codec->codecForMib(106)->toUnicode(daq_byte_array);
   daqInterfaceTextAreaLog = daqInterfaceTextAreaLog + daq_string;
   ui->taDAQInterface->document()->setPlainText(daqInterfaceTextAreaLog);

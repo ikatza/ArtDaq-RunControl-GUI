@@ -28,7 +28,7 @@ void db_dialog::populateLvConfiguration()
   conftoolpy.start("conftool.py", QStringList() << "getListOfAvailableRunConfigurations");
   conftoolpy.waitForFinished();
   QByteArray byte_status = conftoolpy.readAll();
-  QTextCodec* codec;
+  QTextCodec* codec = QTextCodec::codecForName("UTF-8");
   daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("\n", QString::KeepEmptyParts);
   daq_string.removeLast();
   daq_string.sort();
