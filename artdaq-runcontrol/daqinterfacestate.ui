@@ -1,173 +1,136 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>daqInterfaceState</class>
- <widget class="QWidget" name="daqInterfaceState">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>687</width>
-    <height>655</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
-  <widget class="QGraphicsView" name="graphicsView">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>664</width>
-     <height>524</height>
-    </rect>
-   </property>
+  <class>daqInterfaceState</class>
+  <widget class="QWidget" name="daqInterfaceState">
+    <property name="geometry">
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>685</width>
+        <height>592</height>
+      </rect>
+    </property>
+    <property name="windowTitle">
+      <string>Form</string>
+    </property>
+    <widget class="QGraphicsView" name="graphicsView">
+      <property name="geometry">
+        <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>664</width>
+          <height>524</height>
+        </rect>
+      </property>
+    </widget>
+    <widget class="QLCDNumber" name="lcdPartitionNumber">
+      <property name="geometry">
+        <rect>
+          <x>140</x>
+          <y>550</y>
+          <width>71</width>
+          <height>31</height>
+        </rect>
+      </property>
+    </widget>
+    <widget class="QLabel" name="label">
+      <property name="geometry">
+        <rect>
+          <x>10</x>
+          <y>550</y>
+          <width>121</width>
+          <height>31</height>
+        </rect>
+      </property>
+      <property name="text">
+        <string>Partition Number:</string>
+      </property>
+    </widget>
+    <widget class="QLabel" name="label_2">
+      <property name="geometry">
+        <rect>
+          <x>230</x>
+          <y>550</y>
+          <width>121</width>
+          <height>31</height>
+        </rect>
+      </property>
+      <property name="text">
+        <string>Port Number:</string>
+      </property>
+    </widget>
+    <widget class="QLCDNumber" name="lcdPortNumber">
+      <property name="geometry">
+        <rect>
+          <x>330</x>
+          <y>550</y>
+          <width>71</width>
+          <height>31</height>
+        </rect>
+      </property>
+    </widget>
+    <widget class="QLabel" name="label_3">
+      <property name="geometry">
+        <rect>
+          <x>420</x>
+          <y>550</y>
+          <width>81</width>
+          <height>31</height>
+        </rect>
+      </property>
+      <property name="text">
+        <string>Connection:</string>
+      </property>
+    </widget>
+    <widget class="QLabel" name="labelButtonOnline">
+      <property name="geometry">
+        <rect>
+          <x>630</x>
+          <y>540</y>
+          <width>41</width>
+          <height>41</height>
+        </rect>
+      </property>
+      <property name="text">
+        <string>light</string>
+      </property>
+    </widget>
+    <widget class="QFrame" name="frame">
+      <property name="geometry">
+        <rect>
+          <x>510</x>
+          <y>550</y>
+          <width>111</width>
+          <height>31</height>
+        </rect>
+      </property>
+      <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QLabel" name="labelOnline">
+        <property name="geometry">
+          <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>111</width>
+            <height>31</height>
+          </rect>
+        </property>
+        <property name="text">
+          <string>Connection:</string>
+        </property>
+        <property name="textFormat">
+          <enum>Qt::AutoText</enum>
+        </property>
+        <property name="alignment">
+          <set>Qt::AlignCenter</set>
+        </property>
+      </widget>
+    </widget>
   </widget>
-  <widget class="QLCDNumber" name="lcdPartitionNumber">
-   <property name="geometry">
-    <rect>
-     <x>160</x>
-     <y>550</y>
-     <width>71</width>
-     <height>31</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>550</y>
-     <width>121</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Partition Number:</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>270</x>
-     <y>550</y>
-     <width>121</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Port Number:</string>
-   </property>
-  </widget>
-  <widget class="QLCDNumber" name="lcdPortNumber">
-   <property name="geometry">
-    <rect>
-     <x>370</x>
-     <y>550</y>
-     <width>71</width>
-     <height>31</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="labelButtonOnline">
-   <property name="geometry">
-    <rect>
-     <x>630</x>
-     <y>600</y>
-     <width>41</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>light</string>
-   </property>
-  </widget>
-  <widget class="QFrame" name="frame">
-   <property name="geometry">
-    <rect>
-     <x>510</x>
-     <y>610</y>
-     <width>111</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="frameShape">
-    <enum>QFrame::StyledPanel</enum>
-   </property>
-   <property name="frameShadow">
-    <enum>QFrame::Raised</enum>
-   </property>
-  </widget>
-  <widget class="QLabel" name="labelOnline">
-   <property name="geometry">
-    <rect>
-     <x>510</x>
-     <y>610</y>
-     <width>111</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Connection:</string>
-   </property>
-   <property name="textFormat">
-    <enum>Qt::AutoText</enum>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-  </widget>
-  <widget class="QLCDNumber" name="lcdRunNumber">
-   <property name="geometry">
-    <rect>
-     <x>580</x>
-     <y>550</y>
-     <width>71</width>
-     <height>31</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_4">
-   <property name="geometry">
-    <rect>
-     <x>480</x>
-     <y>550</y>
-     <width>121</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Run Number:</string>
-   </property>
-  </widget>
-  <widget class="QFrame" name="frame_2">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>540</y>
-     <width>664</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="frameShape">
-    <enum>QFrame::StyledPanel</enum>
-   </property>
-   <property name="frameShadow">
-    <enum>QFrame::Raised</enum>
-   </property>
-  </widget>
-  <zorder>frame</zorder>
-  <zorder>frame_2</zorder>
-  <zorder>graphicsView</zorder>
-  <zorder>lcdPartitionNumber</zorder>
-  <zorder>label</zorder>
-  <zorder>label_2</zorder>
-  <zorder>lcdPortNumber</zorder>
-  <zorder>labelButtonOnline</zorder>
-  <zorder>labelOnline</zorder>
-  <zorder>lcdRunNumber</zorder>
-  <zorder>label_4</zorder>
- </widget>
- <resources/>
- <connections/>
+  <resources/>
+  <connections/>
 </ui>

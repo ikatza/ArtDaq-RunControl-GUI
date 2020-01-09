@@ -25,10 +25,6 @@ daqInterfaceState::daqInterfaceState(QWidget *parent) :
   palette.setColor(QPalette::WindowText, Qt::red);
   ui->lcdPortNumber->setPalette(palette);
 
-  palette = ui->lcdRunNumber->palette();
-  palette.setColor(QPalette::WindowText, Qt::red);
-  ui->lcdRunNumber->setPalette(palette);
-
   ui->labelOnline->setText("OFFLINE");
   palette = ui->labelOnline->palette();
   palette.setColor(QPalette::WindowText, Qt::red);
@@ -36,8 +32,6 @@ daqInterfaceState::daqInterfaceState(QWidget *parent) :
 
   connect(&timerTransition, SIGNAL(timeout()), this, SLOT(setStateDiagramOff()));
   connect(&timerOnline, SIGNAL(timeout()), this, SLOT(setOnlineButtonLightGreen()));
-
-  this->parseRun_number();
 }
 
 daqInterfaceState::~daqInterfaceState()
@@ -60,7 +54,6 @@ void daqInterfaceState::setStateDiagramStopped()
   QPixmap m(imagesDirectory + "StateDiagram_stopped.png");
   scene->addPixmap(m);
   ui->graphicsView->setScene(scene);
-  this->setLCDRunNumber(this->getRun_number());
 }
 
 void daqInterfaceState::setStateDiagramBooted()
@@ -77,8 +70,6 @@ void daqInterfaceState::setStateDiagramRunning()
   QPixmap m(imagesDirectory + "StateDiagram_running.png");
   scene->addPixmap(m);
   ui->graphicsView->setScene(scene);
-  this->setLCDRunNumber(this->getRun_number() + 1);
-  this->setRunNumberLCDGreen();
 }
 
 void daqInterfaceState::setStateDiagramReady()
@@ -87,9 +78,6 @@ void daqInterfaceState::setStateDiagramReady()
   QPixmap m(imagesDirectory + "StateDiagram_ready.png");
   scene->addPixmap(m);
   ui->graphicsView->setScene(scene);
-  this->setRunNumberLCDRed();
-  this->parseRun_number();
-  this->setLCDRunNumber(this->getRun_number());
 }
 
 void daqInterfaceState::setStateDiagramBooting()
@@ -165,16 +153,6 @@ void daqInterfaceState::setOnlineButtonLightGreen()
   ui->labelButtonOnline->setPixmap(button_image);
 }
 
-int daqInterfaceState::getRun_number() const
-{
-  return run_number;
-}
-
-void daqInterfaceState::setRun_number(int run_number)
-{
-  this->run_number = run_number;
-}
-
 void daqInterfaceState::setLCDPartitionNumber(int number)
 {
   ui->lcdPartitionNumber->display(number);
@@ -183,11 +161,6 @@ void daqInterfaceState::setLCDPartitionNumber(int number)
 void daqInterfaceState::setLCDPortNumber(int number)
 {
   ui->lcdPortNumber->display(number);
-}
-
-void daqInterfaceState::setLCDRunNumber(int number)
-{
-  ui->lcdRunNumber->display(number);
 }
 
 void daqInterfaceState::setOnline()
@@ -208,22 +181,6 @@ void daqInterfaceState::setOnline()
   ui->labelOnline->setPalette(palette);
 }
 
-void daqInterfaceState::setRunNumberLCDGreen()
-{
-  QPalette palette = ui->lcdPartitionNumber->palette();
-  palette = ui->lcdRunNumber->palette();
-  palette.setColor(QPalette::WindowText, Qt::darkGreen);
-  ui->lcdRunNumber->setPalette(palette);
-}
-
-void daqInterfaceState::setRunNumberLCDRed()
-{
-  QPalette palette = ui->lcdPartitionNumber->palette();
-  palette = ui->lcdRunNumber->palette();
-  palette.setColor(QPalette::WindowText, Qt::red);
-  ui->lcdRunNumber->setPalette(palette);
-}
-
 void daqInterfaceState::setOffline()
 {
 
@@ -238,10 +195,6 @@ void daqInterfaceState::setOffline()
   palette.setColor(QPalette::WindowText, Qt::red);
   ui->lcdPortNumber->setPalette(palette);
 
-  palette = ui->lcdRunNumber->palette();
-  palette.setColor(QPalette::WindowText, Qt::red);
-  ui->lcdRunNumber->setPalette(palette);
-
   ui->labelOnline->setText("OFFLINE");
   palette = ui->labelOnline->palette();
   palette.setColor(QPalette::WindowText, Qt::red);
@@ -249,35 +202,4 @@ void daqInterfaceState::setOffline()
 
   ui->lcdPartitionNumber->display(0);
   ui->lcdPortNumber->display(0);
-  ui->lcdRunNumber->display(0);
 }
-
-void daqInterfaceState::parseRun_number()
-{
-  gpp.start("show_recent_runs.sh",QStringList()<<"1");
-  gpp.waitForFinished();
-  QByteArray byte_status = gpp.readAll();
-  QTextCodec* codec = QTextCodec::codecForName("UTF-8");
-  QStringList gpp_stringlist = codec->codecForMib(106)->toUnicode(byte_status).split(" ", QString::KeepEmptyParts);
-  int number;
-  if(gpp_stringlist.count() > 1){
-    QString number_str = gpp_stringlist.at(1);
-    number = number_str.toInt();
-  }else{
-    number = 0;
-  }
-  this->setRun_number(number);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-

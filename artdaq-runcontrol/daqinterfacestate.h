@@ -9,8 +9,6 @@
 #include <QDebug>
 #include <QTimer>
 #include <string.h>
-#include <QProcess>
-#include <QTextCodec>
 
 namespace Ui {
 class daqInterfaceState;
@@ -34,27 +32,18 @@ public:
   void setOnlineButtonGreen();
   void setLCDPartitionNumber(int number);
   void setLCDPortNumber(int number);
-  void setLCDRunNumber(int number);
   void setOnline();
   void setOffline();
   void setOnlineButtonRed();
-  int getRun_number() const;
-  void setRun_number(int value);
-
 public slots:
   void setStateDiagramOff();
 private slots:
   void setOnlineButtonLightGreen();
-  void parseRun_number();
-  void setRunNumberLCDRed();
-  void setRunNumberLCDGreen();
 private:
   Ui::daqInterfaceState *ui;
   QString imagesDirectory;
   QTimer timerTransition;
   QTimer timerOnline;
-  QProcess gpp; //general purpose process
-  int run_number;
 };
 
 #endif // DAQINTERFACESTATE_H
