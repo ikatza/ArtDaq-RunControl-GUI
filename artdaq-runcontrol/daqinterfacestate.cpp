@@ -60,6 +60,7 @@ void daqInterfaceState::setStateDiagramStopped()
   QPixmap m(imagesDirectory + "StateDiagram_stopped.png");
   scene->addPixmap(m);
   ui->graphicsView->setScene(scene);
+  this->setRunNumberLCDRed();
 }
 
 void daqInterfaceState::setStateDiagramBooted()
