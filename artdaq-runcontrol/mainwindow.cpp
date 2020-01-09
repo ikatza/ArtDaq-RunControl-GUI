@@ -300,12 +300,7 @@ void MainWindow::lvBOOTConfigSelected()
 
 void MainWindow::lvComponentsSelected()
 {
-  if(DAQState == 3) {
-    banBOOT = true;
-    qDebug() << list_comps_selected;
-    isLVSelected();
-  }
-  else if(!ui->checkBoxDatabase->isChecked()) {
+  if(!ui->checkBoxDatabase->isChecked()) {
     list_comps_selected.clear();
     QStringList list_str;
     QModelIndexList list = ui->lvComponents->selectionModel()->selectedRows();
@@ -321,6 +316,26 @@ void MainWindow::lvComponentsSelected()
     }
     else {
       banBOOT = false;
+    }
+    isLVSelected();
+  }else{
+    list_comps_selected.clear();
+    QStringList list_str;
+    QModelIndexList list = ui->lvComponents->selectionModel()->selectedRows();
+    if(list.length() != 0) {
+      qDebug() << list.length();
+      for(QModelIndex idx : list) {
+        list_str = idx.model()->data(idx, Qt::DisplayRole).toString().split(' ', QString::KeepEmptyParts);
+        list_comps_selected.append(list_str.first());
+        list_str.clear();
+      }
+      qDebug() << list_comps_selected;
+      banBOOT = true;
+    }
+    else {
+      QStringListModel* unselectedListModel = (QStringListModel*)ui->lvComponents->model();
+      list_comps_selected = unselectedListModel->stringList();
+      banBOOT = true;
     }
     isLVSelected();
   }
@@ -722,7 +737,7 @@ void MainWindow::populateLVComponentsFromDatabase()
   QStringListModel* model = new QStringListModel(this);
   model->setStringList(lvComponentsList);
   ui->lvComponents->setModel(model);
-  ui->lvComponents->setSelectionMode(QAbstractItemView::NoSelection);
+  ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
   ui->lvComponents->setEditTriggers(QAbstractItemView::NoEditTriggers);
   list_comps_selected = lvComponentsList;
 }
