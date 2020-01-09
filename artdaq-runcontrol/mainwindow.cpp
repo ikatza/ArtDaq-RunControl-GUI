@@ -692,7 +692,6 @@ void MainWindow::populateLVComponentsFromDatabase()
 
   commDAQInterface.listDAQInterfaceComponents();
   QThread::msleep(100);
-  commDAQInterface.listDAQInterfaceComponents();
 
   DAQState = 3;
   banBOOTCONFIG = false;
