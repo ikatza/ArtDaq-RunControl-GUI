@@ -37,7 +37,7 @@ daqInterfaceState::daqInterfaceState(QWidget *parent) :
   connect(&timerTransition, SIGNAL(timeout()), this, SLOT(setStateDiagramOff()));
   connect(&timerOnline, SIGNAL(timeout()), this, SLOT(setOnlineButtonLightGreen()));
 
-  this->parseRun_number();
+  //this->parseRun_number();
 }
 
 daqInterfaceState::~daqInterfaceState()
@@ -77,7 +77,6 @@ void daqInterfaceState::setStateDiagramRunning()
   QPixmap m(imagesDirectory + "StateDiagram_running.png");
   scene->addPixmap(m);
   ui->graphicsView->setScene(scene);
-  this->setLCDRunNumber(this->getRun_number() + 1);
   this->setRunNumberLCDGreen();
 }
 
@@ -147,6 +146,10 @@ void daqInterfaceState::setOnlineButtonGreen()
   ui->labelButtonOnline->setText("");
   QPixmap button_image(imagesDirectory + "button_green.png");
   ui->labelButtonOnline->setPixmap(button_image);
+  this->parseRun_number();
+  if(this->run_number_updated){
+    this->setLCDRunNumber(this->getRun_number());
+  }
   timerOnline.setSingleShot(true);
   timerOnline.start(500);
 }
@@ -263,6 +266,11 @@ void daqInterfaceState::parseRun_number()
   if(gpp_stringlist.count() > 1){
     QString number_str = gpp_stringlist.at(1);
     number = number_str.toInt();
+    if(this->run_number != number){
+      run_number_updated = true;
+    }else{
+      run_number_updated = false;
+    }
   }else{
     number = 0;
   }

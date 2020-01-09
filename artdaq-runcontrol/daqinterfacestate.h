@@ -55,6 +55,7 @@ private:
   QTimer timerOnline;
   QProcess gpp; //general purpose process
   int run_number;
+  bool run_number_updated = false;
 };
 
 #endif // DAQINTERFACESTATE_H
