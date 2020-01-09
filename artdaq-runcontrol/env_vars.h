@@ -6,6 +6,7 @@
 namespace env_vars {
   const QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
   const QString user = env.value("USER", "DEFAULT");
+  const QString daqInt_user_sourcefile = env.value("DAQINTERFACE_USER_SOURCEFILE", "EMPTY");
   const QString daqInt_user_dir = env.value("DAQINTERFACE_USER_DIR", "DEFAULT");
   const QString daqInt_wd = env.value("ARTDAQ_DAQINTERFACE_DIR", "DEFAULT");
   // QString ConfigurationFHICL_default = env.value("DAQINTERFACE_FHICL_DIRECTORY", "DEFAULT");

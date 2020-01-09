@@ -453,16 +453,24 @@ void MainWindow::bDAQInterfacePressed()
 
   // //////// estebans way
 
-  /////// new way; this works... maybe breaking something?
-  daq_interface.start("./bin/DAQInterface.sh");
-  DAQInterfaceProcess_started = true;
-  DAQInterface_PID = daq_interface.processId();
-  setButtonsDAQInterfaceInitialized(DAQInterfaceProcess_started);
-  /////// new way; this works... maybe breaking something?
 
-  state_diagram.setLCDPartitionNumber(env_vars::partition_number.toInt());
-  state_diagram.setLCDPortNumber(env_vars::rpc_port.toInt());
-  checkBoxDatabaseChanged();
+  if (env_vars::daqInt_user_sourcefile != "EMPTY"){
+    qDebug() << "env_vars::daqInt_user_sourcefile: " << env_vars::daqInt_user_sourcefile;
+    daq_interface.start("./bin/DAQInterface.sh");
+    DAQInterfaceProcess_started = true;
+    DAQInterface_PID = daq_interface.processId();
+    setButtonsDAQInterfaceInitialized(DAQInterfaceProcess_started);
+
+    state_diagram.setLCDPartitionNumber(env_vars::partition_number.toInt());
+    state_diagram.setLCDPortNumber(env_vars::rpc_port.toInt());
+    checkBoxDatabaseChanged();
+  }
+  else {
+    qCritical("Source script hasn't been sourced.\n"
+              "DAQINTERFACE_USER_SOURCEFILE: %s",
+              qUtf8Printable(env_vars::daqInt_user_sourcefile));
+    QCoreApplication::exit(1);
+  }
   return;
 }
 
