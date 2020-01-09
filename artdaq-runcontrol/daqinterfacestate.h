@@ -40,6 +40,8 @@ public:
   void setOnlineButtonRed();
   int getRun_number() const;
   void setRun_number(int value);
+  bool IsRunning() const;
+  void setIsRunning(bool value);
 
 public slots:
   void setStateDiagramOff();
@@ -55,7 +57,7 @@ private:
   QTimer timerOnline;
   QProcess gpp; //general purpose process
   int run_number;
-  bool run_number_updated = false;
+  bool isRunning = false;
 };
 
 #endif // DAQINTERFACESTATE_H

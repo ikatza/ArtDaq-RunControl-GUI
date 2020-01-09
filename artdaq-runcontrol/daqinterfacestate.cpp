@@ -60,7 +60,6 @@ void daqInterfaceState::setStateDiagramStopped()
   QPixmap m(imagesDirectory + "StateDiagram_stopped.png");
   scene->addPixmap(m);
   ui->graphicsView->setScene(scene);
-  this->setLCDRunNumber(this->getRun_number());
 }
 
 void daqInterfaceState::setStateDiagramBooted()
@@ -78,6 +77,7 @@ void daqInterfaceState::setStateDiagramRunning()
   scene->addPixmap(m);
   ui->graphicsView->setScene(scene);
   this->setRunNumberLCDGreen();
+  this->setIsRunning(true);
 }
 
 void daqInterfaceState::setStateDiagramReady()
@@ -88,7 +88,6 @@ void daqInterfaceState::setStateDiagramReady()
   ui->graphicsView->setScene(scene);
   this->setRunNumberLCDRed();
   this->parseRun_number();
-  this->setLCDRunNumber(this->getRun_number());
 }
 
 void daqInterfaceState::setStateDiagramBooting()
@@ -119,6 +118,7 @@ void daqInterfaceState::setStateDiagramStartingRun()
   ui->graphicsView->setScene(scene);
   timerTransition.setSingleShot(true);
   timerTransition.start(500);
+  this->setIsRunning(false);
 }
 
 void daqInterfaceState::setStateDiagramStoppingRun()
@@ -129,6 +129,7 @@ void daqInterfaceState::setStateDiagramStoppingRun()
   ui->graphicsView->setScene(scene);
   timerTransition.setSingleShot(true);
   timerTransition.start(500);
+  this->setIsRunning(false);
 }
 
 void daqInterfaceState::setStateDiagramTerminating()
@@ -147,7 +148,7 @@ void daqInterfaceState::setOnlineButtonGreen()
   QPixmap button_image(imagesDirectory + "button_green.png");
   ui->labelButtonOnline->setPixmap(button_image);
   this->parseRun_number();
-  if(this->run_number_updated){
+  if(this->IsRunning()){
     this->setLCDRunNumber(this->getRun_number());
   }
   timerOnline.setSingleShot(true);
@@ -219,6 +220,16 @@ void daqInterfaceState::setRunNumberLCDGreen()
   ui->lcdRunNumber->setPalette(palette);
 }
 
+bool daqInterfaceState::IsRunning() const
+{
+  return isRunning;
+}
+
+void daqInterfaceState::setIsRunning(bool value)
+{
+  isRunning = value;
+}
+
 void daqInterfaceState::setRunNumberLCDRed()
 {
   QPalette palette = ui->lcdPartitionNumber->palette();
@@ -266,11 +277,6 @@ void daqInterfaceState::parseRun_number()
   if(gpp_stringlist.count() > 1){
     QString number_str = gpp_stringlist.at(1);
     number = number_str.toInt();
-    if(this->run_number != number){
-      run_number_updated = true;
-    }else{
-      run_number_updated = false;
-    }
   }else{
     number = 0;
   }
