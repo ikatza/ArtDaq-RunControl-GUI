@@ -27,6 +27,7 @@
 #include "daqinterfacestate.h"
 #include "xmlrpc_gui_comm.h"
 #include "db_dialog.h"
+#include "env_vars.h"
 
 namespace Ui {
 class MainWindow;
@@ -42,7 +43,6 @@ public:
 
   QString getDBConfigurationFHICL_dir() const;
   void setDBConfigurationFHICL_dir(const QString &value);
-  QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
 
 private slots:
 
@@ -76,18 +76,15 @@ private slots:
   void populateLVConfigurationsFromDatabase();
   void populateLVBOOTConfigurationsFromDatabase();
   void initializeLV();
-  // protected:
-  //   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-
   void bStartRunPressed();
   void checkTransitionStartRunPressed(QString status);
 private:
   Ui::MainWindow *ui;
   QProcess daq_interface;
   QProcess daq_commands;
-  QString daq_string, user_str, wd;
-  QString DBConfigurationFHICL_dir, ConfigurationFHICL_default;
-  QString DAQInterface_logdir, daqInterfaceTextAreaLog;
+  QString daq_string;
+  QString DBConfigurationFHICL_dir;
+  QString daqInterfaceTextAreaLog;
   QStringList list_comps_selected, list_config_selected, list_BOOTConfig_selected;
   int DAQState;
   int DAQInterface_PID;

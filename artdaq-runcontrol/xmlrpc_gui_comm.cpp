@@ -3,14 +3,7 @@
 
 xmlrpc_gui_comm::xmlrpc_gui_comm()
 {
-  env = QProcessEnvironment::systemEnvironment();
-  QString base_port_str = env.value("ARTDAQ_BASE_PORT", "DEFAULT");
-  QString ports_per_partition_str = env.value("ARTDAQ_PORTS_PER_PARTITION", "DEFAULT");
-  QString partition_number_str = env.value("DAQINTERFACE_PARTITION_NUMBER", "DEFAULT");
-  QString rpc_port_str = QString::number(base_port_str.toInt() + partition_number_str.toInt() * ports_per_partition_str.toInt());
-
-  // QString daqInterfacePort = env.value("DAQINTERFACE_PORT","NOT FOUND");
-  serverUrl = "http://localhost:" + rpc_port_str + "/RPC2";
+  serverUrl = "http://localhost:" + env_vars::rpc_port + "/RPC2";
 }
 
 QString xmlrpc_gui_comm::getDAQInterfaceStatus()
@@ -68,9 +61,8 @@ void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components)
     xmlrpc_c::paramList params;
     QString a = "setdaqcomps";
 
-    QString boardreader_list_file = env.value("DAQINTERFACE_KNOWN_BOARDREADERS_LIST", "NOT FOUND");
     //qDebug()<<boardreader_list_file;
-    QFile file(boardreader_list_file);
+    QFile file(env_vars::boardreader_list_file);
     file.open(QIODevice::ReadOnly);
 
     QTextStream in(&file);
@@ -185,8 +177,7 @@ void xmlrpc_gui_comm::sendTransitionSTART()
     QStringList comp_line;
     QString line, record_directory;
 
-    QString boardreader_list_file = env.value("DAQINTERFACE_SETTINGS", "NOT FOUND");
-    QFile file(boardreader_list_file);
+    QFile file(env_vars::daqInt_settings);
     file.open(QIODevice::ReadOnly);
 
     QTextStream in(&file);
