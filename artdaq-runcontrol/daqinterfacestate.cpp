@@ -37,7 +37,7 @@ daqInterfaceState::daqInterfaceState(QWidget *parent) :
   connect(&timerTransition, SIGNAL(timeout()), this, SLOT(setStateDiagramOff()));
   connect(&timerOnline, SIGNAL(timeout()), this, SLOT(setOnlineButtonLightGreen()));
 
-  this->parseRun_number();
+  //this->parseRun_number();
 }
 
 daqInterfaceState::~daqInterfaceState()
@@ -60,7 +60,7 @@ void daqInterfaceState::setStateDiagramStopped()
   QPixmap m(imagesDirectory + "StateDiagram_stopped.png");
   scene->addPixmap(m);
   ui->graphicsView->setScene(scene);
-  this->setLCDRunNumber(this->getRun_number());
+  this->setRunNumberLCDRed();
 }
 
 void daqInterfaceState::setStateDiagramBooted()
@@ -77,8 +77,8 @@ void daqInterfaceState::setStateDiagramRunning()
   QPixmap m(imagesDirectory + "StateDiagram_running.png");
   scene->addPixmap(m);
   ui->graphicsView->setScene(scene);
-  this->setLCDRunNumber(this->getRun_number() + 1);
   this->setRunNumberLCDGreen();
+  this->setIsRunning(true);
 }
 
 void daqInterfaceState::setStateDiagramReady()
@@ -89,7 +89,6 @@ void daqInterfaceState::setStateDiagramReady()
   ui->graphicsView->setScene(scene);
   this->setRunNumberLCDRed();
   this->parseRun_number();
-  this->setLCDRunNumber(this->getRun_number());
 }
 
 void daqInterfaceState::setStateDiagramBooting()
@@ -120,6 +119,7 @@ void daqInterfaceState::setStateDiagramStartingRun()
   ui->graphicsView->setScene(scene);
   timerTransition.setSingleShot(true);
   timerTransition.start(500);
+  this->setIsRunning(false);
 }
 
 void daqInterfaceState::setStateDiagramStoppingRun()
@@ -130,6 +130,7 @@ void daqInterfaceState::setStateDiagramStoppingRun()
   ui->graphicsView->setScene(scene);
   timerTransition.setSingleShot(true);
   timerTransition.start(500);
+  this->setIsRunning(false);
 }
 
 void daqInterfaceState::setStateDiagramTerminating()
@@ -147,6 +148,10 @@ void daqInterfaceState::setOnlineButtonGreen()
   ui->labelButtonOnline->setText("");
   QPixmap button_image(imagesDirectory + "button_green.png");
   ui->labelButtonOnline->setPixmap(button_image);
+  this->parseRun_number();
+  if(this->IsRunning()){
+    this->setLCDRunNumber(this->getRun_number());
+  }
   timerOnline.setSingleShot(true);
   timerOnline.start(500);
 }
@@ -214,6 +219,16 @@ void daqInterfaceState::setRunNumberLCDGreen()
   palette = ui->lcdRunNumber->palette();
   palette.setColor(QPalette::WindowText, Qt::darkGreen);
   ui->lcdRunNumber->setPalette(palette);
+}
+
+bool daqInterfaceState::IsRunning() const
+{
+  return isRunning;
+}
+
+void daqInterfaceState::setIsRunning(bool value)
+{
+  isRunning = value;
 }
 
 void daqInterfaceState::setRunNumberLCDRed()
