@@ -80,7 +80,7 @@ void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components)
 
     QString line;
 
-    qDebug() << "Lista de comp: " << components << "size: " << components.size();
+    qDebug() << "Components: " << components << "size: " << components.size();
     std::map<std::string, xmlrpc_c::value> structData;
     std::vector<xmlrpc_c::value> array_list;
 

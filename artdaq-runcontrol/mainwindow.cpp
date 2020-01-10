@@ -318,7 +318,8 @@ void MainWindow::lvComponentsSelected()
       banBOOT = false;
     }
     isLVSelected();
-  }else{
+  }
+  else{
     list_comps_selected.clear();
     QStringList list_str;
     QModelIndexList list = ui->lvComponents->selectionModel()->selectedRows();
