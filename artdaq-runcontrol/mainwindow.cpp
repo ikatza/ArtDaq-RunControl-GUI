@@ -11,14 +11,12 @@ MainWindow::MainWindow(QWidget *parent) :
   DAQState = 0;
   banBOOT = false, banCONFIG = false, banBOOTCONFIG = false, banBOOTED = false, banCONFIGURED = false;
   banRUNNING = false, banPAUSED = false;
-  env = QProcessEnvironment::systemEnvironment();
   QProcess* daqinterface_pointer = new QProcess(this);
   daqinterface_pointer = &daq_interface;
   ui->lbStatus->setText("");
   QProcess* kill_proc = new QProcess(this);
-  user_str = env.value("USER", "DEFAULT");
-  kill_proc->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << user_str);
-  kill_proc->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << user_str);
+  kill_proc->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << env_vars::user);
+  kill_proc->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << env_vars::user);
   kill_proc->waitForFinished();
   kill_proc->~QProcess();
   connect(ui->bDAQInterface, SIGNAL(clicked(bool)), this, SLOT(bDAQInterfacePressed()));
@@ -42,7 +40,6 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(ui->bListDatabaseRunConfigurations, SIGNAL(clicked(bool)), this, SLOT(bListDatabaseRunConfigurations()));
   connect(ui->checkBoxDatabase, SIGNAL(toggled(bool)), this, SLOT(checkBoxDatabaseChanged()));
   connect(ui->bStartRun, SIGNAL(clicked(bool)), this, SLOT(bStartRunPressed()));
-  env = QProcessEnvironment::systemEnvironment();
   initializeButtons();
   state_diagram.setWindowTitle("DAQInterface State Diagram");
   state_diagram.setFixedSize(state_diagram.geometry().width(), state_diagram.geometry().height());
@@ -60,7 +57,7 @@ void MainWindow::configurateWindow()
   this->setWindowTitle("ARTDAQ RUN CONTROL");
   this->setFixedSize(this->geometry().width(), this->geometry().height());
   ui->taDAQInterface->setReadOnly(true);
-  this->setDBConfigurationFHICL_dir(env.value("HOME") + "/work-db-v4-dir");
+  this->setDBConfigurationFHICL_dir(env_vars::env.value("HOME") + "/work-db-v4-dir");
 }
 
 
@@ -73,11 +70,10 @@ void MainWindow::bEndSessionPressed()
   msgBox.setDefaultButton(QMessageBox::No);
   int ret = msgBox.exec();
   QProcess* kill_p = new QProcess(this);
-  QString user_str = env.value("USER", "DEFAULT");
   switch (ret) {
   case QMessageBox::Yes:
-    kill_p->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << user_str);
-    kill_p->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << user_str);
+    kill_p->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << env_vars::user);
+    kill_p->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << env_vars::user);
     initializeButtons();
     initializeLV();
     timer.stop();
@@ -277,7 +273,6 @@ void MainWindow::bCONFIGPressed()
 
 void MainWindow::lvBOOTConfigSelected()
 {
-  QString env_str = env.value("DAQINTERFACE_USER_DIR", "DEFAULT");
   list_BOOTConfig_selected.clear();
   QStringList list_str;
   QModelIndexList list = ui->lvConfigBOOT->selectionModel()->selectedRows();
@@ -285,8 +280,8 @@ void MainWindow::lvBOOTConfigSelected()
     qDebug() << list.length();
     for(QModelIndex idx : list) {
       list_str = idx.model()->data(idx, Qt::DisplayRole).toString().split(' ', QString::KeepEmptyParts);
-      QString str = env_str + "/" + list_str.first();
-      list_BOOTConfig_selected.append(str);
+      QString s_ = env_vars::daqInt_user_dir + "/" + list_str.first();
+      list_BOOTConfig_selected.append(s_);
       list_str.clear();
     }
     qDebug() << list_BOOTConfig_selected;
@@ -443,17 +438,10 @@ void MainWindow::setButtonsDAQInterfaceInitialized(bool started)
 
 void MainWindow::bDAQInterfacePressed()
 {
-  wd = env.value("ARTDAQ_DAQINTERFACE_DIR", "DEFAULT");
-  daq_interface.setWorkingDirectory(wd);
-  daq_commands.setWorkingDirectory(wd);
-  QStringList daqinterface_start_commands;
-  QString base_port_str = env.value("ARTDAQ_BASE_PORT", "DEFAULT");
-  QString ports_per_partition_str = env.value("ARTDAQ_PORTS_PER_PARTITION", "DEFAULT");
-  QString partition_number_str = env.value("DAQINTERFACE_PARTITION_NUMBER", "DEFAULT");
-  DAQInterface_logdir = env.value("DAQINTERFACE_LOGDIR", "DEFAULT");
-  ConfigurationFHICL_default = env.value("DAQINTERFACE_FHICL_DIRECTORY", "DEFAULT");
-  DAQInterface_logdir = DAQInterface_logdir + "/DAQInterface_partition" + partition_number_str + ".log";
-  QString rpc_port_str = QString::number(base_port_str.toInt() + partition_number_str.toInt() * ports_per_partition_str.toInt());
+  daq_interface.setWorkingDirectory(env_vars::daqInt_wd);
+  daq_commands.setWorkingDirectory(env_vars::daqInt_wd);
+
+  // QStringList daqinterface_start_commands;
 
   // qDebug() << "All env variables:";
   // QString env_variable;
@@ -476,21 +464,29 @@ void MainWindow::bDAQInterfacePressed()
   // DAQInterface_PID = daq_interface.processId();
   // setButtonsDAQInterfaceInitialized(DAQInterfaceProcess_started);
   // qDebug() << daqinterface_start_commands;
-  // //DAQInterface_logdir = "/home/ecristal/Debug.log";
-  // //DAQInterface_logwatcher.addPath(DAQInterface_logdir);
+  // //DAQInterface_logfile = "/home/ecristal/Debug.log";
+  // //DAQInterface_logwatcher.addPath(DAQInterface_logfile);
 
   // //////// estebans way
 
-  /////// new way; this works... maybe breaking something?
-  daq_interface.start("./bin/DAQInterface.sh");
-  DAQInterfaceProcess_started = true;
-  DAQInterface_PID = daq_interface.processId();
-  setButtonsDAQInterfaceInitialized(DAQInterfaceProcess_started);
-  /////// new way; this works... maybe breaking something?
 
-  state_diagram.setLCDPartitionNumber(partition_number_str.toInt());
-  state_diagram.setLCDPortNumber(rpc_port_str.toInt());
-  checkBoxDatabaseChanged();
+  if (env_vars::daqInt_user_sourcefile != "EMPTY"){
+    qDebug() << "env_vars::daqInt_user_sourcefile: " << env_vars::daqInt_user_sourcefile;
+    daq_interface.start("./bin/DAQInterface.sh");
+    DAQInterfaceProcess_started = true;
+    DAQInterface_PID = daq_interface.processId();
+    setButtonsDAQInterfaceInitialized(DAQInterfaceProcess_started);
+
+    state_diagram.setLCDPartitionNumber(env_vars::partition_number.toInt());
+    state_diagram.setLCDPortNumber(env_vars::rpc_port.toInt());
+    checkBoxDatabaseChanged();
+  }
+  else {
+    qCritical("Source script hasn't been sourced.\n"
+              "DAQINTERFACE_USER_SOURCEFILE: %s",
+              qUtf8Printable(env_vars::daqInt_user_sourcefile));
+    QCoreApplication::exit(1);
+  }
   return;
 }
 
@@ -568,15 +564,14 @@ void MainWindow::bListDAQConfigs()
   DAQState = 2;
   QRegExp reg("*.txt");
   reg.setPatternSyntax(QRegExp::Wildcard);
-  QString env_str = env.value("DAQINTERFACE_USER_DIR", "DEFAULT");
-  QDirIterator dirIt(env_str);
-  QString str;
+  QDirIterator dirIt(env_vars::daqInt_user_dir);
+  QString s_;
   QStringList list_str, list_config;
   while(dirIt.hasNext()) {
-    str = dirIt.next();
-    if(reg.exactMatch(str)) {
-      // qDebug() << "config file " << str;
-      list_str = str.split('/', QString::SkipEmptyParts);
+    s_ = dirIt.next();
+    if(reg.exactMatch(s_)) {
+      // qDebug() << "config file " << s_;
+      list_str = s_.split('/', QString::SkipEmptyParts);
       qDebug() << list_str.last();
       list_config.append(list_str.last());
     }
@@ -685,7 +680,6 @@ void MainWindow::checkBoxDatabaseChanged()
     banBOOTCONFIG = false;
   }
   else {
-    env.insert("DAQINTERFACE_FHICL_DIRECTORY", ConfigurationFHICL_default);
     // qDebug() << env.value("DAQINTERFACE_FHICL_DIRECTORY","FHICL_DEFAULT not found");
     ui->bListDatabaseRunConfigurations->setEnabled(false);
     ui->bDAQcomp->setEnabled(true);
@@ -758,16 +752,15 @@ void MainWindow::populateLVBOOTConfigurationsFromDatabase()
 {
   QRegExp reg("*.txt");
   reg.setPatternSyntax(QRegExp::Wildcard);
-  QString env_str = env.value("DAQINTERFACE_USER_DIR", "DEFAULT");
-  QDirIterator dirIt(env_str);
-  QString str;
+  QDirIterator dirIt(env_vars::daqInt_user_dir);
+  QString s_;
   QStringList list_str, list_config;
   bool foundMatch = false;
   while(dirIt.hasNext()) {
-    str = dirIt.next();
-    if(reg.exactMatch(str)) {
+    s_ = dirIt.next();
+    if(reg.exactMatch(s_)) {
       // qDebug() << "config file "<< str;
-      list_str = str.split('/', QString::SkipEmptyParts);
+      list_str = s_.split('/', QString::SkipEmptyParts);
       // qDebug() << list_str.last();
       list_config.append(list_str.last());
       foundMatch = true;
@@ -794,7 +787,7 @@ void MainWindow::setDBConfigurationFHICL_dir(const QString &value)
 
 QProcessEnvironment MainWindow::getQProcessEnvironment()
 {
-  return this->env;
+  return env_vars::env;
 }
 
 void MainWindow::MensajeParaBelen()

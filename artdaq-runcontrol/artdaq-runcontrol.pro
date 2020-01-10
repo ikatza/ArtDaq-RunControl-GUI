@@ -36,7 +36,8 @@ HEADERS  += mainwindow.h \
          xmlrpc_gui_comm.h \
          newexperimentdialog.h \
          newprofiledialog.h \
-         db_dialog.h
+         db_dialog.h \
+         env_vars.h
 
 FORMS    += mainwindow.ui \
          daqinterfacestate.ui \

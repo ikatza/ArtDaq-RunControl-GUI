@@ -4,12 +4,13 @@
 #include <xmlrpc-c/base.hpp>
 #include <xmlrpc-c/client_simple.hpp>
 #include <QString>
-#include <QProcessEnvironment>
 #include <QFile>
 #include <QTextStream>
 #include <QStringList>
 #include <vector>
 #include <QDirIterator>
+
+#include "env_vars.h"
 
 class xmlrpc_gui_comm {
 public:
@@ -24,12 +25,10 @@ public:
   void sendTransitionSTART();
   void listDAQInterfaceConfigs();
 private:
-  unsigned int port_number;
   QString serverUrl = "http://localhost:5570/RPC2";
   // QString methodName = "listdaqcomps";
   xmlrpc_c::clientSimple guiClient;
 
-  QProcessEnvironment env;
 };
 
 #endif // XMLRPC_GUI_COMM_H
