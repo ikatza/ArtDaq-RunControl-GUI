@@ -276,6 +276,7 @@ void MainWindow::lvBOOTConfigSelected()
   list_BOOTConfig_selected.clear();
   QStringList list_str;
   QModelIndexList list = ui->lvConfigBOOT->selectionModel()->selectedRows();
+  qDebug()<<"Inside"<<__func__<<"banBOOT: " << banBOOT << DAQState;
   if(list.length() != 0) {
     qDebug() << list.length();
     for(QModelIndex idx : list) {
@@ -288,7 +289,15 @@ void MainWindow::lvBOOTConfigSelected()
     banBOOTCONFIG = true;
   }
   else {
-    banBOOTCONFIG = false;
+    QStringListModel* unselectedListModel = (QStringListModel*)ui->lvConfigBOOT->model();
+    if(unselectedListModel->stringList().length() == 1){
+      list_BOOTConfig_selected = unselectedListModel->stringList();
+      banBOOTCONFIG = true;
+      banBOOT = true;
+    }else{
+      banBOOTCONFIG = false;
+      banBOOT = true;
+    }
   }
   isLVSelected();
 }
@@ -386,11 +395,11 @@ void MainWindow::isLVSelected()
     ui->bStart->setEnabled(false);
     // qDebug()<<"selected: 1";
   }
-  else if(banBOOT && banBOOTCONFIG && !banBOOTED) {
+  else if(banBOOT && banCONFIG && banBOOTCONFIG && !banBOOTED) {
     ui->bBOOT->setEnabled(true);
     // qDebug()<<"selected: 2";
   }
-  else if(!banBOOT || !banBOOTCONFIG) {
+  else if(!banBOOT || !banBOOTCONFIG || !banCONFIG) {
     ui->bBOOT->setEnabled(false);
     ui->bCONFIG->setEnabled(false);
     ui->bStartRun->setEnabled(false);
@@ -514,6 +523,7 @@ void MainWindow::DAQInterfaceOutput()
     populateLVBOOTConfigurationsFromDatabase();
     this->lvComponentsSelected();
     this->lvConfigurationsSelected();
+    this->lvBOOTConfigSelected();
     DAQState = 0;
   default:
     break;
@@ -529,6 +539,7 @@ void MainWindow::lvComps()
   ui->lvComponents->setModel(model);
   ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
   DAQState = 0;
+  this->lvComponentsSelected();
 }
 
 void MainWindow::bListDAQComps()
@@ -554,6 +565,9 @@ void MainWindow::lvConfigs()
   model->setStringList(list);
   ui->lvConfigurations->setModel(model);
   DAQState = 0;
+  this->lvConfigurationsSelected();
+  this->lvBOOTConfigSelected();
+  this->lvComponentsSelected();
   // qDebug() << "Inside " << __func__ << " , daq_string: " << daq_string;
   // qDebug() << "Inside " << __func__ << " , list: " << list;
 }
@@ -583,7 +597,6 @@ void MainWindow::bListDAQConfigs()
   QStringListModel* model = new QStringListModel(this);
   model->setStringList(list_config);
   ui->lvConfigBOOT->setModel(model);
-
   QThread::msleep(100);
 }
 
