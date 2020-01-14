@@ -55,9 +55,73 @@ MainWindow::~MainWindow()
 void MainWindow::configurateWindow()
 {
   this->setWindowTitle("ARTDAQ RUN CONTROL");
-  this->setFixedSize(this->geometry().width(), this->geometry().height());
+  //this->setFixedSize(this->geometry().width(), this->geometry().height());
   ui->taDAQInterface->setReadOnly(true);
   this->setDBConfigurationFHICL_dir(env_vars::env.value("HOME") + "/work-db-v4-dir");
+  this->originalWindowSize = this->geometry().size();
+  this->originalQuadraticMeanConfigurationFontSize = (double)qSqrt((qreal)(this->originalWindowSize.height()*this->originalWindowSize.height() + this->originalWindowSize.width()*this->originalWindowSize.width()));
+  this->gbDAQInterfaceCommandsPosition = ui->groupBox_DAQInterfaceCommands->pos();
+  this->gbDAQInterfaceCommandsSize = ui->groupBox_DAQInterfaceCommands->geometry().size();
+  this->gbTransitionCommandsPosition = ui->groupBox_TransitionCommands->pos();
+  this->gbTransitionCommandsSize = ui->groupBox_TransitionCommands->geometry().size();
+  this->gbDatabasePosition = ui->groupBox_Database->pos();
+  this->gbDatabaseSize = ui->groupBox_Database->geometry().size();
+  this->gbDAQInterfacePosition = ui->groupBox_DAQInterface->pos();
+  this->gbDAQInterfaceSize = ui->groupBox_DAQInterface->geometry().size();
+  this->bStartPosition = ui->bStart->pos();
+  this->bStartSize = ui->bStart->geometry().size();
+  this->bStopPosition = ui->bStop->pos();
+  this->bStopSize = ui->bStop->geometry().size();
+  this->bPausePosition = ui->bPause->pos();
+  this->bPauseSize = ui->bPause->geometry().size();
+  this->bTerminatePosition = ui->bTerminate->pos();
+  this->bTerminateSize = ui->bTerminate->geometry().size();
+  this->bStartRunPosition = ui->bStartRun->pos();
+  this->bStartRunSize = ui->bStartRun->geometry().size();
+  this->bListDatabaseRunConfigurationsPosition = ui->bListDatabaseRunConfigurations->pos();
+  this->bListDatabaseRunConfigurationsSize = ui->bListDatabaseRunConfigurations->geometry().size();
+  this->bDAQcompPosition = ui->bDAQcomp->pos();
+  this->bDAQcompSize = ui->bDAQcomp->geometry().size();
+  this->bDAQconfPosition = ui->bDAQconf->pos();
+  this->bDAQconfSize = ui->bDAQconf->geometry().size();
+  this->bBOOTPosition = ui->bBOOT->pos();
+  this->bBOOTSize = ui->bBOOT->geometry().size();
+  this->bCONFIGPosition = ui->bCONFIG->pos();
+  this->bCONFIGSize = ui->bCONFIG->geometry().size();
+  this->bDAQInterfacePosition = ui->bDAQInterface->pos();
+  this->bDAQInterfaceSize = ui->bDAQInterface->geometry().size();
+  this->bEndSessionPosition = ui->bEndSession->pos();
+  this->bEndSessionSize = ui->bEndSession->geometry().size();
+  this->taDAQInterfacePosition = ui->taDAQInterface->pos();
+  this->taDAQInterfaceSize = ui->taDAQInterface->geometry().size();
+  this->checkBoxDatabasePosition = ui->checkBoxDatabase->pos();
+  this->checkBoxDatabaseSize = ui->checkBoxDatabase->geometry().size();
+  this->lvComponentsPosition = ui->lvComponents->pos();
+  this->lvComponentsSize = ui->lvComponents->geometry().size();
+  this->lvConfigurationsPosition = ui->lvConfigurations->pos();
+  this->lvConfigurationsSize = ui->lvConfigurations->geometry().size();
+  this->lvConfigBOOTPosition = ui->lvConfigBOOT->pos();
+  this->lvConfigBOOTSize = ui->lvConfigBOOT->geometry().size();
+  this->lbConfigurationsPosition = ui->lbConfigurations->pos();
+  this->lbConfigurationsSize = ui->lbConfigurations->geometry().size();
+  this->lbComponentsPosition = ui->lbComponents->pos();
+  this->lbComponentsSize = ui->lbComponents->geometry().size();
+  this->lbBOOTConfigPosition = ui->lbBOOTConfig->pos();
+  this->lbBOOTConfigSize = ui->lbBOOTConfig->geometry().size();
+  this->lbStatusTitlePosition = ui->lbStatusTitle->pos();
+  this->lbStatusTitleSize = ui->lbStatusTitle->geometry().size();
+  this->lbStatusPosition = ui->lbStatus->pos();
+  this->lbStatusSize = ui->lbStatus->geometry().size();
+  this->lbMessagesPosition = ui->lbMessages->pos();
+  this->lbMessagesSize = ui->lbMessages->geometry().size();
+  this->lbConfigurationsFont = ui->lbConfigurations->font();
+  this->lbComponentsFont = ui->lbComponents->font();
+  this->lbBOOTConfigFont = ui->lbBOOTConfig->font();
+  this->lbStatusFont = ui->lbStatus->font();
+  this->lbStatusTitleFont = ui->lbStatusTitle->font();
+  this->bStartRunFont = ui->bStartRun->font();
+  this->gbDAQInterfaceCommandsFont = ui->groupBox_DAQInterfaceCommands->font();
+  this->gbDAQInterfaceFont = ui->groupBox_DAQInterface->font();
 }
 
 
@@ -122,6 +186,7 @@ void MainWindow::initializeButtons()
   QIcon ButtonIcon(button_image);
   ui->bStartRun->setIcon(ButtonIcon);
   ui->bStartRun->setIconSize(0.9 * button_image.rect().size());
+  this->bStartRunIconSize = 0.9 * button_image.rect().size();
 }
 
 void MainWindow::initializeLV()
@@ -788,6 +853,168 @@ void MainWindow::setDBConfigurationFHICL_dir(const QString &value)
 QProcessEnvironment MainWindow::getQProcessEnvironment()
 {
   return env_vars::env;
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event){
+  QMainWindow::resizeEvent(event);
+  QSize windowSize = this->geometry().size();
+  int windowHeigth = windowSize.height();
+  int windowWidth = windowSize.width();
+  ui->groupBox_DAQInterfaceCommands->move((int)(windowWidth*this->gbDAQInterfaceCommandsPosition.x()/this->originalWindowSize.width()),ui->groupBox_DAQInterfaceCommands->pos().y());
+  ui->groupBox_DAQInterfaceCommands->move(ui->groupBox_DAQInterfaceCommands->pos().x(),(int)(windowHeigth*this->gbDAQInterfaceCommandsPosition.y()/this->originalWindowSize.height()));
+  ui->groupBox_DAQInterfaceCommands->resize(ui->groupBox_DAQInterfaceCommands->geometry().size().width(),windowHeigth*this->gbDAQInterfaceCommandsSize.height()/this->originalWindowSize.height());
+  ui->groupBox_DAQInterfaceCommands->resize(windowWidth*this->gbDAQInterfaceCommandsSize.width()/this->originalWindowSize.width(),ui->groupBox_DAQInterfaceCommands->geometry().size().height());
+
+  ui->groupBox_TransitionCommands->move((int)(windowWidth*this->gbTransitionCommandsPosition.x()/this->originalWindowSize.width()),ui->groupBox_TransitionCommands->pos().y());
+  ui->groupBox_TransitionCommands->move(ui->groupBox_TransitionCommands->pos().x(),(int)(windowHeigth*this->gbTransitionCommandsPosition.y()/this->originalWindowSize.height()));
+  ui->groupBox_TransitionCommands->resize(ui->groupBox_TransitionCommands->geometry().size().width(),windowHeigth*this->gbTransitionCommandsSize.height()/this->originalWindowSize.height());
+  ui->groupBox_TransitionCommands->resize(windowWidth*this->gbTransitionCommandsSize.width()/this->originalWindowSize.width(),ui->groupBox_TransitionCommands->geometry().size().height());
+
+  ui->groupBox_Database->move((int)(windowWidth*this->gbDatabasePosition.x()/this->originalWindowSize.width()),ui->groupBox_Database->pos().y());
+  ui->groupBox_Database->move(ui->groupBox_Database->pos().x(),(int)(windowHeigth*this->gbDatabasePosition.y()/this->originalWindowSize.height()));
+  ui->groupBox_Database->resize(ui->groupBox_Database->geometry().size().width(),windowHeigth*this->gbDatabaseSize.height()/this->originalWindowSize.height());
+  ui->groupBox_Database->resize(windowWidth*this->gbDatabaseSize.width()/this->originalWindowSize.width(),ui->groupBox_Database->geometry().size().height());
+
+  ui->groupBox_DAQInterface->move((int)(windowWidth*this->gbDAQInterfacePosition.x()/this->originalWindowSize.width()),ui->groupBox_DAQInterface->pos().y());
+  ui->groupBox_DAQInterface->move(ui->groupBox_DAQInterface->pos().x(),(int)(windowHeigth*this->gbDAQInterfacePosition.y()/this->originalWindowSize.height()));
+  ui->groupBox_DAQInterface->resize(ui->groupBox_DAQInterface->geometry().size().width(),windowHeigth*this->gbDAQInterfaceSize.height()/this->originalWindowSize.height());
+  ui->groupBox_DAQInterface->resize(windowWidth*this->gbDAQInterfaceSize.width()/this->originalWindowSize.width(),ui->groupBox_DAQInterface->geometry().size().height());
+
+  ui->bStart->move((int)(windowWidth*this->bStartPosition.x()/this->originalWindowSize.width()),ui->bStart->pos().y());
+  ui->bStart->move(ui->bStart->pos().x(),(int)(windowHeigth*this->bStartPosition.y()/this->originalWindowSize.height()));
+  ui->bStart->resize(ui->bStart->geometry().size().width(),windowHeigth*this->bStartSize.height()/this->originalWindowSize.height());
+  ui->bStart->resize(windowWidth*this->bStartSize.width()/this->originalWindowSize.width(),ui->bStart->geometry().size().height());
+
+  ui->bStop->move((int)(windowWidth*this->bStopPosition.x()/this->originalWindowSize.width()),ui->bStop->pos().y());
+  ui->bStop->move(ui->bStop->pos().x(),(int)(windowHeigth*this->bStopPosition.y()/this->originalWindowSize.height()));
+  ui->bStop->resize(ui->bStop->geometry().size().width(),windowHeigth*this->bStopSize.height()/this->originalWindowSize.height());
+  ui->bStop->resize(windowWidth*this->bStopSize.width()/this->originalWindowSize.width(),ui->bStop->geometry().size().height());
+
+  ui->bPause->move((int)(windowWidth*this->bPausePosition.x()/this->originalWindowSize.width()),ui->bPause->pos().y());
+  ui->bPause->move(ui->bPause->pos().x(),(int)(windowHeigth*this->bPausePosition.y()/this->originalWindowSize.height()));
+  ui->bPause->resize(ui->bPause->geometry().size().width(),windowHeigth*this->bPauseSize.height()/this->originalWindowSize.height());
+  ui->bPause->resize(windowWidth*this->bPauseSize.width()/this->originalWindowSize.width(),ui->bPause->geometry().size().height());
+
+  ui->bTerminate->move((int)(windowWidth*this->bTerminatePosition.x()/this->originalWindowSize.width()),ui->bTerminate->pos().y());
+  ui->bTerminate->move(ui->bTerminate->pos().x(),(int)(windowHeigth*this->bTerminatePosition.y()/this->originalWindowSize.height()));
+  ui->bTerminate->resize(ui->bTerminate->geometry().size().width(),windowHeigth*this->bTerminateSize.height()/this->originalWindowSize.height());
+  ui->bTerminate->resize(windowWidth*this->bTerminateSize.width()/this->originalWindowSize.width(),ui->bTerminate->geometry().size().height());
+
+  ui->bStartRun->move((int)(windowWidth*this->bStartRunPosition.x()/this->originalWindowSize.width()),ui->bStartRun->pos().y());
+  ui->bStartRun->move(ui->bStartRun->pos().x(),(int)(windowHeigth*this->bStartRunPosition.y()/this->originalWindowSize.height()));
+  ui->bStartRun->resize(ui->bStartRun->geometry().size().width(),windowHeigth*this->bStartRunSize.height()/this->originalWindowSize.height());
+  ui->bStartRun->resize(windowWidth*this->bStartRunSize.width()/this->originalWindowSize.width(),ui->bStartRun->geometry().size().height());
+
+  ui->bListDatabaseRunConfigurations->move((int)(windowWidth*this->bListDatabaseRunConfigurationsPosition.x()/this->originalWindowSize.width()),ui->bListDatabaseRunConfigurations->pos().y());
+  ui->bListDatabaseRunConfigurations->move(ui->bListDatabaseRunConfigurations->pos().x(),(int)(windowHeigth*this->bListDatabaseRunConfigurationsPosition.y()/this->originalWindowSize.height()));
+  ui->bListDatabaseRunConfigurations->resize(ui->bListDatabaseRunConfigurations->geometry().size().width(),windowHeigth*this->bListDatabaseRunConfigurationsSize.height()/this->originalWindowSize.height());
+  ui->bListDatabaseRunConfigurations->resize(windowWidth*this->bListDatabaseRunConfigurationsSize.width()/this->originalWindowSize.width(),ui->bListDatabaseRunConfigurations->geometry().size().height());
+
+  ui->bDAQcomp->move((int)(windowWidth*this->bDAQcompPosition.x()/this->originalWindowSize.width()),ui->bDAQcomp->pos().y());
+  ui->bDAQcomp->move(ui->bDAQcomp->pos().x(),(int)(windowHeigth*this->bDAQcompPosition.y()/this->originalWindowSize.height()));
+  ui->bDAQcomp->resize(ui->bDAQcomp->geometry().size().width(),windowHeigth*this->bDAQcompSize.height()/this->originalWindowSize.height());
+  ui->bDAQcomp->resize(windowWidth*this->bDAQcompSize.width()/this->originalWindowSize.width(),ui->bDAQcomp->geometry().size().height());
+
+  ui->bDAQconf->move((int)(windowWidth*this->bDAQconfPosition.x()/this->originalWindowSize.width()),ui->bDAQconf->pos().y());
+  ui->bDAQconf->move(ui->bDAQconf->pos().x(),(int)(windowHeigth*this->bDAQconfPosition.y()/this->originalWindowSize.height()));
+  ui->bDAQconf->resize(ui->bDAQconf->geometry().size().width(),windowHeigth*this->bDAQconfSize.height()/this->originalWindowSize.height());
+  ui->bDAQconf->resize(windowWidth*this->bDAQconfSize.width()/this->originalWindowSize.width(),ui->bDAQconf->geometry().size().height());
+
+  ui->bBOOT->move((int)(windowWidth*this->bBOOTPosition.x()/this->originalWindowSize.width()),ui->bBOOT->pos().y());
+  ui->bBOOT->move(ui->bBOOT->pos().x(),(int)(windowHeigth*this->bBOOTPosition.y()/this->originalWindowSize.height()));
+  ui->bBOOT->resize(ui->bBOOT->geometry().size().width(),windowHeigth*this->bBOOTSize.height()/this->originalWindowSize.height());
+  ui->bBOOT->resize(windowWidth*this->bBOOTSize.width()/this->originalWindowSize.width(),ui->bBOOT->geometry().size().height());
+
+  ui->bCONFIG->move((int)(windowWidth*this->bCONFIGPosition.x()/this->originalWindowSize.width()),ui->bCONFIG->pos().y());
+  ui->bCONFIG->move(ui->bCONFIG->pos().x(),(int)(windowHeigth*this->bCONFIGPosition.y()/this->originalWindowSize.height()));
+  ui->bCONFIG->resize(ui->bCONFIG->geometry().size().width(),windowHeigth*this->bCONFIGSize.height()/this->originalWindowSize.height());
+  ui->bCONFIG->resize(windowWidth*this->bCONFIGSize.width()/this->originalWindowSize.width(),ui->bCONFIG->geometry().size().height());
+
+  ui->bDAQInterface->move((int)(windowWidth*this->bDAQInterfacePosition.x()/this->originalWindowSize.width()),ui->bDAQInterface->pos().y());
+  ui->bDAQInterface->move(ui->bDAQInterface->pos().x(),(int)(windowHeigth*this->bDAQInterfacePosition.y()/this->originalWindowSize.height()));
+  ui->bDAQInterface->resize(ui->bDAQInterface->geometry().size().width(),windowHeigth*this->bDAQInterfaceSize.height()/this->originalWindowSize.height());
+  ui->bDAQInterface->resize(windowWidth*this->bDAQInterfaceSize.width()/this->originalWindowSize.width(),ui->bDAQInterface->geometry().size().height());
+
+  ui->bEndSession->move((int)(windowWidth*this->bEndSessionPosition.x()/this->originalWindowSize.width()),ui->bEndSession->pos().y());
+  ui->bEndSession->move(ui->bEndSession->pos().x(),(int)(windowHeigth*this->bEndSessionPosition.y()/this->originalWindowSize.height()));
+  ui->bEndSession->resize(ui->bEndSession->geometry().size().width(),windowHeigth*this->bEndSessionSize.height()/this->originalWindowSize.height());
+  ui->bEndSession->resize(windowWidth*this->bEndSessionSize.width()/this->originalWindowSize.width(),ui->bEndSession->geometry().size().height());
+
+  ui->taDAQInterface->move((int)(windowWidth*this->taDAQInterfacePosition.x()/this->originalWindowSize.width()),ui->taDAQInterface->pos().y());
+  ui->taDAQInterface->move(ui->taDAQInterface->pos().x(),(int)(windowHeigth*this->taDAQInterfacePosition.y()/this->originalWindowSize.height()));
+  ui->taDAQInterface->resize(ui->taDAQInterface->geometry().size().width(),windowHeigth*this->taDAQInterfaceSize.height()/this->originalWindowSize.height());
+  ui->taDAQInterface->resize(windowWidth*this->taDAQInterfaceSize.width()/this->originalWindowSize.width(),ui->taDAQInterface->geometry().size().height());
+
+  ui->lbConfigurations->move((int)(windowWidth*this->lbConfigurationsPosition.x()/this->originalWindowSize.width()),ui->lbConfigurations->pos().y());
+  ui->lbConfigurations->move(ui->lbConfigurations->pos().x(),(int)(windowHeigth*this->lbConfigurationsPosition.y()/this->originalWindowSize.height()));
+  ui->lbConfigurations->resize(ui->lbConfigurations->geometry().size().width(),windowHeigth*this->lbConfigurationsSize.height()/this->originalWindowSize.height());
+  ui->lbConfigurations->resize(windowWidth*this->lbConfigurationsSize.width()/this->originalWindowSize.width(),ui->lbConfigurations->geometry().size().height());
+
+  ui->lbComponents->move((int)(windowWidth*this->lbComponentsPosition.x()/this->originalWindowSize.width()),ui->lbComponents->pos().y());
+  ui->lbComponents->move(ui->lbComponents->pos().x(),(int)(windowHeigth*this->lbComponentsPosition.y()/this->originalWindowSize.height()));
+  ui->lbComponents->resize(ui->lbComponents->geometry().size().width(),windowHeigth*this->lbComponentsSize.height()/this->originalWindowSize.height());
+  ui->lbComponents->resize(windowWidth*this->lbComponentsSize.width()/this->originalWindowSize.width(),ui->lbComponents->geometry().size().height());
+
+  ui->lbBOOTConfig->move((int)(windowWidth*this->lbBOOTConfigPosition.x()/this->originalWindowSize.width()),ui->lbBOOTConfig->pos().y());
+  ui->lbBOOTConfig->move(ui->lbBOOTConfig->pos().x(),(int)(windowHeigth*this->lbBOOTConfigPosition.y()/this->originalWindowSize.height()));
+  ui->lbBOOTConfig->resize(ui->lbBOOTConfig->geometry().size().width(),windowHeigth*this->lbBOOTConfigSize.height()/this->originalWindowSize.height());
+  ui->lbBOOTConfig->resize(windowWidth*this->lbBOOTConfigSize.width()/this->originalWindowSize.width(),ui->lbBOOTConfig->geometry().size().height());
+
+  ui->lbStatus->move((int)(windowWidth*this->lbStatusPosition.x()/this->originalWindowSize.width()),ui->lbStatus->pos().y());
+  ui->lbStatus->move(ui->lbStatus->pos().x(),(int)(windowHeigth*this->lbStatusPosition.y()/this->originalWindowSize.height()));
+  ui->lbStatus->resize(ui->lbStatus->geometry().size().width(),windowHeigth*this->lbStatusSize.height()/this->originalWindowSize.height());
+  ui->lbStatus->resize(windowWidth*this->lbStatusSize.width()/this->originalWindowSize.width(),ui->lbStatus->geometry().size().height());
+
+  ui->lbStatusTitle->move((int)(windowWidth*this->lbStatusTitlePosition.x()/this->originalWindowSize.width()),ui->lbStatusTitle->pos().y());
+  ui->lbStatusTitle->move(ui->lbStatusTitle->pos().x(),(int)(windowHeigth*this->lbStatusTitlePosition.y()/this->originalWindowSize.height()));
+  ui->lbStatusTitle->resize(ui->lbStatusTitle->geometry().size().width(),windowHeigth*this->lbStatusTitleSize.height()/this->originalWindowSize.height());
+  ui->lbStatusTitle->resize(windowWidth*this->lbStatusTitleSize.width()/this->originalWindowSize.width(),ui->lbStatusTitle->geometry().size().height());
+
+  ui->lbMessages->move((int)(windowWidth*this->lbMessagesPosition.x()/this->originalWindowSize.width()),ui->lbMessages->pos().y());
+  ui->lbMessages->move(ui->lbMessages->pos().x(),(int)(windowHeigth*this->lbMessagesPosition.y()/this->originalWindowSize.height()));
+  ui->lbMessages->resize(ui->lbMessages->geometry().size().width(),windowHeigth*this->lbMessagesSize.height()/this->originalWindowSize.height());
+  ui->lbMessages->resize(windowWidth*this->lbMessagesSize.width()/this->originalWindowSize.width(),ui->lbMessages->geometry().size().height());
+
+  ui->checkBoxDatabase->move((int)(windowWidth*this->checkBoxDatabasePosition.x()/this->originalWindowSize.width()),ui->checkBoxDatabase->pos().y());
+  ui->checkBoxDatabase->move(ui->checkBoxDatabase->pos().x(),(int)(windowHeigth*this->checkBoxDatabasePosition.y()/this->originalWindowSize.height()));
+  ui->checkBoxDatabase->resize(ui->checkBoxDatabase->geometry().size().width(),windowHeigth*this->checkBoxDatabaseSize.height()/this->originalWindowSize.height());
+  ui->checkBoxDatabase->resize(windowWidth*this->checkBoxDatabaseSize.width()/this->originalWindowSize.width(),ui->checkBoxDatabase->geometry().size().height());
+
+  ui->lvComponents->move((int)(windowWidth*this->lvComponentsPosition.x()/this->originalWindowSize.width()),ui->lvComponents->pos().y());
+  ui->lvComponents->move(ui->lvComponents->pos().x(),(int)(windowHeigth*this->lvComponentsPosition.y()/this->originalWindowSize.height()));
+  ui->lvComponents->resize(ui->lvComponents->geometry().size().width(),windowHeigth*this->lvComponentsSize.height()/this->originalWindowSize.height());
+  ui->lvComponents->resize(windowWidth*this->lvComponentsSize.width()/this->originalWindowSize.width(),ui->lvComponents->geometry().size().height());
+
+  ui->lvConfigurations->move((int)(windowWidth*this->lvConfigurationsPosition.x()/this->originalWindowSize.width()),ui->lvConfigurations->pos().y());
+  ui->lvConfigurations->move(ui->lvConfigurations->pos().x(),(int)(windowHeigth*this->lvConfigurationsPosition.y()/this->originalWindowSize.height()));
+  ui->lvConfigurations->resize(ui->lvConfigurations->geometry().size().width(),windowHeigth*this->lvConfigurationsSize.height()/this->originalWindowSize.height());
+  ui->lvConfigurations->resize(windowWidth*this->lvConfigurationsSize.width()/this->originalWindowSize.width(),ui->lvConfigurations->geometry().size().height());
+
+  ui->lvConfigBOOT->move((int)(windowWidth*this->lvConfigBOOTPosition.x()/this->originalWindowSize.width()),ui->lvConfigBOOT->pos().y());
+  ui->lvConfigBOOT->move(ui->lvConfigBOOT->pos().x(),(int)(windowHeigth*this->lvConfigBOOTPosition.y()/this->originalWindowSize.height()));
+  ui->lvConfigBOOT->resize(ui->lvConfigBOOT->geometry().size().width(),windowHeigth*this->lvConfigBOOTSize.height()/this->originalWindowSize.height());
+  ui->lvConfigBOOT->resize(windowWidth*this->lvConfigBOOTSize.width()/this->originalWindowSize.width(),ui->lvConfigBOOT->geometry().size().height());
+
+  double quadraticMeanConfigurationFontSize = (double)qSqrt((qreal)(windowHeigth*windowHeigth + windowWidth*windowWidth));
+
+  QFont gbDAQInterfaceCommandsFont_("Cantarell",11);
+  int lbFontSizeDAQInterfaceCommands = (int)(this->gbDAQInterfaceCommandsFont.pointSize()*quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize);
+  gbDAQInterfaceCommandsFont_.setPointSize(lbFontSizeDAQInterfaceCommands);
+  ui->groupBox_DAQInterfaceCommands->setFont(gbDAQInterfaceCommandsFont_);
+
+  QFont gbDAQInterfaceFont_("Cantarell",11);
+  int lbFontSizeDAQInterface = (int)(this->gbDAQInterfaceFont.pointSize()*quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize);
+  gbDAQInterfaceFont_.setPointSize(lbFontSizeDAQInterface);
+  ui->groupBox_DAQInterface->setFont(gbDAQInterfaceFont_);
+
+  QFont bStartRunFont_("Cantarell",11);
+  int lbFontSizeStartRun = (int)(this->bStartRunFont.pointSize()*quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize);
+  bStartRunFont_.setPointSize(lbFontSizeStartRun);
+  ui->bStartRun->setFont(bStartRunFont_);
+
+  QSize bStartRunIconResize = this->bStartRunIconSize*quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize;
+  qDebug() << bStartRunIconResize << this->bStartRunIconSize << quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize;
+  ui->bStartRun->setIconSize(bStartRunIconResize);
 }
 
 void MainWindow::MensajeParaBelen()

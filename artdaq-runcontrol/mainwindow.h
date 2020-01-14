@@ -23,6 +23,7 @@
 #include <QPair>
 #include <QVector>
 #include <QScrollBar>
+#include <QtMath>
 
 #include "daqinterfacestate.h"
 #include "xmlrpc_gui_comm.h"
@@ -78,6 +79,7 @@ private slots:
   void initializeLV();
   void bStartRunPressed();
   void checkTransitionStartRunPressed(QString status);
+  void resizeEvent(QResizeEvent *event);
 private:
   Ui::MainWindow *ui;
   QProcess daq_interface;
@@ -120,6 +122,21 @@ private:
   daqInterfaceState state_diagram;
   xmlrpc_gui_comm commDAQInterface;
   QPair<QString, QString> dbSelectedConfig;
+  QSize originalWindowSize;
+  QSize gbDAQInterfaceCommandsSize, gbTransitionCommandsSize, gbDatabaseSize, gbDAQInterfaceSize;
+  QPoint gbDAQInterfaceCommandsPosition, gbTransitionCommandsPosition, gbDatabasePosition, gbDAQInterfacePosition;
+  QSize bStartSize, bStopSize, bPauseSize, bTerminateSize, bStartRunSize, bListDatabaseRunConfigurationsSize;
+  QPoint bStartPosition, bStopPosition, bPausePosition, bTerminatePosition, bStartRunPosition, bListDatabaseRunConfigurationsPosition;
+  QSize bDAQcompSize, bDAQconfSize, bBOOTSize, bCONFIGSize, bDAQInterfaceSize, bEndSessionSize;
+  QPoint bDAQcompPosition, bDAQconfPosition, bBOOTPosition, bCONFIGPosition, bDAQInterfacePosition, bEndSessionPosition;
+  QSize lvComponentsSize, lvConfigurationsSize, lvConfigBOOTSize, taDAQInterfaceSize, checkBoxDatabaseSize;
+  QPoint lvComponentsPosition, lvConfigurationsPosition, lvConfigBOOTPosition, taDAQInterfacePosition, checkBoxDatabasePosition;
+  QSize lbConfigurationsSize, lbComponentsSize, lbBOOTConfigSize, lbMessagesSize, lbStatusTitleSize, lbStatusSize;
+  QPoint lbConfigurationsPosition, lbComponentsPosition, lbBOOTConfigPosition, lbMessagesPosition, lbStatusTitlePosition, lbStatusPosition;
+  QFont lbConfigurationsFont, lbComponentsFont, lbBOOTConfigFont, lbMessagesFont, lbStatusTitleFont, lbStatusFont;
+  QFont gbDAQInterfaceFont, gbDAQInterfaceCommandsFont, bStartRunFont;
+  QSize bStartRunIconSize;
+  double originalQuadraticMeanConfigurationFontSize;
 };
 
 #endif // MAINWINDOW_H
