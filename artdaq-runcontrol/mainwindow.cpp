@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(ui->checkBoxDatabase, SIGNAL(toggled(bool)), this, SLOT(checkBoxDatabaseChanged()));
   connect(ui->bStartRun, SIGNAL(clicked(bool)), this, SLOT(bStartRunPressed()));
   initializeButtons();
+  configurateMenuBar();
   state_diagram.setWindowTitle("DAQInterface State Diagram");
   state_diagram.setFixedSize(state_diagram.geometry().width(), state_diagram.geometry().height());
   state_diagram.show();
@@ -122,6 +123,18 @@ void MainWindow::configurateWindow()
   this->bStartRunFont = ui->bStartRun->font();
   this->gbDAQInterfaceCommandsFont = ui->groupBox_DAQInterfaceCommands->font();
   this->gbDAQInterfaceFont = ui->groupBox_DAQInterface->font();
+  this->taDAQInterfaceFont = ui->taDAQInterface->font();
+  this->lvComponentsFont = ui->lvComponents->font();
+  this->lvBOOTConfigFont = ui->lvConfigBOOT->font();
+  this->lvConfigurationsFont = ui->lvConfigurations->font();
+}
+
+void MainWindow::configurateMenuBar(){
+  QAction *optionsMenu = new QAction("&Options", this);
+  QMenu *Tools;
+  Tools = menuBar()->addMenu("&Tools");
+  Tools->addAction(optionsMenu);
+  connect(optionsMenu, SIGNAL(triggered(bool)), this, SLOT(openMenuOptionsDialog()));
 }
 
 
@@ -857,6 +870,10 @@ QProcessEnvironment MainWindow::getQProcessEnvironment()
 
 void MainWindow::resizeEvent(QResizeEvent *event){
   QMainWindow::resizeEvent(event);
+  this->resizeWindow();
+}
+
+void MainWindow::resizeWindow(){
   QSize windowSize = this->geometry().size();
   int windowHeigth = windowSize.height();
   int windowWidth = windowSize.width();
@@ -1013,8 +1030,55 @@ void MainWindow::resizeEvent(QResizeEvent *event){
   ui->bStartRun->setFont(bStartRunFont_);
 
   QSize bStartRunIconResize = this->bStartRunIconSize*quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize;
-  qDebug() << bStartRunIconResize << this->bStartRunIconSize << quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize;
   ui->bStartRun->setIconSize(bStartRunIconResize);
+
+  if(this->EnableFontAutoResizing){
+    QFont taDAQInterfaceFont_("Cantarell",11);
+    taDAQInterfaceFont_.setFamily(ui->taDAQInterface->font().family());
+    int taFontSizeDAQInterface = (int)(this->taDAQInterfaceFont.pointSize()*quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize);
+    taDAQInterfaceFont_.setPointSize(taFontSizeDAQInterface);
+    ui->taDAQInterface->setFont(taDAQInterfaceFont_);
+
+    QFont lvComponentsFont_("Cantarell",11);
+    lvComponentsFont_.setFamily(ui->lvComponents->font().family());
+    int lvFontSizeComponents = (int)(this->lvComponentsFont.pointSize()*quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize);
+    lvComponentsFont_.setPointSize(lvFontSizeComponents);
+    ui->lvComponents->setFont(lvComponentsFont_);
+
+    QFont lvConfigurationsFont_("Cantarell",11);
+    lvConfigurationsFont_.setFamily(ui->lvConfigurations->font().family());
+    int lvFontSizeConfigurations = (int)(this->lvConfigurationsFont.pointSize()*quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize);
+    lvConfigurationsFont_.setPointSize(lvFontSizeConfigurations);
+    ui->lvConfigurations->setFont(lvConfigurationsFont_);
+
+    QFont lvBOOTConfigFont_("Cantarell",11);
+    lvBOOTConfigFont_.setFamily(ui->lvConfigBOOT->font().family());
+    int lvFontSizeBOOTConfig = (int)(this->lvBOOTConfigFont.pointSize()*quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize);
+    lvBOOTConfigFont_.setPointSize(lvFontSizeBOOTConfig);
+    ui->lvConfigBOOT->setFont(lvBOOTConfigFont_);
+  }
+}
+
+void MainWindow::openMenuOptionsDialog(){
+  MenuOptionsDialog* menuOptionsDialog = new MenuOptionsDialog(this);
+  menuOptionsDialog->setWindowTitle("Options");
+  menuOptionsDialog->setFromMainWindowFont(ui->taDAQInterface->font());
+  menuOptionsDialog->setupFontComboBox();
+  menuOptionsDialog->setEnableAutoResizing(this->EnableFontAutoResizing);
+  menuOptionsDialog->setupCheckBoxEnableAutoResizing();
+  int result = menuOptionsDialog->exec();
+  if(result == QDialog::Accepted){
+    QFont font(menuOptionsDialog->getFontType(),menuOptionsDialog->getFontSize());
+    ui->taDAQInterface->setFont(font);
+    ui->lvComponents->setFont(font);
+    ui->lvConfigurations->setFont(font);
+    ui->lvConfigBOOT->setFont(font);
+    ui->taDAQInterface->setText(this->daqInterfaceTextAreaLog);
+    this->EnableFontAutoResizing = menuOptionsDialog->getEnableAutoResizing();
+    this->resizeWindow();
+  }else{
+
+  }
 }
 
 void MainWindow::MensajeParaBelen()

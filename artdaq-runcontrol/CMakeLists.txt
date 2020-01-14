@@ -26,6 +26,8 @@ set(artdaq-runcontrol_srcs
     xmlrpc_gui_comm.cpp
     db_dialog.cpp
     db_dialog.ui
+    menuoptionsdialog.cpp
+    menuoptionsdialog.ui
     main.cpp
 )
 

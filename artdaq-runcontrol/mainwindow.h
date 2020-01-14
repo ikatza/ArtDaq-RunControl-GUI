@@ -24,11 +24,13 @@
 #include <QVector>
 #include <QScrollBar>
 #include <QtMath>
+#include <QMenuBar>
 
 #include "daqinterfacestate.h"
 #include "xmlrpc_gui_comm.h"
 #include "db_dialog.h"
 #include "env_vars.h"
+#include "menuoptionsdialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -80,6 +82,9 @@ private slots:
   void bStartRunPressed();
   void checkTransitionStartRunPressed(QString status);
   void resizeEvent(QResizeEvent *event);
+  void configurateMenuBar();
+  void openMenuOptionsDialog();
+  void resizeWindow();
 private:
   Ui::MainWindow *ui;
   QProcess daq_interface;
@@ -134,9 +139,10 @@ private:
   QSize lbConfigurationsSize, lbComponentsSize, lbBOOTConfigSize, lbMessagesSize, lbStatusTitleSize, lbStatusSize;
   QPoint lbConfigurationsPosition, lbComponentsPosition, lbBOOTConfigPosition, lbMessagesPosition, lbStatusTitlePosition, lbStatusPosition;
   QFont lbConfigurationsFont, lbComponentsFont, lbBOOTConfigFont, lbMessagesFont, lbStatusTitleFont, lbStatusFont;
-  QFont gbDAQInterfaceFont, gbDAQInterfaceCommandsFont, bStartRunFont;
+  QFont gbDAQInterfaceFont, gbDAQInterfaceCommandsFont, bStartRunFont, taDAQInterfaceFont, lvComponentsFont, lvConfigurationsFont, lvBOOTConfigFont;
   QSize bStartRunIconSize;
   double originalQuadraticMeanConfigurationFontSize;
+  bool EnableFontAutoResizing = true;
 };
 
 #endif // MAINWINDOW_H

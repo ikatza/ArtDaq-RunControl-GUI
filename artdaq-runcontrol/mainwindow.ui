@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1086</width>
-    <height>573</height>
+    <height>588</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,16 +26,6 @@
     <property name="title">
      <string>DAQInterface</string>
     </property>
-    <widget class="QPlainTextEdit" name="taDAQInterface">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>50</y>
-       <width>351</width>
-       <height>281</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="QPushButton" name="bDAQInterface">
      <property name="geometry">
       <rect>
@@ -112,6 +102,16 @@
      </property>
      <property name="text">
       <string>Para Belen</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="taDAQInterface">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>50</y>
+       <width>351</width>
+       <height>281</height>
+      </rect>
      </property>
     </widget>
    </widget>
@@ -396,7 +396,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>false</bool>
+    <bool>true</bool>
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
