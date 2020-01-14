@@ -276,7 +276,6 @@ void MainWindow::lvBOOTConfigSelected()
   list_BOOTConfig_selected.clear();
   QStringList list_str;
   QModelIndexList list = ui->lvConfigBOOT->selectionModel()->selectedRows();
-  qDebug()<<"Inside"<<__func__<<"banBOOT: " << banBOOT << DAQState;
   if(list.length() != 0) {
     qDebug() << list.length();
     for(QModelIndex idx : list) {
@@ -291,7 +290,9 @@ void MainWindow::lvBOOTConfigSelected()
   else {
     QStringListModel* unselectedListModel = (QStringListModel*)ui->lvConfigBOOT->model();
     if(unselectedListModel->stringList().length() == 1){
-      list_BOOTConfig_selected = unselectedListModel->stringList();
+      list_BOOTConfig_selected.clear();
+      QString s_ = env_vars::daqInt_user_dir + "/" + unselectedListModel->stringList().first();
+      list_BOOTConfig_selected.append(s_);
       banBOOTCONFIG = true;
       banBOOT = true;
     }else{
@@ -368,7 +369,14 @@ void MainWindow::lvConfigurationsSelected()
       banCONFIG = true;
     }
     else {
-      banCONFIG = false;
+      qDebug()<<__func__<<"entered else func";
+      QStringListModel* unselectedListModel = (QStringListModel*)ui->lvConfigurations->model();
+      if(unselectedListModel->stringList().length() == 1){
+        list_config_selected= unselectedListModel->stringList();
+        banCONFIG = true;
+      }else{
+        banCONFIG = false;
+      }
     }
     isLVSelected();
   }
