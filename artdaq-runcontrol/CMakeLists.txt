@@ -12,6 +12,9 @@ set(CMAKE_AUTOUIC ON)
 include_directories($ENV{XMLRPC_C_FQ_DIR}/include)
 link_directories($ENV{XMLRPC_C_FQ_DIR}/lib)
 
+set(CMAKE_BUILD_TYPE Debug)
+add_definitions(-DQT_MESSAGELOGCONTEXT)
+
 add_subdirectory(resources)
 
 # Find the QtWidgets library
@@ -28,6 +31,7 @@ set(artdaq-runcontrol_srcs
     db_dialog.ui
     menuoptionsdialog.cpp
     menuoptionsdialog.ui
+    messagehandler.cpp
     main.cpp
 )
 
