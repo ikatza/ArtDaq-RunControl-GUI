@@ -16,8 +16,6 @@
 
 #define LOG_WRITE(OUTPUT, COLOR, LEVEL, MSG, FILE, LINE, FUNCTION) OUTPUT << COLOR << QTime::currentTime().toString("hhmmsszzz").toStdString() << " " LEVEL " " << COLOR_RESET << " FILE::" << FILE << " LINE::" << LINE << " FUNCTION::" << FUNCTION << "\n\t" << COLOR << MSG << COLOR_RESET << "\n";
 
-void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
-
 void customLogWriter(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 
 #endif // MESSAGEHANDLER_H
