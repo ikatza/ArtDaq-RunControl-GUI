@@ -12,7 +12,11 @@ set(CMAKE_AUTOUIC ON)
 include_directories($ENV{XMLRPC_C_FQ_DIR}/include)
 link_directories($ENV{XMLRPC_C_FQ_DIR}/lib)
 
-set(CMAKE_BUILD_TYPE Debug)
+# set(CMAKE_BUILD_TYPE Debug) # un-comment to build debug product
+
+add_definitions(-DQT_NO_DEBUG_OUTPUT) # comment to have debug messages printed
+
+# get context info about files, functions and lines where output is being printed 
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 
 add_subdirectory(resources)
