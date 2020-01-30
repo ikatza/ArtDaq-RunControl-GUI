@@ -690,6 +690,8 @@ void MainWindow::bStartRunPressed()
 {
 
   banStartRunPressed = true;
+  startRunConfigSignalIssued = false;
+  startRunStartSignalIssued = false;
   this->bBOOTPressed();
 }
 
@@ -702,15 +704,26 @@ void MainWindow::checkTransitionStartRunPressed(QString status)
     switch(est) {
     case 1: //stopped
       banStartRunPressed = false;
+      startRunConfigSignalIssued = false;
+      startRunStartSignalIssued = false;
       break;
     case 2: //booted
-      this->bCONFIGPressed();
+      if(!startRunConfigSignalIssued){
+        this->bCONFIGPressed();
+      }else{
+        //Add error message
+      }
       break;
     case 3: //ready
-      this->bSTARTPressed();
+      if(!startRunStartSignalIssued){
+        this->bSTARTPressed();
+      }else{
+        //Add error message
+      }
+      startRunConfigSignalIssued = false;
       break;
     case 4: // running
-
+      startRunStartSignalIssued = false;
       break;
     case 5: // pause
 
@@ -719,10 +732,10 @@ void MainWindow::checkTransitionStartRunPressed(QString status)
 
       break;
     case 7: // configuring
-
+      startRunConfigSignalIssued = true;
       break;
     case 8: // starting
-
+      startRunStartSignalIssued = true;
       break;
     case 9: // stopping
       banStartRunPressed = false;

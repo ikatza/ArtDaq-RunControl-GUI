@@ -97,6 +97,7 @@ private:
   int DAQInterface_PID;
   bool DAQInterfaceProcess_started;
   bool banBOOT, banCONFIG, banBOOTCONFIG, banBOOTED, banCONFIGURED, banRUNNING, banPAUSED, banStartRunPressed;
+  bool startRunConfigSignalIssued, startRunStartSignalIssued;
   QTimer timer;
   QFileSystemWatcher DAQInterface_logwatcher;
   QMap<QString, QString> status_map = {{"stopped", "stopped"},
