@@ -85,6 +85,9 @@ private slots:
   void configurateMenuBar();
   void openMenuOptionsDialog();
   void resizeWindow();
+  void setButtonsStoppedEnabled();
+  void setButtonsStoppedDisabled();
+  void setAllButtonsDisabled();
 private:
   Ui::MainWindow *ui;
   QProcess daq_interface;

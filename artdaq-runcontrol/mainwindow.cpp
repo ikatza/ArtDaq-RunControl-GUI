@@ -251,6 +251,7 @@ void MainWindow::status(QString status)
     statusTransition();
     state_diagram.setStateDiagramStopped();
     state_diagram.setOnlineButtonGreen();
+    setButtonsStoppedEnabled();
     break;
   case 2: //booted
     //banBOOT = false;
@@ -264,6 +265,8 @@ void MainWindow::status(QString status)
     statusTransition();
     state_diagram.setStateDiagramBooted();
     state_diagram.setOnlineButtonGreen();
+    setButtonsStoppedDisabled();
+    ui->bTerminate->setEnabled(true);
     break;
   case 3: //ready
     //banBOOT = false;
@@ -277,6 +280,8 @@ void MainWindow::status(QString status)
     statusTransition();
     state_diagram.setStateDiagramReady();
     state_diagram.setOnlineButtonGreen();
+    setButtonsStoppedDisabled();
+    ui->bTerminate->setEnabled(true);
     break;
   case 4: // running
     banRUNNING = true;
@@ -284,6 +289,7 @@ void MainWindow::status(QString status)
     statusTransition();
     state_diagram.setStateDiagramRunning();
     state_diagram.setOnlineButtonGreen();
+    setButtonsStoppedDisabled();
     break;
   case 5: // pause
     banRUNNING = false;
@@ -292,22 +298,32 @@ void MainWindow::status(QString status)
   case 6: // booting
     state_diagram.setStateDiagramBooting();
     state_diagram.setOnlineButtonGreen();
+    setButtonsStoppedDisabled();
+    setAllButtonsDisabled();
     break;
   case 7: // configuring
     state_diagram.setStateDiagramConfiguring();
     state_diagram.setOnlineButtonGreen();
+    setButtonsStoppedDisabled();
+    setAllButtonsDisabled();
     break;
   case 8: // starting
     state_diagram.setStateDiagramStartingRun();
     state_diagram.setOnlineButtonGreen();
+    setButtonsStoppedDisabled();
+    setAllButtonsDisabled();
     break;
   case 9: // stopping
     state_diagram.setStateDiagramStoppingRun();
     state_diagram.setOnlineButtonGreen();
+    setButtonsStoppedDisabled();
+    setAllButtonsDisabled();
     break;
   case 10: // terminating
     state_diagram.setStateDiagramTerminating();
     state_diagram.setOnlineButtonGreen();
+    setButtonsStoppedDisabled();
+    setAllButtonsDisabled();
     break;
   case 99:
     initializeButtons();
@@ -320,6 +336,30 @@ void MainWindow::status(QString status)
   default:
     break;
   }
+}
+
+void MainWindow::setButtonsStoppedEnabled(){
+  ui->bEndSession->setEnabled(true);
+  ui->bDAQcomp->setEnabled(true);
+  ui->bDAQconf->setEnabled(true);
+}
+
+void MainWindow::setButtonsStoppedDisabled(){
+  ui->bEndSession->setEnabled(false);
+  ui->bDAQcomp->setEnabled(false);
+  ui->bDAQconf->setEnabled(false);
+}
+
+void MainWindow::setAllButtonsDisabled(){
+  ui->bEndSession->setEnabled(false);
+  ui->bDAQcomp->setEnabled(false);
+  ui->bDAQconf->setEnabled(false);
+  ui->bBOOT->setEnabled(false);
+  ui->bCONFIG->setEnabled(false);
+  ui->bStart->setEnabled(false);
+  ui->bStop->setEnabled(false);
+  ui->bTerminate->setEnabled(false);
+  ui->bStartRun->setEnabled(false);
 }
 
 void MainWindow::bSTOPPressed()
