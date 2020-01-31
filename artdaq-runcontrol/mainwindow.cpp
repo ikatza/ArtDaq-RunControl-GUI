@@ -252,6 +252,7 @@ void MainWindow::status(QString status)
     state_diagram.setStateDiagramStopped();
     state_diagram.setOnlineButtonGreen();
     setButtonsStoppedEnabled();
+    ui->checkBoxDatabase->setEnabled(true);
     break;
   case 2: //booted
     //banBOOT = false;
@@ -267,6 +268,7 @@ void MainWindow::status(QString status)
     state_diagram.setOnlineButtonGreen();
     setButtonsStoppedDisabled();
     ui->bTerminate->setEnabled(true);
+    ui->checkBoxDatabase->setEnabled(false);
     break;
   case 3: //ready
     //banBOOT = false;
@@ -282,6 +284,7 @@ void MainWindow::status(QString status)
     state_diagram.setOnlineButtonGreen();
     setButtonsStoppedDisabled();
     ui->bTerminate->setEnabled(true);
+    ui->checkBoxDatabase->setEnabled(false);
     break;
   case 4: // running
     banRUNNING = true;
@@ -290,6 +293,7 @@ void MainWindow::status(QString status)
     state_diagram.setStateDiagramRunning();
     state_diagram.setOnlineButtonGreen();
     setButtonsStoppedDisabled();
+    ui->checkBoxDatabase->setEnabled(false);
     break;
   case 5: // pause
     banRUNNING = false;
@@ -300,30 +304,35 @@ void MainWindow::status(QString status)
     state_diagram.setOnlineButtonGreen();
     setButtonsStoppedDisabled();
     setAllButtonsDisabled();
+    ui->checkBoxDatabase->setEnabled(false);
     break;
   case 7: // configuring
     state_diagram.setStateDiagramConfiguring();
     state_diagram.setOnlineButtonGreen();
     setButtonsStoppedDisabled();
     setAllButtonsDisabled();
+    ui->checkBoxDatabase->setEnabled(false);
     break;
   case 8: // starting
     state_diagram.setStateDiagramStartingRun();
     state_diagram.setOnlineButtonGreen();
     setButtonsStoppedDisabled();
     setAllButtonsDisabled();
+    ui->checkBoxDatabase->setEnabled(false);
     break;
   case 9: // stopping
     state_diagram.setStateDiagramStoppingRun();
     state_diagram.setOnlineButtonGreen();
     setButtonsStoppedDisabled();
     setAllButtonsDisabled();
+    ui->checkBoxDatabase->setEnabled(false);
     break;
   case 10: // terminating
     state_diagram.setStateDiagramTerminating();
     state_diagram.setOnlineButtonGreen();
     setButtonsStoppedDisabled();
     setAllButtonsDisabled();
+    ui->checkBoxDatabase->setEnabled(false);
     break;
   case 99:
     initializeButtons();
