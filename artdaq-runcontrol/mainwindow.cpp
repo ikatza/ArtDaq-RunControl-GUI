@@ -22,7 +22,6 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(ui->bDAQInterface, SIGNAL(clicked(bool)), this, SLOT(bDAQInterfacePressed()));
   connect(daqinterface_pointer, SIGNAL(readyReadStandardOutput()), this, SLOT(DAQInterfaceOutput()));
   connect(&DAQInterface_logwatcher, SIGNAL(fileChanged(QString)), this, SLOT(bDebugPressed()));
-  connect(daqinterface_pointer, SIGNAL(started()), this, SLOT(setButtonsDAQInterfaceInitialized()));
   connect(ui->bBelen, SIGNAL(clicked(bool)), this, SLOT(MensajeParaBelen()));
   connect(ui->bDAQcomp, SIGNAL(clicked(bool)), this, SLOT(bListDAQComps()));
   connect(ui->bDAQconf, SIGNAL(clicked(bool)), this, SLOT(bListDAQConfigs()));
@@ -340,7 +339,6 @@ void MainWindow::bSTARTPressed()
 void MainWindow::bBOOTPressed()
 {
   commDAQInterface.setDAQInterfaceComponents(list_comps_selected);
-  qDebug() << list_BOOTConfig_selected;
   commDAQInterface.sendTransitionBOOT(list_BOOTConfig_selected);
 }
 
@@ -355,14 +353,12 @@ void MainWindow::lvBOOTConfigSelected()
   QStringList list_str;
   QModelIndexList list = ui->lvConfigBOOT->selectionModel()->selectedRows();
   if(list.length() != 0) {
-    qDebug() << list.length();
     for(QModelIndex idx : list) {
       list_str = idx.model()->data(idx, Qt::DisplayRole).toString().split(' ', QString::KeepEmptyParts);
       QString s_ = env_vars::daqInt_user_dir + "/" + list_str.first();
       list_BOOTConfig_selected.append(s_);
       list_str.clear();
     }
-    qDebug() << list_BOOTConfig_selected;
     banBOOTCONFIG = true;
   }
   else {
@@ -388,13 +384,11 @@ void MainWindow::lvComponentsSelected()
     QStringList list_str;
     QModelIndexList list = ui->lvComponents->selectionModel()->selectedRows();
     if(list.length() != 0) {
-      qDebug() << list.length();
       for(QModelIndex idx : list) {
         list_str = idx.model()->data(idx, Qt::DisplayRole).toString().split(' ', QString::KeepEmptyParts);
         list_comps_selected.append(list_str.first());
         list_str.clear();
       }
-      qDebug() << list_comps_selected;
       banBOOT = true;
     }
     else {
@@ -407,13 +401,11 @@ void MainWindow::lvComponentsSelected()
     QStringList list_str;
     QModelIndexList list = ui->lvComponents->selectionModel()->selectedRows();
     if(list.length() != 0) {
-      qDebug() << list.length();
       for(QModelIndex idx : list) {
         list_str = idx.model()->data(idx, Qt::DisplayRole).toString().split(' ', QString::KeepEmptyParts);
         list_comps_selected.append(list_str.first());
         list_str.clear();
       }
-      qDebug() << list_comps_selected;
       banBOOT = true;
     }
     else {
@@ -429,7 +421,6 @@ void MainWindow::lvConfigurationsSelected()
 {
   if(DAQState == 3) {
     banCONFIG = true;
-    qDebug() << list_config_selected;
     isLVSelected();
   }
   else if(!ui->checkBoxDatabase->isChecked()) {
@@ -437,17 +428,14 @@ void MainWindow::lvConfigurationsSelected()
     QStringList list_str;
     QModelIndexList list = ui->lvConfigurations->selectionModel()->selectedRows();
     if(list.length() != 0) {
-      qDebug() << list.length();
       for(QModelIndex idx : list) {
         list_str = idx.model()->data(idx, Qt::DisplayRole).toString().split(' ', QString::KeepEmptyParts);
         list_config_selected.append(list_str.first());
         list_str.clear();
       }
-      qDebug() << list_config_selected;
       banCONFIG = true;
     }
     else {
-      qDebug()<<__func__<<"entered else func";
       QStringListModel* unselectedListModel = (QStringListModel*)ui->lvConfigurations->model();
       if(unselectedListModel->stringList().length() == 1){
         list_config_selected= unselectedListModel->stringList();
@@ -672,11 +660,9 @@ void MainWindow::bListDAQConfigs()
     if(reg.exactMatch(s_)) {
       // qDebug() << "config file " << s_;
       list_str = s_.split('/', QString::SkipEmptyParts);
-      qDebug() << list_str.last();
       list_config.append(list_str.last());
     }
     else {
-      qDebug() << "not config file";
     }
   }
 
