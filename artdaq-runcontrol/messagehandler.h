@@ -6,6 +6,7 @@
 #include <QtGlobal>
 #include <QTime>
 #include <iostream>
+#include <QDebug>
 
 #define COLOR_DEBUG "\033[1;37m"
 #define COLOR_INFO "\033[1;32m"

@@ -31,6 +31,7 @@
 #include "db_dialog.h"
 #include "env_vars.h"
 #include "menuoptionsdialog.h"
+#include "messagehandler.h"
 
 namespace Ui {
 class MainWindow;
