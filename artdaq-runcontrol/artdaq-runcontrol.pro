@@ -30,7 +30,8 @@ SOURCES += main.cpp\
         newexperimentdialog.cpp \
         newprofiledialog.cpp \
         db_dialog.cpp \
-    menuoptionsdialog.cpp
+        menuoptionsdialog.cpp \
+        messagehandler.cpp
 
 HEADERS  += mainwindow.h \
          daqinterfacestate.h \
@@ -39,14 +40,15 @@ HEADERS  += mainwindow.h \
          newprofiledialog.h \
          db_dialog.h \
          env_vars.h \
-    menuoptionsdialog.h
+         menuoptionsdialog.h \
+         messagehandler.h
 
 FORMS    += mainwindow.ui \
          daqinterfacestate.ui \
          newexperimentdialog.ui \
          newprofiledialog.ui \
          db_dialog.ui \
-    menuoptionsdialog.ui
+         menuoptionsdialog.ui
 
 INCLUDEPATH += /root/artdaq-demo-base/products/xmlrpc_c/v1_39_10d/Linux64bit+3.10-2.17-e15-prof/include
 
