@@ -133,10 +133,66 @@ void MainWindow::configurateWindow()
 void MainWindow::configurateMenuBar(){
   qDebug()<<"Starting function";
   QAction *optionsMenu = new QAction("&Options", this);
+  QAction *exitMenu = new QAction("&Exit", this);
+  QAction *windowMenu = new QAction("&Show state diagram", this);
   QMenu *Tools;
+  Tools = menuBar()->addMenu("&File");
+  Tools->addAction(exitMenu);
   Tools = menuBar()->addMenu("&Tools");
   Tools->addAction(optionsMenu);
+  Tools = menuBar()->addMenu("&Window");
+  Tools->addAction(windowMenu);
   connect(optionsMenu, SIGNAL(triggered(bool)), this, SLOT(openMenuOptionsDialog()));
+  connect(exitMenu, SIGNAL(triggered(bool)), this, SLOT(closeProgram()));
+  connect(windowMenu, SIGNAL(triggered(bool)), this, SLOT(showDaqInterfaceStateWindow()));
+  qDebug()<<"Ending function";
+}
+
+void MainWindow::showDaqInterfaceStateWindow(){
+  qDebug()<<"Starting function";
+  state_diagram.show();
+  qDebug()<<"Ending function";
+}
+
+void MainWindow::closeProgram(){
+  qDebug()<<"Starting function";
+  QMessageBox msgBox;
+  msgBox.setText("Closing Program");
+  msgBox.setInformativeText("Do you really wish to close the program?\n All the artDAQ processes will be destroyed ");
+  msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+  msgBox.setDefaultButton(QMessageBox::No);
+  int ret = msgBox.exec();
+  QProcess* kill_p = new QProcess(this);
+  switch (ret) {
+  case QMessageBox::Yes:
+    kill_p->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << env_vars::user);
+    kill_p->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << env_vars::user);
+    exit(0);
+    break;
+  case QMessageBox::No:
+    break;
+  default:
+    break;
+  }
+  qDebug()<<"Ending function";
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+  qDebug()<<"Starting function";
+  QProcess* kill_p = new QProcess(this);
+  QMessageBox::StandardButton msgBox = QMessageBox::question( this, "artdaqRunControl",
+                                                                  tr("Do you really wish to close the program?\n All the artDAQ processes will be destroyed"),
+                                                                  QMessageBox::No | QMessageBox::Yes,
+                                                                  QMessageBox::Yes);
+  if (msgBox != QMessageBox::Yes) {
+    event->ignore();
+  }else{
+    kill_p->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << env_vars::user);
+    kill_p->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << env_vars::user);
+    event->accept();
+    exit(0);
+  }
   qDebug()<<"Ending function";
 }
 
