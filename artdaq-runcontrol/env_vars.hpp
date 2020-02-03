@@ -1,5 +1,5 @@
-#ifndef ENV_VARS_H
-#define ENV_VARS_H
+#ifndef ENV_VARS_HPP
+#define ENV_VARS_HPP
 
 #include <QProcessEnvironment>
 
@@ -21,4 +21,4 @@ namespace env_vars {
 
 }
 
-#endif
+#endif // ENV_VARS_HPP

@@ -1,5 +1,5 @@
-#ifndef XMLRPC_GUI_COMM_H
-#define XMLRPC_GUI_COMM_H
+#ifndef XMLRPC_GUI_COMM_HPP
+#define XMLRPC_GUI_COMM_HPP
 
 #include <xmlrpc-c/base.hpp>
 #include <xmlrpc-c/client_simple.hpp>
@@ -10,7 +10,7 @@
 #include <vector>
 #include <QDirIterator>
 
-#include "env_vars.h"
+#include "env_vars.hpp"
 
 class xmlrpc_gui_comm {
 public:
@@ -31,4 +31,4 @@ private:
 
 };
 
-#endif // XMLRPC_GUI_COMM_H
+#endif // XMLRPC_GUI_COMM_HPP

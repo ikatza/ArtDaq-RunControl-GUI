@@ -1,5 +1,5 @@
-#ifndef MESSAGEHANDLER_H
-#define MESSAGEHANDLER_H
+#ifndef MESSAGEHANDLER_HPP
+#define MESSAGEHANDLER_HPP
 
 
 
@@ -26,4 +26,4 @@
 
 void customLogWriter(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 
-#endif // MESSAGEHANDLER_H
+#endif // MESSAGEHANDLER_HPP

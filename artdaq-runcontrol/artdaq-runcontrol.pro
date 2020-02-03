@@ -33,20 +33,16 @@ SOURCES += main.cpp\
         menuoptionsdialog.cpp \
         messagehandler.cpp
 
-HEADERS  += mainwindow.h \
-         daqinterfacestate.h \
-         xmlrpc_gui_comm.h \
-         newexperimentdialog.h \
-         newprofiledialog.h \
-         db_dialog.h \
-         env_vars.h \
-         menuoptionsdialog.h \
-         messagehandler.h
+HEADERS  += mainwindow.hpp \
+         daqinterfacestate.hpp \
+         xmlrpc_gui_comm.hpp \
+         db_dialog.hpp \
+         env_vars.hpp \
+         menuoptionsdialog.hpp \
+         messagehandler.hpp
 
 FORMS    += mainwindow.ui \
          daqinterfacestate.ui \
-         newexperimentdialog.ui \
-         newprofiledialog.ui \
          db_dialog.ui \
          menuoptionsdialog.ui
 

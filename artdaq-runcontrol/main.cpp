@@ -1,5 +1,5 @@
-#include "mainwindow.h"
-#include "messagehandler.h"
+#include "mainwindow.hpp"
+#include "messagehandler.hpp"
 #include <QApplication>
 
 int main(int argc, char *argv[])

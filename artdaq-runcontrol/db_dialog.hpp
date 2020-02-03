@@ -1,5 +1,5 @@
-#ifndef DB_DIALOG_H
-#define DB_DIALOG_H
+#ifndef DB_DIALOG_HPP
+#define DB_DIALOG_HPP
 
 #include <QDialog>
 #include <QProcess>
@@ -52,4 +52,4 @@ private:
   QProcessEnvironment env;
 };
 
-#endif // DB_DIALOG_H
+#endif // DB_DIALOG_HPP

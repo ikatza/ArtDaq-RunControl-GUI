@@ -1,4 +1,4 @@
-#include "db_dialog.h"
+#include "db_dialog.hpp"
 #include "ui_db_dialog.h"
 
 db_dialog::db_dialog(QWidget *parent) :

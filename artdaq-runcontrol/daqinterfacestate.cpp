@@ -1,4 +1,4 @@
-#include "daqinterfacestate.h"
+#include "daqinterfacestate.hpp"
 #include "ui_daqinterfacestate.h"
 
 daqInterfaceState::daqInterfaceState(QWidget *parent) :

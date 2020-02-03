@@ -1,4 +1,4 @@
-#include "xmlrpc_gui_comm.h"
+#include "xmlrpc_gui_comm.hpp"
 #include <QDebug>
 
 xmlrpc_gui_comm::xmlrpc_gui_comm()

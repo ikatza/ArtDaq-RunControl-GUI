@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef MAINWINDOW_HPP
+#define MAINWINDOW_HPP
 
 #include <QMainWindow>
 #include <QProcess>
@@ -27,12 +27,12 @@
 #include <QMenuBar>
 #include <QCloseEvent>
 
-#include "daqinterfacestate.h"
-#include "xmlrpc_gui_comm.h"
-#include "db_dialog.h"
-#include "env_vars.h"
-#include "menuoptionsdialog.h"
-#include "messagehandler.h"
+#include "daqinterfacestate.hpp"
+#include "xmlrpc_gui_comm.hpp"
+#include "db_dialog.hpp"
+#include "env_vars.hpp"
+#include "menuoptionsdialog.hpp"
+#include "messagehandler.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -154,4 +154,4 @@ private:
   bool EnableFontAutoResizing = true;
 };
 
-#endif // MAINWINDOW_H
+#endif // MAINWINDOW_HPP

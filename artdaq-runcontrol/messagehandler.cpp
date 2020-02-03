@@ -1,4 +1,4 @@
-#include "messagehandler.h"
+#include "messagehandler.hpp"
 
 
 void customLogWriter(QtMsgType type, const QMessageLogContext &context, const QString &msg) {

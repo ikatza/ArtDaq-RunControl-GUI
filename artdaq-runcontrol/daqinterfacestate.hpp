@@ -1,5 +1,5 @@
-#ifndef DAQINTERFACESTATE_H
-#define DAQINTERFACESTATE_H
+#ifndef DAQINTERFACESTATE_HPP
+#define DAQINTERFACESTATE_HPP
 
 #include <QWidget>
 #include <QGraphicsScene>
@@ -60,4 +60,4 @@ private:
   bool isRunning = false;
 };
 
-#endif // DAQINTERFACESTATE_H
+#endif // DAQINTERFACESTATE_HPP

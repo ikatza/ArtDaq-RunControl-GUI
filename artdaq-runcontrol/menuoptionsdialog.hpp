@@ -1,5 +1,5 @@
-#ifndef MENUOPTIONSDIALOG_H
-#define MENUOPTIONSDIALOG_H
+#ifndef MENUOPTIONSDIALOG_HPP
+#define MENUOPTIONSDIALOG_HPP
 
 #include <QDialog>
 #include <QFont>
@@ -46,4 +46,4 @@ private:
                         "qui officia deserunt mollit anim id est laborum.";
 };
 
-#endif // MENUOPTIONSDIALOG_H
+#endif // MENUOPTIONSDIALOG_HPP
