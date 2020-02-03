@@ -6,10 +6,10 @@ MenuOptionsDialog::MenuOptionsDialog(QWidget *parent) :
   ui(new Ui::MenuOptionsDialog)
 {
   ui->setupUi(this);
-  ui->tabFonts->setTabText(0,"Fonts");
-  connect(ui->fcbFontType,SIGNAL(currentIndexChanged(int)),this,SLOT(fontChanged()));
-  connect(ui->sbFontSize,SIGNAL(valueChanged(int)),this,SLOT(fontChanged()));
-  connect(ui->cbEnableAutoResizing,SIGNAL(toggled(bool)),this,SLOT(cbEnableAutoResizingChanged()));
+  ui->tabFonts->setTabText(0, "Fonts");
+  connect(ui->fcbFontType, SIGNAL(currentIndexChanged(int)), this, SLOT(fontChanged()));
+  connect(ui->sbFontSize, SIGNAL(valueChanged(int)), this, SLOT(fontChanged()));
+  connect(ui->cbEnableAutoResizing, SIGNAL(toggled(bool)), this, SLOT(cbEnableAutoResizingChanged()));
 }
 
 MenuOptionsDialog::~MenuOptionsDialog()
@@ -17,7 +17,8 @@ MenuOptionsDialog::~MenuOptionsDialog()
   delete ui;
 }
 
-void MenuOptionsDialog::setupFontComboBox(){
+void MenuOptionsDialog::setupFontComboBox()
+{
   ui->fcbFontType->setCurrentFont(this->getFromMainWindowFont());
   ui->sbFontSize->setValue(this->getFromMainWindowFont().pointSize());
   QString fontType_ = ui->fcbFontType->currentText();
@@ -26,19 +27,23 @@ void MenuOptionsDialog::setupFontComboBox(){
   this->setFontType(fontType_);
 }
 
-void MenuOptionsDialog::setupCheckBoxEnableAutoResizing(){
+void MenuOptionsDialog::setupCheckBoxEnableAutoResizing()
+{
   ui->cbEnableAutoResizing->setChecked(this->enableAutoResizing);
 }
 
-void MenuOptionsDialog::setFromMainWindowFont(const QFont font){
+void MenuOptionsDialog::setFromMainWindowFont(const QFont font)
+{
   this->fromMainWindowsFont = font;
 }
 
-QFont MenuOptionsDialog::getFromMainWindowFont() const{
+QFont MenuOptionsDialog::getFromMainWindowFont() const
+{
   return this->fromMainWindowsFont;
 }
 
-void MenuOptionsDialog::fontChanged(){
+void MenuOptionsDialog::fontChanged()
+{
   QString fontType_ = ui->fcbFontType->currentText();
   int fontSize_ = ui->sbFontSize->value();
   this->setFontSize(fontSize_);
@@ -48,11 +53,13 @@ void MenuOptionsDialog::fontChanged(){
   ui->taFontVisualization->setText(this->lorem_ipsum);
 }
 
-void MenuOptionsDialog::cbEnableAutoResizingChanged(){
+void MenuOptionsDialog::cbEnableAutoResizingChanged()
+{
   this->enableAutoResizing = ui->cbEnableAutoResizing->isChecked();
-  if(ui->cbEnableAutoResizing->isChecked()){
+  if(ui->cbEnableAutoResizing->isChecked()) {
     ui->sbFontSize->setEnabled(false);
-  }else{
+  }
+  else {
     ui->sbFontSize->setEnabled(true);
   }
 }

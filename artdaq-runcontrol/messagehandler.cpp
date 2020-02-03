@@ -1,7 +1,8 @@
 #include "messagehandler.hpp"
 
 
-void customLogWriter(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
+void customLogWriter(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
   QByteArray localMsg = msg.toLocal8Bit();
   const char *file = context.file ? context.file : "";
   const char *function = context.function ? context.function : "";

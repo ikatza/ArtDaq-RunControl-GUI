@@ -172,7 +172,7 @@ void daqInterfaceState::setOnlineButtonGreen()
   QPixmap pixmapImage = QPixmap::fromImage(image);
   ui->labelButtonOnline->setPixmap(pixmapImage);
   this->parseRun_number();
-  if(this->IsRunning()){
+  if(this->IsRunning()) {
     this->setLCDRunNumber(this->getRun_number());
   }
   timerOnline.setSingleShot(true);
@@ -296,16 +296,17 @@ void daqInterfaceState::setOffline()
 
 void daqInterfaceState::parseRun_number()
 {
-  gpp.start("show_recent_runs.sh",QStringList()<<"1");
+  gpp.start("show_recent_runs.sh", QStringList() << "1");
   gpp.waitForFinished();
   QByteArray byte_status = gpp.readAll();
   QTextCodec* codec = QTextCodec::codecForName("UTF-8");
   QStringList gpp_stringlist = codec->codecForMib(106)->toUnicode(byte_status).split(" ", QString::KeepEmptyParts);
   int number;
-  if(gpp_stringlist.count() > 1){
+  if(gpp_stringlist.count() > 1) {
     QString number_str = gpp_stringlist.at(1);
     number = number_str.toInt();
-  }else{
+  }
+  else {
     number = 0;
   }
   this->setRun_number(number);

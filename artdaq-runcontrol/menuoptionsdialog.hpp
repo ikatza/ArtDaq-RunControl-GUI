@@ -9,8 +9,7 @@ namespace Ui {
 class MenuOptionsDialog;
 }
 
-class MenuOptionsDialog : public QDialog
-{
+class MenuOptionsDialog : public QDialog {
   Q_OBJECT
 
 public:

@@ -54,13 +54,13 @@ MainWindow::~MainWindow()
 
 void MainWindow::configurateWindow()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   this->setWindowTitle("ARTDAQ RUN CONTROL");
   //this->setFixedSize(this->geometry().width(), this->geometry().height());
   ui->taDAQInterface->setReadOnly(true);
   this->setDBConfigurationFHICL_dir(env_vars::env.value("HOME") + "/work-db-v4-dir");
   this->originalWindowSize = this->geometry().size();
-  this->originalQuadraticMeanConfigurationFontSize = (double)qSqrt((qreal)(this->originalWindowSize.height()*this->originalWindowSize.height() + this->originalWindowSize.width()*this->originalWindowSize.width()));
+  this->originalQuadraticMeanConfigurationFontSize = (double)qSqrt((qreal)(this->originalWindowSize.height() * this->originalWindowSize.height() + this->originalWindowSize.width() * this->originalWindowSize.width()));
   this->gbDAQInterfaceCommandsPosition = ui->groupBox_DAQInterfaceCommands->pos();
   this->gbDAQInterfaceCommandsSize = ui->groupBox_DAQInterfaceCommands->geometry().size();
   this->gbTransitionCommandsPosition = ui->groupBox_TransitionCommands->pos();
@@ -127,11 +127,12 @@ void MainWindow::configurateWindow()
   this->lvComponentsFont = ui->lvComponents->font();
   this->lvBOOTConfigFont = ui->lvConfigBOOT->font();
   this->lvConfigurationsFont = ui->lvConfigurations->font();
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
-void MainWindow::configurateMenuBar(){
-  qDebug()<<"Starting function";
+void MainWindow::configurateMenuBar()
+{
+  qDebug() << "Starting function";
   QAction *optionsMenu = new QAction("&Options", this);
   QAction *exitMenu = new QAction("&Exit", this);
   QAction *windowMenu = new QAction("&Show state diagram", this);
@@ -145,17 +146,19 @@ void MainWindow::configurateMenuBar(){
   connect(optionsMenu, SIGNAL(triggered(bool)), this, SLOT(openMenuOptionsDialog()));
   connect(exitMenu, SIGNAL(triggered(bool)), this, SLOT(closeProgram()));
   connect(windowMenu, SIGNAL(triggered(bool)), this, SLOT(showDaqInterfaceStateWindow()));
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
-void MainWindow::showDaqInterfaceStateWindow(){
-  qDebug()<<"Starting function";
+void MainWindow::showDaqInterfaceStateWindow()
+{
+  qDebug() << "Starting function";
   state_diagram.show();
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
-void MainWindow::closeProgram(){
-  qDebug()<<"Starting function";
+void MainWindow::closeProgram()
+{
+  qDebug() << "Starting function";
   QMessageBox msgBox;
   msgBox.setText("Closing Program");
   msgBox.setInformativeText("Do you really wish to close the program?\n All the artDAQ processes will be destroyed ");
@@ -174,32 +177,33 @@ void MainWindow::closeProgram(){
   default:
     break;
   }
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   QProcess* kill_p = new QProcess(this);
   QMessageBox::StandardButton msgBox = QMessageBox::question( this, "artdaqRunControl",
-                                                                  tr("Do you really wish to close the program?\n All the artDAQ processes will be destroyed"),
-                                                                  QMessageBox::No | QMessageBox::Yes,
-                                                                  QMessageBox::Yes);
+                                       tr("Do you really wish to close the program?\n All the artDAQ processes will be destroyed"),
+                                       QMessageBox::No | QMessageBox::Yes,
+                                       QMessageBox::Yes);
   if (msgBox != QMessageBox::Yes) {
     event->ignore();
-  }else{
+  }
+  else {
     kill_p->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << env_vars::user);
     kill_p->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << env_vars::user);
     event->accept();
     exit(0);
   }
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 
 void MainWindow::bEndSessionPressed()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   QMessageBox msgBox;
   msgBox.setText("End session");
   msgBox.setInformativeText("Do you really wish to end the session?\n All the artDAQ processes will be destroyed ");
@@ -229,12 +233,12 @@ void MainWindow::bEndSessionPressed()
     break;
   }
   status("offline");
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::initializeButtons()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   ui->bDAQcomp->setEnabled(false);
   ui->bDAQconf->setEnabled(false);
   ui->bEndSession->setEnabled(false);
@@ -261,19 +265,19 @@ void MainWindow::initializeButtons()
   ui->bStartRun->setIcon(ButtonIcon);
   ui->bStartRun->setIconSize(0.9 * button_image.rect().size());
   this->bStartRunIconSize = 0.9 * button_image.rect().size();
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::initializeLV()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   QStringListModel* model = new QStringListModel(this);
   QStringList empty;
   model->setStringList(empty);
   ui->lvConfigBOOT->setModel(model);
   ui->lvComponents->setModel(model);
   ui->lvConfigurations->setModel(model);
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::checkStatus()
@@ -317,7 +321,7 @@ void MainWindow::status(QString status)
     state_diagram.setOnlineButtonGreen();
     setButtonsStoppedEnabled();
     ui->checkBoxDatabase->setEnabled(true);
-    if(ui->checkBoxDatabase->isChecked()){
+    if(ui->checkBoxDatabase->isChecked()) {
       ui->bListDatabaseRunConfigurations->setEnabled(true);
     }
     break;
@@ -422,21 +426,24 @@ void MainWindow::status(QString status)
   }
 }
 
-void MainWindow::setButtonsStoppedEnabled(){
+void MainWindow::setButtonsStoppedEnabled()
+{
   ui->bEndSession->setEnabled(true);
-  if(!ui->checkBoxDatabase->isEnabled()){
+  if(!ui->checkBoxDatabase->isEnabled()) {
     ui->bDAQcomp->setEnabled(true);
     ui->bDAQconf->setEnabled(true);
   }
 }
 
-void MainWindow::setButtonsStoppedDisabled(){
+void MainWindow::setButtonsStoppedDisabled()
+{
   ui->bEndSession->setEnabled(false);
   ui->bDAQcomp->setEnabled(false);
   ui->bDAQconf->setEnabled(false);
 }
 
-void MainWindow::setAllButtonsDisabled(){
+void MainWindow::setAllButtonsDisabled()
+{
   ui->bEndSession->setEnabled(false);
   ui->bDAQcomp->setEnabled(false);
   ui->bDAQconf->setEnabled(false);
@@ -450,43 +457,43 @@ void MainWindow::setAllButtonsDisabled(){
 
 void MainWindow::bSTOPPressed()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   commDAQInterface.sendTransitionSTOP();
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::bTERMINATEPressed()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   commDAQInterface.sendTransitionTERMINATE();
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::bSTARTPressed()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   commDAQInterface.sendTransitionSTART();
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::bBOOTPressed()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   commDAQInterface.setDAQInterfaceComponents(list_comps_selected);
   commDAQInterface.sendTransitionBOOT(list_BOOTConfig_selected);
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::bCONFIGPressed()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   commDAQInterface.sendTransitionCONFIG(list_config_selected);
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::lvBOOTConfigSelected()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   list_BOOTConfig_selected.clear();
   QStringList list_str;
   QModelIndexList list = ui->lvConfigBOOT->selectionModel()->selectedRows();
@@ -501,24 +508,25 @@ void MainWindow::lvBOOTConfigSelected()
   }
   else {
     QStringListModel* unselectedListModel = (QStringListModel*)ui->lvConfigBOOT->model();
-    if(unselectedListModel->stringList().length() == 1){
+    if(unselectedListModel->stringList().length() == 1) {
       list_BOOTConfig_selected.clear();
       QString s_ = env_vars::daqInt_user_dir + "/" + unselectedListModel->stringList().first();
       list_BOOTConfig_selected.append(s_);
       banBOOTCONFIG = true;
       banBOOT = true;
-    }else{
+    }
+    else {
       banBOOTCONFIG = false;
       banBOOT = true;
     }
   }
   isLVSelected();
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::lvComponentsSelected()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   if(!ui->checkBoxDatabase->isChecked()) {
     list_comps_selected.clear();
     QStringList list_str;
@@ -536,7 +544,7 @@ void MainWindow::lvComponentsSelected()
     }
     isLVSelected();
   }
-  else{
+  else {
     list_comps_selected.clear();
     QStringList list_str;
     QModelIndexList list = ui->lvComponents->selectionModel()->selectedRows();
@@ -555,12 +563,12 @@ void MainWindow::lvComponentsSelected()
     }
     isLVSelected();
   }
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::lvConfigurationsSelected()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   if(DAQState == 3) {
     banCONFIG = true;
     isLVSelected();
@@ -579,16 +587,17 @@ void MainWindow::lvConfigurationsSelected()
     }
     else {
       QStringListModel* unselectedListModel = (QStringListModel*)ui->lvConfigurations->model();
-      if(unselectedListModel->stringList().length() == 1){
-        list_config_selected= unselectedListModel->stringList();
+      if(unselectedListModel->stringList().length() == 1) {
+        list_config_selected = unselectedListModel->stringList();
         banCONFIG = true;
-      }else{
+      }
+      else {
         banCONFIG = false;
       }
     }
     isLVSelected();
   }
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::statusTransition()
@@ -652,7 +661,7 @@ void MainWindow::isLVSelected()
 
 void MainWindow::setButtonsDAQInterfaceInitialized(bool started)
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   if(started) {
     ui->bDAQInterface->setEnabled(false);
     ui->bDAQcomp->setEnabled(true);
@@ -661,12 +670,12 @@ void MainWindow::setButtonsDAQInterfaceInitialized(bool started)
     ui->checkBoxDatabase->setEnabled(true);
     timer.start(1000);
   }
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::bDAQInterfacePressed()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   daq_interface.setWorkingDirectory(env_vars::daqInt_wd);
   daq_commands.setWorkingDirectory(env_vars::daqInt_wd);
 
@@ -699,7 +708,7 @@ void MainWindow::bDAQInterfacePressed()
   // //////// estebans way
 
 
-  if (env_vars::daqInt_user_sourcefile != "EMPTY"){
+  if (env_vars::daqInt_user_sourcefile != "EMPTY") {
     qDebug() << "env_vars::daqInt_user_sourcefile: " << env_vars::daqInt_user_sourcefile;
     daq_interface.start("./bin/DAQInterface.sh");
     DAQInterfaceProcess_started = true;
@@ -716,13 +725,13 @@ void MainWindow::bDAQInterfacePressed()
               qUtf8Printable(env_vars::daqInt_user_sourcefile));
     QCoreApplication::exit(1);
   }
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
   return;
 }
 
 void MainWindow::DAQInterfaceOutput()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   QByteArray daq_byte_array = daq_interface.readAllStandardOutput();
   //daq_interface.waitForFinished();
   QTextCodec* codec = QTextCodec::codecForName("UTF-8");
@@ -750,12 +759,12 @@ void MainWindow::DAQInterfaceOutput()
   default:
     break;
   }
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::lvComps()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   QStringListModel* model = new QStringListModel(this);
   QStringList list = daq_string.split('\n', QString::SkipEmptyParts);
   list.removeFirst();
@@ -764,21 +773,21 @@ void MainWindow::lvComps()
   ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
   DAQState = 0;
   this->lvComponentsSelected();
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::bListDAQComps()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   commDAQInterface.listDAQInterfaceComponents();
   DAQState = 1;
   QThread::msleep(100);
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::lvConfigs()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   QStringListModel* model = new QStringListModel(this);
   QStringList list = daq_string.split("\n\n", QString::SkipEmptyParts);
   //qDebug()<<list.at(0);
@@ -795,12 +804,12 @@ void MainWindow::lvConfigs()
   this->lvConfigurationsSelected();
   this->lvBOOTConfigSelected();
   this->lvComponentsSelected();
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::bListDAQConfigs()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   commDAQInterface.listDAQInterfaceConfigs();
   DAQState = 2;
   QRegExp reg("*.txt");
@@ -823,17 +832,17 @@ void MainWindow::bListDAQConfigs()
   model->setStringList(list_config);
   ui->lvConfigBOOT->setModel(model);
   QThread::msleep(100);
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::bStartRunPressed()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   banStartRunPressed = true;
   startRunConfigSignalIssued = false;
   startRunStartSignalIssued = false;
   this->bBOOTPressed();
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::checkTransitionStartRunPressed(QString status)
@@ -848,16 +857,18 @@ void MainWindow::checkTransitionStartRunPressed(QString status)
       startRunStartSignalIssued = false;
       break;
     case 2: //booted
-      if(!startRunConfigSignalIssued){
+      if(!startRunConfigSignalIssued) {
         this->bCONFIGPressed();
-      }else{
+      }
+      else {
         //Add error message
       }
       break;
     case 3: //ready
-      if(!startRunStartSignalIssued){
+      if(!startRunStartSignalIssued) {
         this->bSTARTPressed();
-      }else{
+      }
+      else {
         //Add error message
       }
       startRunConfigSignalIssued = false;
@@ -906,7 +917,7 @@ void MainWindow::bDebugPressed()
 
 void MainWindow::bListDatabaseRunConfigurations()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   db_dialog *dbDialog = new db_dialog(this);
   dbDialog->setWindowTitle("List Of Available Run Configurations");
   int result = dbDialog->exec();
@@ -920,12 +931,12 @@ void MainWindow::bListDatabaseRunConfigurations()
     this->populateLVComponentsFromDatabase();
   }
   else if(result == QDialog::Rejected) {}
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::checkBoxDatabaseChanged()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   bool checked = ui->checkBoxDatabase->isChecked();
   if(checked) {
     ui->bListDatabaseRunConfigurations->setEnabled(true);
@@ -946,12 +957,12 @@ void MainWindow::checkBoxDatabaseChanged()
     ui->lvComponents->setEditTriggers(QAbstractItemView::NoEditTriggers);
     banBOOTCONFIG = false;
   }
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::populateLVComponentsFromDatabase()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   QString config_name = dbSelectedConfig.first;
   config_name.chop(5); // to remove the numbers // TODO: find a better way
   QString selectedDBConfig_dir = dbSelectedConfig.second + "/" + config_name;
@@ -991,12 +1002,12 @@ void MainWindow::populateLVComponentsFromDatabase()
   ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
   ui->lvComponents->setEditTriggers(QAbstractItemView::NoEditTriggers);
   list_comps_selected = lvComponentsList;
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::populateLVConfigurationsFromDatabase()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   QStringList lvConfigurationsList;
   lvConfigurationsList.append(dbSelectedConfig.first);
   QStringListModel* model = new QStringListModel(this);
@@ -1005,12 +1016,12 @@ void MainWindow::populateLVConfigurationsFromDatabase()
   ui->lvConfigurations->setSelectionMode(QAbstractItemView::NoSelection);
   ui->lvConfigurations->setEditTriggers(QAbstractItemView::NoEditTriggers);
   list_config_selected = lvConfigurationsList;
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::populateLVBOOTConfigurationsFromDatabase()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   QRegExp reg("*.txt");
   reg.setPatternSyntax(QRegExp::Wildcard);
   QDirIterator dirIt(env_vars::daqInt_user_dir);
@@ -1034,227 +1045,230 @@ void MainWindow::populateLVBOOTConfigurationsFromDatabase()
     ui->lvConfigBOOT->setEditTriggers(QAbstractItemView::NoEditTriggers);
   }
   else qInfo() << "No common config files found.";
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 QString MainWindow::getDBConfigurationFHICL_dir() const
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   return DBConfigurationFHICL_dir;
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::setDBConfigurationFHICL_dir(const QString &value)
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   DBConfigurationFHICL_dir = value;
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 QProcessEnvironment MainWindow::getQProcessEnvironment()
 {
-  qDebug()<<"Starting function";
+  qDebug() << "Starting function";
   return env_vars::env;
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
-void MainWindow::resizeEvent(QResizeEvent *event){
-  qDebug()<<"Starting function";
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+  qDebug() << "Starting function";
   QMainWindow::resizeEvent(event);
   this->resizeWindow();
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
-void MainWindow::resizeWindow(){
-  qDebug()<<"Starting function";
+void MainWindow::resizeWindow()
+{
+  qDebug() << "Starting function";
   QSize windowSize = this->geometry().size();
   int windowHeigth = windowSize.height();
   int windowWidth = windowSize.width();
-  ui->groupBox_DAQInterfaceCommands->move((int)(windowWidth*this->gbDAQInterfaceCommandsPosition.x()/this->originalWindowSize.width()),ui->groupBox_DAQInterfaceCommands->pos().y());
-  ui->groupBox_DAQInterfaceCommands->move(ui->groupBox_DAQInterfaceCommands->pos().x(),(int)(windowHeigth*this->gbDAQInterfaceCommandsPosition.y()/this->originalWindowSize.height()));
-  ui->groupBox_DAQInterfaceCommands->resize(ui->groupBox_DAQInterfaceCommands->geometry().size().width(),windowHeigth*this->gbDAQInterfaceCommandsSize.height()/this->originalWindowSize.height());
-  ui->groupBox_DAQInterfaceCommands->resize(windowWidth*this->gbDAQInterfaceCommandsSize.width()/this->originalWindowSize.width(),ui->groupBox_DAQInterfaceCommands->geometry().size().height());
+  ui->groupBox_DAQInterfaceCommands->move((int)(windowWidth * this->gbDAQInterfaceCommandsPosition.x() / this->originalWindowSize.width()), ui->groupBox_DAQInterfaceCommands->pos().y());
+  ui->groupBox_DAQInterfaceCommands->move(ui->groupBox_DAQInterfaceCommands->pos().x(), (int)(windowHeigth * this->gbDAQInterfaceCommandsPosition.y() / this->originalWindowSize.height()));
+  ui->groupBox_DAQInterfaceCommands->resize(ui->groupBox_DAQInterfaceCommands->geometry().size().width(), windowHeigth * this->gbDAQInterfaceCommandsSize.height() / this->originalWindowSize.height());
+  ui->groupBox_DAQInterfaceCommands->resize(windowWidth * this->gbDAQInterfaceCommandsSize.width() / this->originalWindowSize.width(), ui->groupBox_DAQInterfaceCommands->geometry().size().height());
 
-  ui->groupBox_TransitionCommands->move((int)(windowWidth*this->gbTransitionCommandsPosition.x()/this->originalWindowSize.width()),ui->groupBox_TransitionCommands->pos().y());
-  ui->groupBox_TransitionCommands->move(ui->groupBox_TransitionCommands->pos().x(),(int)(windowHeigth*this->gbTransitionCommandsPosition.y()/this->originalWindowSize.height()));
-  ui->groupBox_TransitionCommands->resize(ui->groupBox_TransitionCommands->geometry().size().width(),windowHeigth*this->gbTransitionCommandsSize.height()/this->originalWindowSize.height());
-  ui->groupBox_TransitionCommands->resize(windowWidth*this->gbTransitionCommandsSize.width()/this->originalWindowSize.width(),ui->groupBox_TransitionCommands->geometry().size().height());
+  ui->groupBox_TransitionCommands->move((int)(windowWidth * this->gbTransitionCommandsPosition.x() / this->originalWindowSize.width()), ui->groupBox_TransitionCommands->pos().y());
+  ui->groupBox_TransitionCommands->move(ui->groupBox_TransitionCommands->pos().x(), (int)(windowHeigth * this->gbTransitionCommandsPosition.y() / this->originalWindowSize.height()));
+  ui->groupBox_TransitionCommands->resize(ui->groupBox_TransitionCommands->geometry().size().width(), windowHeigth * this->gbTransitionCommandsSize.height() / this->originalWindowSize.height());
+  ui->groupBox_TransitionCommands->resize(windowWidth * this->gbTransitionCommandsSize.width() / this->originalWindowSize.width(), ui->groupBox_TransitionCommands->geometry().size().height());
 
-  ui->groupBox_Database->move((int)(windowWidth*this->gbDatabasePosition.x()/this->originalWindowSize.width()),ui->groupBox_Database->pos().y());
-  ui->groupBox_Database->move(ui->groupBox_Database->pos().x(),(int)(windowHeigth*this->gbDatabasePosition.y()/this->originalWindowSize.height()));
-  ui->groupBox_Database->resize(ui->groupBox_Database->geometry().size().width(),windowHeigth*this->gbDatabaseSize.height()/this->originalWindowSize.height());
-  ui->groupBox_Database->resize(windowWidth*this->gbDatabaseSize.width()/this->originalWindowSize.width(),ui->groupBox_Database->geometry().size().height());
+  ui->groupBox_Database->move((int)(windowWidth * this->gbDatabasePosition.x() / this->originalWindowSize.width()), ui->groupBox_Database->pos().y());
+  ui->groupBox_Database->move(ui->groupBox_Database->pos().x(), (int)(windowHeigth * this->gbDatabasePosition.y() / this->originalWindowSize.height()));
+  ui->groupBox_Database->resize(ui->groupBox_Database->geometry().size().width(), windowHeigth * this->gbDatabaseSize.height() / this->originalWindowSize.height());
+  ui->groupBox_Database->resize(windowWidth * this->gbDatabaseSize.width() / this->originalWindowSize.width(), ui->groupBox_Database->geometry().size().height());
 
-  ui->groupBox_DAQInterface->move((int)(windowWidth*this->gbDAQInterfacePosition.x()/this->originalWindowSize.width()),ui->groupBox_DAQInterface->pos().y());
-  ui->groupBox_DAQInterface->move(ui->groupBox_DAQInterface->pos().x(),(int)(windowHeigth*this->gbDAQInterfacePosition.y()/this->originalWindowSize.height()));
-  ui->groupBox_DAQInterface->resize(ui->groupBox_DAQInterface->geometry().size().width(),windowHeigth*this->gbDAQInterfaceSize.height()/this->originalWindowSize.height());
-  ui->groupBox_DAQInterface->resize(windowWidth*this->gbDAQInterfaceSize.width()/this->originalWindowSize.width(),ui->groupBox_DAQInterface->geometry().size().height());
+  ui->groupBox_DAQInterface->move((int)(windowWidth * this->gbDAQInterfacePosition.x() / this->originalWindowSize.width()), ui->groupBox_DAQInterface->pos().y());
+  ui->groupBox_DAQInterface->move(ui->groupBox_DAQInterface->pos().x(), (int)(windowHeigth * this->gbDAQInterfacePosition.y() / this->originalWindowSize.height()));
+  ui->groupBox_DAQInterface->resize(ui->groupBox_DAQInterface->geometry().size().width(), windowHeigth * this->gbDAQInterfaceSize.height() / this->originalWindowSize.height());
+  ui->groupBox_DAQInterface->resize(windowWidth * this->gbDAQInterfaceSize.width() / this->originalWindowSize.width(), ui->groupBox_DAQInterface->geometry().size().height());
 
-  ui->bStart->move((int)(windowWidth*this->bStartPosition.x()/this->originalWindowSize.width()),ui->bStart->pos().y());
-  ui->bStart->move(ui->bStart->pos().x(),(int)(windowHeigth*this->bStartPosition.y()/this->originalWindowSize.height()));
-  ui->bStart->resize(ui->bStart->geometry().size().width(),windowHeigth*this->bStartSize.height()/this->originalWindowSize.height());
-  ui->bStart->resize(windowWidth*this->bStartSize.width()/this->originalWindowSize.width(),ui->bStart->geometry().size().height());
+  ui->bStart->move((int)(windowWidth * this->bStartPosition.x() / this->originalWindowSize.width()), ui->bStart->pos().y());
+  ui->bStart->move(ui->bStart->pos().x(), (int)(windowHeigth * this->bStartPosition.y() / this->originalWindowSize.height()));
+  ui->bStart->resize(ui->bStart->geometry().size().width(), windowHeigth * this->bStartSize.height() / this->originalWindowSize.height());
+  ui->bStart->resize(windowWidth * this->bStartSize.width() / this->originalWindowSize.width(), ui->bStart->geometry().size().height());
 
-  ui->bStop->move((int)(windowWidth*this->bStopPosition.x()/this->originalWindowSize.width()),ui->bStop->pos().y());
-  ui->bStop->move(ui->bStop->pos().x(),(int)(windowHeigth*this->bStopPosition.y()/this->originalWindowSize.height()));
-  ui->bStop->resize(ui->bStop->geometry().size().width(),windowHeigth*this->bStopSize.height()/this->originalWindowSize.height());
-  ui->bStop->resize(windowWidth*this->bStopSize.width()/this->originalWindowSize.width(),ui->bStop->geometry().size().height());
+  ui->bStop->move((int)(windowWidth * this->bStopPosition.x() / this->originalWindowSize.width()), ui->bStop->pos().y());
+  ui->bStop->move(ui->bStop->pos().x(), (int)(windowHeigth * this->bStopPosition.y() / this->originalWindowSize.height()));
+  ui->bStop->resize(ui->bStop->geometry().size().width(), windowHeigth * this->bStopSize.height() / this->originalWindowSize.height());
+  ui->bStop->resize(windowWidth * this->bStopSize.width() / this->originalWindowSize.width(), ui->bStop->geometry().size().height());
 
-  ui->bPause->move((int)(windowWidth*this->bPausePosition.x()/this->originalWindowSize.width()),ui->bPause->pos().y());
-  ui->bPause->move(ui->bPause->pos().x(),(int)(windowHeigth*this->bPausePosition.y()/this->originalWindowSize.height()));
-  ui->bPause->resize(ui->bPause->geometry().size().width(),windowHeigth*this->bPauseSize.height()/this->originalWindowSize.height());
-  ui->bPause->resize(windowWidth*this->bPauseSize.width()/this->originalWindowSize.width(),ui->bPause->geometry().size().height());
+  ui->bPause->move((int)(windowWidth * this->bPausePosition.x() / this->originalWindowSize.width()), ui->bPause->pos().y());
+  ui->bPause->move(ui->bPause->pos().x(), (int)(windowHeigth * this->bPausePosition.y() / this->originalWindowSize.height()));
+  ui->bPause->resize(ui->bPause->geometry().size().width(), windowHeigth * this->bPauseSize.height() / this->originalWindowSize.height());
+  ui->bPause->resize(windowWidth * this->bPauseSize.width() / this->originalWindowSize.width(), ui->bPause->geometry().size().height());
 
-  ui->bTerminate->move((int)(windowWidth*this->bTerminatePosition.x()/this->originalWindowSize.width()),ui->bTerminate->pos().y());
-  ui->bTerminate->move(ui->bTerminate->pos().x(),(int)(windowHeigth*this->bTerminatePosition.y()/this->originalWindowSize.height()));
-  ui->bTerminate->resize(ui->bTerminate->geometry().size().width(),windowHeigth*this->bTerminateSize.height()/this->originalWindowSize.height());
-  ui->bTerminate->resize(windowWidth*this->bTerminateSize.width()/this->originalWindowSize.width(),ui->bTerminate->geometry().size().height());
+  ui->bTerminate->move((int)(windowWidth * this->bTerminatePosition.x() / this->originalWindowSize.width()), ui->bTerminate->pos().y());
+  ui->bTerminate->move(ui->bTerminate->pos().x(), (int)(windowHeigth * this->bTerminatePosition.y() / this->originalWindowSize.height()));
+  ui->bTerminate->resize(ui->bTerminate->geometry().size().width(), windowHeigth * this->bTerminateSize.height() / this->originalWindowSize.height());
+  ui->bTerminate->resize(windowWidth * this->bTerminateSize.width() / this->originalWindowSize.width(), ui->bTerminate->geometry().size().height());
 
-  ui->bStartRun->move((int)(windowWidth*this->bStartRunPosition.x()/this->originalWindowSize.width()),ui->bStartRun->pos().y());
-  ui->bStartRun->move(ui->bStartRun->pos().x(),(int)(windowHeigth*this->bStartRunPosition.y()/this->originalWindowSize.height()));
-  ui->bStartRun->resize(ui->bStartRun->geometry().size().width(),windowHeigth*this->bStartRunSize.height()/this->originalWindowSize.height());
-  ui->bStartRun->resize(windowWidth*this->bStartRunSize.width()/this->originalWindowSize.width(),ui->bStartRun->geometry().size().height());
+  ui->bStartRun->move((int)(windowWidth * this->bStartRunPosition.x() / this->originalWindowSize.width()), ui->bStartRun->pos().y());
+  ui->bStartRun->move(ui->bStartRun->pos().x(), (int)(windowHeigth * this->bStartRunPosition.y() / this->originalWindowSize.height()));
+  ui->bStartRun->resize(ui->bStartRun->geometry().size().width(), windowHeigth * this->bStartRunSize.height() / this->originalWindowSize.height());
+  ui->bStartRun->resize(windowWidth * this->bStartRunSize.width() / this->originalWindowSize.width(), ui->bStartRun->geometry().size().height());
 
-  ui->bListDatabaseRunConfigurations->move((int)(windowWidth*this->bListDatabaseRunConfigurationsPosition.x()/this->originalWindowSize.width()),ui->bListDatabaseRunConfigurations->pos().y());
-  ui->bListDatabaseRunConfigurations->move(ui->bListDatabaseRunConfigurations->pos().x(),(int)(windowHeigth*this->bListDatabaseRunConfigurationsPosition.y()/this->originalWindowSize.height()));
-  ui->bListDatabaseRunConfigurations->resize(ui->bListDatabaseRunConfigurations->geometry().size().width(),windowHeigth*this->bListDatabaseRunConfigurationsSize.height()/this->originalWindowSize.height());
-  ui->bListDatabaseRunConfigurations->resize(windowWidth*this->bListDatabaseRunConfigurationsSize.width()/this->originalWindowSize.width(),ui->bListDatabaseRunConfigurations->geometry().size().height());
+  ui->bListDatabaseRunConfigurations->move((int)(windowWidth * this->bListDatabaseRunConfigurationsPosition.x() / this->originalWindowSize.width()), ui->bListDatabaseRunConfigurations->pos().y());
+  ui->bListDatabaseRunConfigurations->move(ui->bListDatabaseRunConfigurations->pos().x(), (int)(windowHeigth * this->bListDatabaseRunConfigurationsPosition.y() / this->originalWindowSize.height()));
+  ui->bListDatabaseRunConfigurations->resize(ui->bListDatabaseRunConfigurations->geometry().size().width(), windowHeigth * this->bListDatabaseRunConfigurationsSize.height() / this->originalWindowSize.height());
+  ui->bListDatabaseRunConfigurations->resize(windowWidth * this->bListDatabaseRunConfigurationsSize.width() / this->originalWindowSize.width(), ui->bListDatabaseRunConfigurations->geometry().size().height());
 
-  ui->bDAQcomp->move((int)(windowWidth*this->bDAQcompPosition.x()/this->originalWindowSize.width()),ui->bDAQcomp->pos().y());
-  ui->bDAQcomp->move(ui->bDAQcomp->pos().x(),(int)(windowHeigth*this->bDAQcompPosition.y()/this->originalWindowSize.height()));
-  ui->bDAQcomp->resize(ui->bDAQcomp->geometry().size().width(),windowHeigth*this->bDAQcompSize.height()/this->originalWindowSize.height());
-  ui->bDAQcomp->resize(windowWidth*this->bDAQcompSize.width()/this->originalWindowSize.width(),ui->bDAQcomp->geometry().size().height());
+  ui->bDAQcomp->move((int)(windowWidth * this->bDAQcompPosition.x() / this->originalWindowSize.width()), ui->bDAQcomp->pos().y());
+  ui->bDAQcomp->move(ui->bDAQcomp->pos().x(), (int)(windowHeigth * this->bDAQcompPosition.y() / this->originalWindowSize.height()));
+  ui->bDAQcomp->resize(ui->bDAQcomp->geometry().size().width(), windowHeigth * this->bDAQcompSize.height() / this->originalWindowSize.height());
+  ui->bDAQcomp->resize(windowWidth * this->bDAQcompSize.width() / this->originalWindowSize.width(), ui->bDAQcomp->geometry().size().height());
 
-  ui->bDAQconf->move((int)(windowWidth*this->bDAQconfPosition.x()/this->originalWindowSize.width()),ui->bDAQconf->pos().y());
-  ui->bDAQconf->move(ui->bDAQconf->pos().x(),(int)(windowHeigth*this->bDAQconfPosition.y()/this->originalWindowSize.height()));
-  ui->bDAQconf->resize(ui->bDAQconf->geometry().size().width(),windowHeigth*this->bDAQconfSize.height()/this->originalWindowSize.height());
-  ui->bDAQconf->resize(windowWidth*this->bDAQconfSize.width()/this->originalWindowSize.width(),ui->bDAQconf->geometry().size().height());
+  ui->bDAQconf->move((int)(windowWidth * this->bDAQconfPosition.x() / this->originalWindowSize.width()), ui->bDAQconf->pos().y());
+  ui->bDAQconf->move(ui->bDAQconf->pos().x(), (int)(windowHeigth * this->bDAQconfPosition.y() / this->originalWindowSize.height()));
+  ui->bDAQconf->resize(ui->bDAQconf->geometry().size().width(), windowHeigth * this->bDAQconfSize.height() / this->originalWindowSize.height());
+  ui->bDAQconf->resize(windowWidth * this->bDAQconfSize.width() / this->originalWindowSize.width(), ui->bDAQconf->geometry().size().height());
 
-  ui->bBOOT->move((int)(windowWidth*this->bBOOTPosition.x()/this->originalWindowSize.width()),ui->bBOOT->pos().y());
-  ui->bBOOT->move(ui->bBOOT->pos().x(),(int)(windowHeigth*this->bBOOTPosition.y()/this->originalWindowSize.height()));
-  ui->bBOOT->resize(ui->bBOOT->geometry().size().width(),windowHeigth*this->bBOOTSize.height()/this->originalWindowSize.height());
-  ui->bBOOT->resize(windowWidth*this->bBOOTSize.width()/this->originalWindowSize.width(),ui->bBOOT->geometry().size().height());
+  ui->bBOOT->move((int)(windowWidth * this->bBOOTPosition.x() / this->originalWindowSize.width()), ui->bBOOT->pos().y());
+  ui->bBOOT->move(ui->bBOOT->pos().x(), (int)(windowHeigth * this->bBOOTPosition.y() / this->originalWindowSize.height()));
+  ui->bBOOT->resize(ui->bBOOT->geometry().size().width(), windowHeigth * this->bBOOTSize.height() / this->originalWindowSize.height());
+  ui->bBOOT->resize(windowWidth * this->bBOOTSize.width() / this->originalWindowSize.width(), ui->bBOOT->geometry().size().height());
 
-  ui->bCONFIG->move((int)(windowWidth*this->bCONFIGPosition.x()/this->originalWindowSize.width()),ui->bCONFIG->pos().y());
-  ui->bCONFIG->move(ui->bCONFIG->pos().x(),(int)(windowHeigth*this->bCONFIGPosition.y()/this->originalWindowSize.height()));
-  ui->bCONFIG->resize(ui->bCONFIG->geometry().size().width(),windowHeigth*this->bCONFIGSize.height()/this->originalWindowSize.height());
-  ui->bCONFIG->resize(windowWidth*this->bCONFIGSize.width()/this->originalWindowSize.width(),ui->bCONFIG->geometry().size().height());
+  ui->bCONFIG->move((int)(windowWidth * this->bCONFIGPosition.x() / this->originalWindowSize.width()), ui->bCONFIG->pos().y());
+  ui->bCONFIG->move(ui->bCONFIG->pos().x(), (int)(windowHeigth * this->bCONFIGPosition.y() / this->originalWindowSize.height()));
+  ui->bCONFIG->resize(ui->bCONFIG->geometry().size().width(), windowHeigth * this->bCONFIGSize.height() / this->originalWindowSize.height());
+  ui->bCONFIG->resize(windowWidth * this->bCONFIGSize.width() / this->originalWindowSize.width(), ui->bCONFIG->geometry().size().height());
 
-  ui->bDAQInterface->move((int)(windowWidth*this->bDAQInterfacePosition.x()/this->originalWindowSize.width()),ui->bDAQInterface->pos().y());
-  ui->bDAQInterface->move(ui->bDAQInterface->pos().x(),(int)(windowHeigth*this->bDAQInterfacePosition.y()/this->originalWindowSize.height()));
-  ui->bDAQInterface->resize(ui->bDAQInterface->geometry().size().width(),windowHeigth*this->bDAQInterfaceSize.height()/this->originalWindowSize.height());
-  ui->bDAQInterface->resize(windowWidth*this->bDAQInterfaceSize.width()/this->originalWindowSize.width(),ui->bDAQInterface->geometry().size().height());
+  ui->bDAQInterface->move((int)(windowWidth * this->bDAQInterfacePosition.x() / this->originalWindowSize.width()), ui->bDAQInterface->pos().y());
+  ui->bDAQInterface->move(ui->bDAQInterface->pos().x(), (int)(windowHeigth * this->bDAQInterfacePosition.y() / this->originalWindowSize.height()));
+  ui->bDAQInterface->resize(ui->bDAQInterface->geometry().size().width(), windowHeigth * this->bDAQInterfaceSize.height() / this->originalWindowSize.height());
+  ui->bDAQInterface->resize(windowWidth * this->bDAQInterfaceSize.width() / this->originalWindowSize.width(), ui->bDAQInterface->geometry().size().height());
 
-  ui->bEndSession->move((int)(windowWidth*this->bEndSessionPosition.x()/this->originalWindowSize.width()),ui->bEndSession->pos().y());
-  ui->bEndSession->move(ui->bEndSession->pos().x(),(int)(windowHeigth*this->bEndSessionPosition.y()/this->originalWindowSize.height()));
-  ui->bEndSession->resize(ui->bEndSession->geometry().size().width(),windowHeigth*this->bEndSessionSize.height()/this->originalWindowSize.height());
-  ui->bEndSession->resize(windowWidth*this->bEndSessionSize.width()/this->originalWindowSize.width(),ui->bEndSession->geometry().size().height());
+  ui->bEndSession->move((int)(windowWidth * this->bEndSessionPosition.x() / this->originalWindowSize.width()), ui->bEndSession->pos().y());
+  ui->bEndSession->move(ui->bEndSession->pos().x(), (int)(windowHeigth * this->bEndSessionPosition.y() / this->originalWindowSize.height()));
+  ui->bEndSession->resize(ui->bEndSession->geometry().size().width(), windowHeigth * this->bEndSessionSize.height() / this->originalWindowSize.height());
+  ui->bEndSession->resize(windowWidth * this->bEndSessionSize.width() / this->originalWindowSize.width(), ui->bEndSession->geometry().size().height());
 
-  ui->taDAQInterface->move((int)(windowWidth*this->taDAQInterfacePosition.x()/this->originalWindowSize.width()),ui->taDAQInterface->pos().y());
-  ui->taDAQInterface->move(ui->taDAQInterface->pos().x(),(int)(windowHeigth*this->taDAQInterfacePosition.y()/this->originalWindowSize.height()));
-  ui->taDAQInterface->resize(ui->taDAQInterface->geometry().size().width(),windowHeigth*this->taDAQInterfaceSize.height()/this->originalWindowSize.height());
-  ui->taDAQInterface->resize(windowWidth*this->taDAQInterfaceSize.width()/this->originalWindowSize.width(),ui->taDAQInterface->geometry().size().height());
+  ui->taDAQInterface->move((int)(windowWidth * this->taDAQInterfacePosition.x() / this->originalWindowSize.width()), ui->taDAQInterface->pos().y());
+  ui->taDAQInterface->move(ui->taDAQInterface->pos().x(), (int)(windowHeigth * this->taDAQInterfacePosition.y() / this->originalWindowSize.height()));
+  ui->taDAQInterface->resize(ui->taDAQInterface->geometry().size().width(), windowHeigth * this->taDAQInterfaceSize.height() / this->originalWindowSize.height());
+  ui->taDAQInterface->resize(windowWidth * this->taDAQInterfaceSize.width() / this->originalWindowSize.width(), ui->taDAQInterface->geometry().size().height());
 
-  ui->lbConfigurations->move((int)(windowWidth*this->lbConfigurationsPosition.x()/this->originalWindowSize.width()),ui->lbConfigurations->pos().y());
-  ui->lbConfigurations->move(ui->lbConfigurations->pos().x(),(int)(windowHeigth*this->lbConfigurationsPosition.y()/this->originalWindowSize.height()));
-  ui->lbConfigurations->resize(ui->lbConfigurations->geometry().size().width(),windowHeigth*this->lbConfigurationsSize.height()/this->originalWindowSize.height());
-  ui->lbConfigurations->resize(windowWidth*this->lbConfigurationsSize.width()/this->originalWindowSize.width(),ui->lbConfigurations->geometry().size().height());
+  ui->lbConfigurations->move((int)(windowWidth * this->lbConfigurationsPosition.x() / this->originalWindowSize.width()), ui->lbConfigurations->pos().y());
+  ui->lbConfigurations->move(ui->lbConfigurations->pos().x(), (int)(windowHeigth * this->lbConfigurationsPosition.y() / this->originalWindowSize.height()));
+  ui->lbConfigurations->resize(ui->lbConfigurations->geometry().size().width(), windowHeigth * this->lbConfigurationsSize.height() / this->originalWindowSize.height());
+  ui->lbConfigurations->resize(windowWidth * this->lbConfigurationsSize.width() / this->originalWindowSize.width(), ui->lbConfigurations->geometry().size().height());
 
-  ui->lbComponents->move((int)(windowWidth*this->lbComponentsPosition.x()/this->originalWindowSize.width()),ui->lbComponents->pos().y());
-  ui->lbComponents->move(ui->lbComponents->pos().x(),(int)(windowHeigth*this->lbComponentsPosition.y()/this->originalWindowSize.height()));
-  ui->lbComponents->resize(ui->lbComponents->geometry().size().width(),windowHeigth*this->lbComponentsSize.height()/this->originalWindowSize.height());
-  ui->lbComponents->resize(windowWidth*this->lbComponentsSize.width()/this->originalWindowSize.width(),ui->lbComponents->geometry().size().height());
+  ui->lbComponents->move((int)(windowWidth * this->lbComponentsPosition.x() / this->originalWindowSize.width()), ui->lbComponents->pos().y());
+  ui->lbComponents->move(ui->lbComponents->pos().x(), (int)(windowHeigth * this->lbComponentsPosition.y() / this->originalWindowSize.height()));
+  ui->lbComponents->resize(ui->lbComponents->geometry().size().width(), windowHeigth * this->lbComponentsSize.height() / this->originalWindowSize.height());
+  ui->lbComponents->resize(windowWidth * this->lbComponentsSize.width() / this->originalWindowSize.width(), ui->lbComponents->geometry().size().height());
 
-  ui->lbBOOTConfig->move((int)(windowWidth*this->lbBOOTConfigPosition.x()/this->originalWindowSize.width()),ui->lbBOOTConfig->pos().y());
-  ui->lbBOOTConfig->move(ui->lbBOOTConfig->pos().x(),(int)(windowHeigth*this->lbBOOTConfigPosition.y()/this->originalWindowSize.height()));
-  ui->lbBOOTConfig->resize(ui->lbBOOTConfig->geometry().size().width(),windowHeigth*this->lbBOOTConfigSize.height()/this->originalWindowSize.height());
-  ui->lbBOOTConfig->resize(windowWidth*this->lbBOOTConfigSize.width()/this->originalWindowSize.width(),ui->lbBOOTConfig->geometry().size().height());
+  ui->lbBOOTConfig->move((int)(windowWidth * this->lbBOOTConfigPosition.x() / this->originalWindowSize.width()), ui->lbBOOTConfig->pos().y());
+  ui->lbBOOTConfig->move(ui->lbBOOTConfig->pos().x(), (int)(windowHeigth * this->lbBOOTConfigPosition.y() / this->originalWindowSize.height()));
+  ui->lbBOOTConfig->resize(ui->lbBOOTConfig->geometry().size().width(), windowHeigth * this->lbBOOTConfigSize.height() / this->originalWindowSize.height());
+  ui->lbBOOTConfig->resize(windowWidth * this->lbBOOTConfigSize.width() / this->originalWindowSize.width(), ui->lbBOOTConfig->geometry().size().height());
 
-  ui->lbStatus->move((int)(windowWidth*this->lbStatusPosition.x()/this->originalWindowSize.width()),ui->lbStatus->pos().y());
-  ui->lbStatus->move(ui->lbStatus->pos().x(),(int)(windowHeigth*this->lbStatusPosition.y()/this->originalWindowSize.height()));
-  ui->lbStatus->resize(ui->lbStatus->geometry().size().width(),windowHeigth*this->lbStatusSize.height()/this->originalWindowSize.height());
-  ui->lbStatus->resize(windowWidth*this->lbStatusSize.width()/this->originalWindowSize.width(),ui->lbStatus->geometry().size().height());
+  ui->lbStatus->move((int)(windowWidth * this->lbStatusPosition.x() / this->originalWindowSize.width()), ui->lbStatus->pos().y());
+  ui->lbStatus->move(ui->lbStatus->pos().x(), (int)(windowHeigth * this->lbStatusPosition.y() / this->originalWindowSize.height()));
+  ui->lbStatus->resize(ui->lbStatus->geometry().size().width(), windowHeigth * this->lbStatusSize.height() / this->originalWindowSize.height());
+  ui->lbStatus->resize(windowWidth * this->lbStatusSize.width() / this->originalWindowSize.width(), ui->lbStatus->geometry().size().height());
 
-  ui->lbStatusTitle->move((int)(windowWidth*this->lbStatusTitlePosition.x()/this->originalWindowSize.width()),ui->lbStatusTitle->pos().y());
-  ui->lbStatusTitle->move(ui->lbStatusTitle->pos().x(),(int)(windowHeigth*this->lbStatusTitlePosition.y()/this->originalWindowSize.height()));
-  ui->lbStatusTitle->resize(ui->lbStatusTitle->geometry().size().width(),windowHeigth*this->lbStatusTitleSize.height()/this->originalWindowSize.height());
-  ui->lbStatusTitle->resize(windowWidth*this->lbStatusTitleSize.width()/this->originalWindowSize.width(),ui->lbStatusTitle->geometry().size().height());
+  ui->lbStatusTitle->move((int)(windowWidth * this->lbStatusTitlePosition.x() / this->originalWindowSize.width()), ui->lbStatusTitle->pos().y());
+  ui->lbStatusTitle->move(ui->lbStatusTitle->pos().x(), (int)(windowHeigth * this->lbStatusTitlePosition.y() / this->originalWindowSize.height()));
+  ui->lbStatusTitle->resize(ui->lbStatusTitle->geometry().size().width(), windowHeigth * this->lbStatusTitleSize.height() / this->originalWindowSize.height());
+  ui->lbStatusTitle->resize(windowWidth * this->lbStatusTitleSize.width() / this->originalWindowSize.width(), ui->lbStatusTitle->geometry().size().height());
 
-  ui->lbMessages->move((int)(windowWidth*this->lbMessagesPosition.x()/this->originalWindowSize.width()),ui->lbMessages->pos().y());
-  ui->lbMessages->move(ui->lbMessages->pos().x(),(int)(windowHeigth*this->lbMessagesPosition.y()/this->originalWindowSize.height()));
-  ui->lbMessages->resize(ui->lbMessages->geometry().size().width(),windowHeigth*this->lbMessagesSize.height()/this->originalWindowSize.height());
-  ui->lbMessages->resize(windowWidth*this->lbMessagesSize.width()/this->originalWindowSize.width(),ui->lbMessages->geometry().size().height());
+  ui->lbMessages->move((int)(windowWidth * this->lbMessagesPosition.x() / this->originalWindowSize.width()), ui->lbMessages->pos().y());
+  ui->lbMessages->move(ui->lbMessages->pos().x(), (int)(windowHeigth * this->lbMessagesPosition.y() / this->originalWindowSize.height()));
+  ui->lbMessages->resize(ui->lbMessages->geometry().size().width(), windowHeigth * this->lbMessagesSize.height() / this->originalWindowSize.height());
+  ui->lbMessages->resize(windowWidth * this->lbMessagesSize.width() / this->originalWindowSize.width(), ui->lbMessages->geometry().size().height());
 
-  ui->checkBoxDatabase->move((int)(windowWidth*this->checkBoxDatabasePosition.x()/this->originalWindowSize.width()),ui->checkBoxDatabase->pos().y());
-  ui->checkBoxDatabase->move(ui->checkBoxDatabase->pos().x(),(int)(windowHeigth*this->checkBoxDatabasePosition.y()/this->originalWindowSize.height()));
-  ui->checkBoxDatabase->resize(ui->checkBoxDatabase->geometry().size().width(),windowHeigth*this->checkBoxDatabaseSize.height()/this->originalWindowSize.height());
-  ui->checkBoxDatabase->resize(windowWidth*this->checkBoxDatabaseSize.width()/this->originalWindowSize.width(),ui->checkBoxDatabase->geometry().size().height());
+  ui->checkBoxDatabase->move((int)(windowWidth * this->checkBoxDatabasePosition.x() / this->originalWindowSize.width()), ui->checkBoxDatabase->pos().y());
+  ui->checkBoxDatabase->move(ui->checkBoxDatabase->pos().x(), (int)(windowHeigth * this->checkBoxDatabasePosition.y() / this->originalWindowSize.height()));
+  ui->checkBoxDatabase->resize(ui->checkBoxDatabase->geometry().size().width(), windowHeigth * this->checkBoxDatabaseSize.height() / this->originalWindowSize.height());
+  ui->checkBoxDatabase->resize(windowWidth * this->checkBoxDatabaseSize.width() / this->originalWindowSize.width(), ui->checkBoxDatabase->geometry().size().height());
 
-  ui->lvComponents->move((int)(windowWidth*this->lvComponentsPosition.x()/this->originalWindowSize.width()),ui->lvComponents->pos().y());
-  ui->lvComponents->move(ui->lvComponents->pos().x(),(int)(windowHeigth*this->lvComponentsPosition.y()/this->originalWindowSize.height()));
-  ui->lvComponents->resize(ui->lvComponents->geometry().size().width(),windowHeigth*this->lvComponentsSize.height()/this->originalWindowSize.height());
-  ui->lvComponents->resize(windowWidth*this->lvComponentsSize.width()/this->originalWindowSize.width(),ui->lvComponents->geometry().size().height());
+  ui->lvComponents->move((int)(windowWidth * this->lvComponentsPosition.x() / this->originalWindowSize.width()), ui->lvComponents->pos().y());
+  ui->lvComponents->move(ui->lvComponents->pos().x(), (int)(windowHeigth * this->lvComponentsPosition.y() / this->originalWindowSize.height()));
+  ui->lvComponents->resize(ui->lvComponents->geometry().size().width(), windowHeigth * this->lvComponentsSize.height() / this->originalWindowSize.height());
+  ui->lvComponents->resize(windowWidth * this->lvComponentsSize.width() / this->originalWindowSize.width(), ui->lvComponents->geometry().size().height());
 
-  ui->lvConfigurations->move((int)(windowWidth*this->lvConfigurationsPosition.x()/this->originalWindowSize.width()),ui->lvConfigurations->pos().y());
-  ui->lvConfigurations->move(ui->lvConfigurations->pos().x(),(int)(windowHeigth*this->lvConfigurationsPosition.y()/this->originalWindowSize.height()));
-  ui->lvConfigurations->resize(ui->lvConfigurations->geometry().size().width(),windowHeigth*this->lvConfigurationsSize.height()/this->originalWindowSize.height());
-  ui->lvConfigurations->resize(windowWidth*this->lvConfigurationsSize.width()/this->originalWindowSize.width(),ui->lvConfigurations->geometry().size().height());
+  ui->lvConfigurations->move((int)(windowWidth * this->lvConfigurationsPosition.x() / this->originalWindowSize.width()), ui->lvConfigurations->pos().y());
+  ui->lvConfigurations->move(ui->lvConfigurations->pos().x(), (int)(windowHeigth * this->lvConfigurationsPosition.y() / this->originalWindowSize.height()));
+  ui->lvConfigurations->resize(ui->lvConfigurations->geometry().size().width(), windowHeigth * this->lvConfigurationsSize.height() / this->originalWindowSize.height());
+  ui->lvConfigurations->resize(windowWidth * this->lvConfigurationsSize.width() / this->originalWindowSize.width(), ui->lvConfigurations->geometry().size().height());
 
-  ui->lvConfigBOOT->move((int)(windowWidth*this->lvConfigBOOTPosition.x()/this->originalWindowSize.width()),ui->lvConfigBOOT->pos().y());
-  ui->lvConfigBOOT->move(ui->lvConfigBOOT->pos().x(),(int)(windowHeigth*this->lvConfigBOOTPosition.y()/this->originalWindowSize.height()));
-  ui->lvConfigBOOT->resize(ui->lvConfigBOOT->geometry().size().width(),windowHeigth*this->lvConfigBOOTSize.height()/this->originalWindowSize.height());
-  ui->lvConfigBOOT->resize(windowWidth*this->lvConfigBOOTSize.width()/this->originalWindowSize.width(),ui->lvConfigBOOT->geometry().size().height());
+  ui->lvConfigBOOT->move((int)(windowWidth * this->lvConfigBOOTPosition.x() / this->originalWindowSize.width()), ui->lvConfigBOOT->pos().y());
+  ui->lvConfigBOOT->move(ui->lvConfigBOOT->pos().x(), (int)(windowHeigth * this->lvConfigBOOTPosition.y() / this->originalWindowSize.height()));
+  ui->lvConfigBOOT->resize(ui->lvConfigBOOT->geometry().size().width(), windowHeigth * this->lvConfigBOOTSize.height() / this->originalWindowSize.height());
+  ui->lvConfigBOOT->resize(windowWidth * this->lvConfigBOOTSize.width() / this->originalWindowSize.width(), ui->lvConfigBOOT->geometry().size().height());
 
-  double quadraticMeanConfigurationFontSize = (double)qSqrt((qreal)(windowHeigth*windowHeigth + windowWidth*windowWidth));
+  double quadraticMeanConfigurationFontSize = (double)qSqrt((qreal)(windowHeigth * windowHeigth + windowWidth * windowWidth));
 
-  QFont gbDAQInterfaceCommandsFont_("Cantarell",11);
-  int lbFontSizeDAQInterfaceCommands = (int)(this->gbDAQInterfaceCommandsFont.pointSize()*quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize);
+  QFont gbDAQInterfaceCommandsFont_("Cantarell", 11);
+  int lbFontSizeDAQInterfaceCommands = (int)(this->gbDAQInterfaceCommandsFont.pointSize() * quadraticMeanConfigurationFontSize / this->originalQuadraticMeanConfigurationFontSize);
   gbDAQInterfaceCommandsFont_.setPointSize(lbFontSizeDAQInterfaceCommands);
   ui->groupBox_DAQInterfaceCommands->setFont(gbDAQInterfaceCommandsFont_);
 
-  QFont gbDAQInterfaceFont_("Cantarell",11);
-  int lbFontSizeDAQInterface = (int)(this->gbDAQInterfaceFont.pointSize()*quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize);
+  QFont gbDAQInterfaceFont_("Cantarell", 11);
+  int lbFontSizeDAQInterface = (int)(this->gbDAQInterfaceFont.pointSize() * quadraticMeanConfigurationFontSize / this->originalQuadraticMeanConfigurationFontSize);
   gbDAQInterfaceFont_.setPointSize(lbFontSizeDAQInterface);
   ui->groupBox_DAQInterface->setFont(gbDAQInterfaceFont_);
 
-  QFont bStartRunFont_("Cantarell",11);
-  int lbFontSizeStartRun = (int)(this->bStartRunFont.pointSize()*quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize);
+  QFont bStartRunFont_("Cantarell", 11);
+  int lbFontSizeStartRun = (int)(this->bStartRunFont.pointSize() * quadraticMeanConfigurationFontSize / this->originalQuadraticMeanConfigurationFontSize);
   bStartRunFont_.setPointSize(lbFontSizeStartRun);
   ui->bStartRun->setFont(bStartRunFont_);
 
-  QSize bStartRunIconResize = this->bStartRunIconSize*quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize;
+  QSize bStartRunIconResize = this->bStartRunIconSize * quadraticMeanConfigurationFontSize / this->originalQuadraticMeanConfigurationFontSize;
   ui->bStartRun->setIconSize(bStartRunIconResize);
 
-  if(this->EnableFontAutoResizing){
-    QFont taDAQInterfaceFont_("Cantarell",11);
+  if(this->EnableFontAutoResizing) {
+    QFont taDAQInterfaceFont_("Cantarell", 11);
     taDAQInterfaceFont_.setFamily(ui->taDAQInterface->font().family());
-    int taFontSizeDAQInterface = (int)(this->taDAQInterfaceFont.pointSize()*quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize);
+    int taFontSizeDAQInterface = (int)(this->taDAQInterfaceFont.pointSize() * quadraticMeanConfigurationFontSize / this->originalQuadraticMeanConfigurationFontSize);
     taDAQInterfaceFont_.setPointSize(taFontSizeDAQInterface);
     ui->taDAQInterface->setFont(taDAQInterfaceFont_);
 
-    QFont lvComponentsFont_("Cantarell",11);
+    QFont lvComponentsFont_("Cantarell", 11);
     lvComponentsFont_.setFamily(ui->lvComponents->font().family());
-    int lvFontSizeComponents = (int)(this->lvComponentsFont.pointSize()*quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize);
+    int lvFontSizeComponents = (int)(this->lvComponentsFont.pointSize() * quadraticMeanConfigurationFontSize / this->originalQuadraticMeanConfigurationFontSize);
     lvComponentsFont_.setPointSize(lvFontSizeComponents);
     ui->lvComponents->setFont(lvComponentsFont_);
 
-    QFont lvConfigurationsFont_("Cantarell",11);
+    QFont lvConfigurationsFont_("Cantarell", 11);
     lvConfigurationsFont_.setFamily(ui->lvConfigurations->font().family());
-    int lvFontSizeConfigurations = (int)(this->lvConfigurationsFont.pointSize()*quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize);
+    int lvFontSizeConfigurations = (int)(this->lvConfigurationsFont.pointSize() * quadraticMeanConfigurationFontSize / this->originalQuadraticMeanConfigurationFontSize);
     lvConfigurationsFont_.setPointSize(lvFontSizeConfigurations);
     ui->lvConfigurations->setFont(lvConfigurationsFont_);
 
-    QFont lvBOOTConfigFont_("Cantarell",11);
+    QFont lvBOOTConfigFont_("Cantarell", 11);
     lvBOOTConfigFont_.setFamily(ui->lvConfigBOOT->font().family());
-    int lvFontSizeBOOTConfig = (int)(this->lvBOOTConfigFont.pointSize()*quadraticMeanConfigurationFontSize/this->originalQuadraticMeanConfigurationFontSize);
+    int lvFontSizeBOOTConfig = (int)(this->lvBOOTConfigFont.pointSize() * quadraticMeanConfigurationFontSize / this->originalQuadraticMeanConfigurationFontSize);
     lvBOOTConfigFont_.setPointSize(lvFontSizeBOOTConfig);
     ui->lvConfigBOOT->setFont(lvBOOTConfigFont_);
   }
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
-void MainWindow::openMenuOptionsDialog(){
-  qDebug()<<"Starting function";
+void MainWindow::openMenuOptionsDialog()
+{
+  qDebug() << "Starting function";
   MenuOptionsDialog* menuOptionsDialog = new MenuOptionsDialog(this);
   menuOptionsDialog->setWindowTitle("Options");
   menuOptionsDialog->setFromMainWindowFont(ui->taDAQInterface->font());
@@ -1262,8 +1276,8 @@ void MainWindow::openMenuOptionsDialog(){
   menuOptionsDialog->setEnableAutoResizing(this->EnableFontAutoResizing);
   menuOptionsDialog->setupCheckBoxEnableAutoResizing();
   int result = menuOptionsDialog->exec();
-  if(result == QDialog::Accepted){
-    QFont font(menuOptionsDialog->getFontType(),menuOptionsDialog->getFontSize());
+  if(result == QDialog::Accepted) {
+    QFont font(menuOptionsDialog->getFontType(), menuOptionsDialog->getFontSize());
     ui->taDAQInterface->setFont(font);
     ui->lvComponents->setFont(font);
     ui->lvConfigurations->setFont(font);
@@ -1271,10 +1285,11 @@ void MainWindow::openMenuOptionsDialog(){
     ui->taDAQInterface->setText(this->daqInterfaceTextAreaLog);
     this->EnableFontAutoResizing = menuOptionsDialog->getEnableAutoResizing();
     this->resizeWindow();
-  }else{
+  }
+  else {
 
   }
-  qDebug()<<"Ending function";
+  qDebug() << "Ending function";
 }
 
 void MainWindow::MensajeParaBelen()
