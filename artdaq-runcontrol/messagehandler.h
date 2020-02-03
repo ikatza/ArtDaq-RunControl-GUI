@@ -15,7 +15,14 @@
 #define COLOR_FATAL "\033[41m"
 #define COLOR_RESET "\033[0m"
 
-#define LOG_WRITE(OUTPUT, COLOR, LEVEL, MSG, FILE, LINE, FUNCTION) OUTPUT << COLOR << QTime::currentTime().toString("hhmmsszzz").toStdString() << " " LEVEL " " << COLOR_RESET << " FILE::" << FILE << " LINE::" << LINE << " FUNCTION::" << FUNCTION << "\n\t" << COLOR << MSG << COLOR_RESET << "\n";
+#define LOG_WRITE(OUTPUT, COLOR, LEVEL, MSG, FILE, LINE, FUNCTION) OUTPUT \
+<< COLOR << QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss:zzz").toStdString() \
+<< " " LEVEL " " << COLOR_RESET \
+<< "\nFILE::" << FILE \
+<< " LINE::" << LINE \
+<< " FUNCTION::" << FUNCTION \
+<< "\n\t" \
+<< COLOR << MSG << COLOR_RESET << "\n";
 
 void customLogWriter(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 
