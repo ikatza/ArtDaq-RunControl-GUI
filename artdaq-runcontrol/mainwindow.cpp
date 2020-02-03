@@ -252,6 +252,9 @@ void MainWindow::status(QString status)
     state_diagram.setOnlineButtonGreen();
     setButtonsStoppedEnabled();
     ui->checkBoxDatabase->setEnabled(true);
+    if(ui->checkBoxDatabase->isChecked()){
+      ui->bListDatabaseRunConfigurations->setEnabled(true);
+    }
     break;
   case 2: //booted
     //banBOOT = false;
@@ -268,6 +271,7 @@ void MainWindow::status(QString status)
     setButtonsStoppedDisabled();
     ui->bTerminate->setEnabled(true);
     ui->checkBoxDatabase->setEnabled(false);
+    ui->bListDatabaseRunConfigurations->setEnabled(false);
     break;
   case 3: //ready
     //banBOOT = false;
@@ -284,6 +288,7 @@ void MainWindow::status(QString status)
     setButtonsStoppedDisabled();
     ui->bTerminate->setEnabled(true);
     ui->checkBoxDatabase->setEnabled(false);
+    ui->bListDatabaseRunConfigurations->setEnabled(false);
     break;
   case 4: // running
     banRUNNING = true;
@@ -293,6 +298,7 @@ void MainWindow::status(QString status)
     state_diagram.setOnlineButtonGreen();
     setButtonsStoppedDisabled();
     ui->checkBoxDatabase->setEnabled(false);
+    ui->bListDatabaseRunConfigurations->setEnabled(false);
     break;
   case 5: // pause
     banRUNNING = false;
@@ -304,6 +310,7 @@ void MainWindow::status(QString status)
     setButtonsStoppedDisabled();
     setAllButtonsDisabled();
     ui->checkBoxDatabase->setEnabled(false);
+    ui->bListDatabaseRunConfigurations->setEnabled(false);
     break;
   case 7: // configuring
     state_diagram.setStateDiagramConfiguring();
@@ -311,6 +318,7 @@ void MainWindow::status(QString status)
     setButtonsStoppedDisabled();
     setAllButtonsDisabled();
     ui->checkBoxDatabase->setEnabled(false);
+    ui->bListDatabaseRunConfigurations->setEnabled(false);
     break;
   case 8: // starting
     state_diagram.setStateDiagramStartingRun();
@@ -318,6 +326,7 @@ void MainWindow::status(QString status)
     setButtonsStoppedDisabled();
     setAllButtonsDisabled();
     ui->checkBoxDatabase->setEnabled(false);
+    ui->bListDatabaseRunConfigurations->setEnabled(false);
     break;
   case 9: // stopping
     state_diagram.setStateDiagramStoppingRun();
@@ -325,6 +334,7 @@ void MainWindow::status(QString status)
     setButtonsStoppedDisabled();
     setAllButtonsDisabled();
     ui->checkBoxDatabase->setEnabled(false);
+    ui->bListDatabaseRunConfigurations->setEnabled(false);
     break;
   case 10: // terminating
     state_diagram.setStateDiagramTerminating();
@@ -332,6 +342,7 @@ void MainWindow::status(QString status)
     setButtonsStoppedDisabled();
     setAllButtonsDisabled();
     ui->checkBoxDatabase->setEnabled(false);
+    ui->bListDatabaseRunConfigurations->setEnabled(false);
     break;
   case 99:
     initializeButtons();
@@ -348,8 +359,10 @@ void MainWindow::status(QString status)
 
 void MainWindow::setButtonsStoppedEnabled(){
   ui->bEndSession->setEnabled(true);
-  ui->bDAQcomp->setEnabled(true);
-  ui->bDAQconf->setEnabled(true);
+  if(!ui->checkBoxDatabase->isEnabled()){
+    ui->bDAQcomp->setEnabled(true);
+    ui->bDAQconf->setEnabled(true);
+  }
 }
 
 void MainWindow::setButtonsStoppedDisabled(){
@@ -824,6 +837,7 @@ void MainWindow::checkBoxDatabaseChanged()
     ui->bListDatabaseRunConfigurations->setEnabled(true);
     ui->bDAQcomp->setEnabled(false);
     ui->bDAQconf->setEnabled(false);
+    initializeLV();
     banBOOTCONFIG = false;
   }
   else {
