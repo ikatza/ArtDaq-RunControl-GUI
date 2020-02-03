@@ -2,6 +2,26 @@ cmake_minimum_required(VERSION 3.1.0)
 
 project(artdaq-runcontrol)
 
+add_definitions(-DVERSION="v0_00_05")
+add_definitions(-DNAME="artdaq-runcontrol-gui")
+add_definitions(-DSYSTEM="slf7-x86_64-e17-prof")
+
+add_definitions(-DGIT_HASH="warawara")
+add_definitions(-DGIT_BRANCH="master")
+
+# # Not working attempt:
+# add_definitions(-DVERSION="${CPACK_PACKAGE_VERSION}")
+# add_definitions(-DNAME="${CPACK_PACKAGE_NAME}")
+# add_definitions(-DSYSTEM="${CPACK_SYSTEM_NAME}")
+
+# # Some other non working attempts
+# add_definitions(-DGIT_CURRENT_SHA1="$(shell git -C \""$$_PRO_FILE_PWD_"\" describe)")
+# add_definitions(-DGIT_CURRENT_SHA1="asdasdasdasf")
+# add_definitions(-DGIT_HASH=`git rev-parse HEAD`)
+# add_definitions(-DCOMPILE_TIME=`date -u +'%Y-%m-%d %H:%M:%S UTC'`)
+# add_definitions(-DGIT_BRANCH="$(shell git rev-parse --abbrev-ref HEAD)")
+# add_definitions(-DGIT_VERSION = $$system(git --git-dir $$PWD/.git --work-tree $$PWD describe --always --tags))
+
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed
