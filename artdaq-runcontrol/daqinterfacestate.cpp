@@ -9,13 +9,16 @@ daqInterfaceState::daqInterfaceState(QWidget *parent) :
   imagesDirectory = QCoreApplication::applicationDirPath() + "/../resources/images/";
   //qDebug()<<imagesDirectory;
   QGraphicsScene *scene = new QGraphicsScene();
-  QPixmap m(imagesDirectory + "StateDiagram_all_off.png");
-  scene->addPixmap(m);
+  QImage image;
+  image.load(imagesDirectory + "StateDiagram_all_off.png", "PNG");
+  QPixmap pixmapImage = QPixmap::fromImage(image);
+  scene->addPixmap(pixmapImage);
   ui->graphicsView->setScene(scene);
 
   ui->labelButtonOnline->setText("");
-  QPixmap button_image(imagesDirectory + "button_red.png");
-  ui->labelButtonOnline->setPixmap(button_image);
+  image.load(imagesDirectory + "button_red.png", "PNG");
+  pixmapImage = QPixmap::fromImage(image);
+  ui->labelButtonOnline->setPixmap(pixmapImage);
 
   QPalette palette = ui->lcdPartitionNumber->palette();
   palette.setColor(QPalette::WindowText, Qt::red);
@@ -36,8 +39,6 @@ daqInterfaceState::daqInterfaceState(QWidget *parent) :
 
   connect(&timerTransition, SIGNAL(timeout()), this, SLOT(setStateDiagramOff()));
   connect(&timerOnline, SIGNAL(timeout()), this, SLOT(setOnlineButtonLightGreen()));
-
-  //this->parseRun_number();
 }
 
 daqInterfaceState::~daqInterfaceState()
@@ -47,76 +48,92 @@ daqInterfaceState::~daqInterfaceState()
 
 void daqInterfaceState::setStateDiagramOff()
 {
-  QGraphicsScene *scene = new QGraphicsScene();
-  QPixmap m(imagesDirectory + "StateDiagram_all_off.png");
-  scene->addPixmap(m);
-  ui->graphicsView->setScene(scene);
+  QGraphicsScene *scene = ui->graphicsView->scene();
+  scene->clear();
+  QImage image;
+  image.load(imagesDirectory + "StateDiagram_all_off.png", "PNG");
+  QPixmap pixmapImage = QPixmap::fromImage(image);
+  scene->addPixmap(pixmapImage);
 }
 
 
 void daqInterfaceState::setStateDiagramStopped()
 {
-  QGraphicsScene *scene = new QGraphicsScene();
-  QPixmap m(imagesDirectory + "StateDiagram_stopped.png");
-  scene->addPixmap(m);
-  ui->graphicsView->setScene(scene);
+  QGraphicsScene *scene = ui->graphicsView->scene();
+  scene->clear();
+  QImage image;
+  image.load(imagesDirectory + "StateDiagram_stopped.png", "PNG");
+  QPixmap pixmapImage = QPixmap::fromImage(image);
+  scene->addPixmap(pixmapImage);
   this->setRunNumberLCDRed();
 }
 
 void daqInterfaceState::setStateDiagramBooted()
 {
-  QGraphicsScene *scene = new QGraphicsScene();
-  QPixmap m(imagesDirectory + "StateDiagram_booted.png");
-  scene->addPixmap(m);
-  ui->graphicsView->setScene(scene);
+  QGraphicsScene *scene = ui->graphicsView->scene();
+  scene->clear();
+  QImage image;
+  image.load(imagesDirectory + "StateDiagram_booted.png", "PNG");
+  QPixmap pixmapImage = QPixmap::fromImage(image);
+  scene->addPixmap(pixmapImage);
 }
 
 void daqInterfaceState::setStateDiagramRunning()
 {
-  QGraphicsScene *scene = new QGraphicsScene();
-  QPixmap m(imagesDirectory + "StateDiagram_running.png");
-  scene->addPixmap(m);
-  ui->graphicsView->setScene(scene);
+  QGraphicsScene *scene = ui->graphicsView->scene();
+  scene->clear();
+  QImage image;
+  image.load(imagesDirectory + "StateDiagram_running.png", "PNG");
+  QPixmap pixmapImage = QPixmap::fromImage(image);
+  scene->addPixmap(pixmapImage);
   this->setRunNumberLCDGreen();
   this->setIsRunning(true);
 }
 
 void daqInterfaceState::setStateDiagramReady()
 {
-  QGraphicsScene *scene = new QGraphicsScene();
-  QPixmap m(imagesDirectory + "StateDiagram_ready.png");
-  scene->addPixmap(m);
-  ui->graphicsView->setScene(scene);
+  QGraphicsScene *scene = ui->graphicsView->scene();
+  scene->clear();
+  QImage image;
+  image.load(imagesDirectory + "StateDiagram_ready.png", "PNG");
+  QPixmap pixmapImage = QPixmap::fromImage(image);
+  scene->addPixmap(pixmapImage);
   this->setRunNumberLCDRed();
   this->parseRun_number();
 }
 
 void daqInterfaceState::setStateDiagramBooting()
 {
-  QGraphicsScene *scene = new QGraphicsScene();
-  QPixmap m(imagesDirectory + "StateDiagram_booting.png");
-  scene->addPixmap(m);
-  ui->graphicsView->setScene(scene);
+  QGraphicsScene *scene = ui->graphicsView->scene();
+  scene->clear();
+  QImage image;
+  image.load(imagesDirectory + "StateDiagram_booting.png", "PNG");
+  QPixmap pixmapImage = QPixmap::fromImage(image);
+  scene->addPixmap(pixmapImage);
   timerTransition.setSingleShot(true);
   timerTransition.start(500);
 }
 
 void daqInterfaceState::setStateDiagramConfiguring()
 {
-  QGraphicsScene *scene = new QGraphicsScene();
-  QPixmap m(imagesDirectory + "StateDiagram_configuring.png");
-  scene->addPixmap(m);
-  ui->graphicsView->setScene(scene);
+  QGraphicsScene *scene = ui->graphicsView->scene();
+  scene->clear();
+  QImage image;
+  image.load(imagesDirectory + "StateDiagram_configuring.png", "PNG");
+  QPixmap pixmapImage = QPixmap::fromImage(image);
+  scene->addPixmap(pixmapImage);
   timerTransition.setSingleShot(true);
   timerTransition.start(500);
 }
 
 void daqInterfaceState::setStateDiagramStartingRun()
 {
-  QGraphicsScene *scene = new QGraphicsScene();
-  QPixmap m(imagesDirectory + "StateDiagram_starting_run.png");
-  scene->addPixmap(m);
-  ui->graphicsView->setScene(scene);
+  QGraphicsScene *scene = ui->graphicsView->scene();
+  scene->clear();
+  QImage image;
+  image.load(imagesDirectory + "StateDiagram_starting_run.png", "PNG");
+  QPixmap pixmapImage = QPixmap::fromImage(image);
+  scene->addPixmap(pixmapImage);
   timerTransition.setSingleShot(true);
   timerTransition.start(500);
   this->setIsRunning(false);
@@ -124,10 +141,12 @@ void daqInterfaceState::setStateDiagramStartingRun()
 
 void daqInterfaceState::setStateDiagramStoppingRun()
 {
-  QGraphicsScene *scene = new QGraphicsScene();
-  QPixmap m(imagesDirectory + "StateDiagram_stopping_run.png");
-  scene->addPixmap(m);
-  ui->graphicsView->setScene(scene);
+  QGraphicsScene *scene = ui->graphicsView->scene();
+  scene->clear();
+  QImage image;
+  image.load(imagesDirectory + "StateDiagram_stopping_run.png", "PNG");
+  QPixmap pixmapImage = QPixmap::fromImage(image);
+  scene->addPixmap(pixmapImage);
   timerTransition.setSingleShot(true);
   timerTransition.start(500);
   this->setIsRunning(false);
@@ -135,10 +154,12 @@ void daqInterfaceState::setStateDiagramStoppingRun()
 
 void daqInterfaceState::setStateDiagramTerminating()
 {
-  QGraphicsScene *scene = new QGraphicsScene();
-  QPixmap m(imagesDirectory + "StateDiagram_terminating.png");
-  scene->addPixmap(m);
-  ui->graphicsView->setScene(scene);
+  QGraphicsScene *scene = ui->graphicsView->scene();
+  scene->clear();
+  QImage image;
+  image.load(imagesDirectory + "StateDiagram_terminating.png", "PNG");
+  QPixmap pixmapImage = QPixmap::fromImage(image);
+  scene->addPixmap(pixmapImage);
   timerTransition.setSingleShot(true);
   timerTransition.start(500);
 }
@@ -146,8 +167,10 @@ void daqInterfaceState::setStateDiagramTerminating()
 void daqInterfaceState::setOnlineButtonGreen()
 {
   ui->labelButtonOnline->setText("");
-  QPixmap button_image(imagesDirectory + "button_green.png");
-  ui->labelButtonOnline->setPixmap(button_image);
+  QImage image;
+  image.load(imagesDirectory + "button_green.png", "PNG");
+  QPixmap pixmapImage = QPixmap::fromImage(image);
+  ui->labelButtonOnline->setPixmap(pixmapImage);
   this->parseRun_number();
   if(this->IsRunning()){
     this->setLCDRunNumber(this->getRun_number());
@@ -159,15 +182,19 @@ void daqInterfaceState::setOnlineButtonGreen()
 void daqInterfaceState::setOnlineButtonRed()
 {
   ui->labelButtonOnline->setText("");
-  QPixmap button_image(imagesDirectory + "button_red.png");
-  ui->labelButtonOnline->setPixmap(button_image);
+  QImage image;
+  image.load(imagesDirectory + "button_red.png", "PNG");
+  QPixmap pixmapImage = QPixmap::fromImage(image);
+  ui->labelButtonOnline->setPixmap(pixmapImage);
 }
 
 void daqInterfaceState::setOnlineButtonLightGreen()
 {
   ui->labelButtonOnline->setText("");
-  QPixmap button_image(imagesDirectory + "button_light_green.png");
-  ui->labelButtonOnline->setPixmap(button_image);
+  QImage image;
+  image.load(imagesDirectory + "button_light_green.png", "PNG");
+  QPixmap pixmapImage = QPixmap::fromImage(image);
+  ui->labelButtonOnline->setPixmap(pixmapImage);
 }
 
 int daqInterfaceState::getRun_number() const
@@ -283,16 +310,3 @@ void daqInterfaceState::parseRun_number()
   }
   this->setRun_number(number);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
