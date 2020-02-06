@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.1.0)
 
 project(artdaq-runcontrol)
 
-add_definitions(-DVERSION="v0_00_05")
+add_definitions(-DVERSION="v1_00_00")
 add_definitions(-DNAME="artdaq-runcontrol-gui")
 add_definitions(-DSYSTEM="slf7-x86_64-e17-prof")
 
