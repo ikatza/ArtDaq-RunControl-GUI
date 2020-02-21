@@ -1,7 +1,7 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent artdaq_runcontrol_gui 		v1_00_00
-defaultqual	e17
+parent artdaq_runcontrol_gui 		v1_00_01
+defaultqual	e19
 
 # These optional lines define the installed directories where
 # headers, libraries, and executables will be found
@@ -19,8 +19,8 @@ fcldir      -
 #
 product			version	       optional
 qt         		v5_12_3
-xmlrpc_c		v1_51_03
-cetbuildtools   	v7_13_02       -       only_for_build
+xmlrpc_c		v1_51_03a
+cetbuildtools   	v7_14_00       -       only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
@@ -28,6 +28,8 @@ end_product_list
 qualifier			 qt		xmlrpc_c		
 e17:prof			 e17		e17:prof
 e17:debug			 e17		e17:prof
+e19:prof			 e19		e19:prof
+e19:debug			 e19		e19:prof
 end_qualifier_list
 # Preserve tabs and formatting in emacs and vi / vim:
 
