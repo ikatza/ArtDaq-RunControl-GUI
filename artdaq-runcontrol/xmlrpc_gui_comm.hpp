@@ -1,6 +1,7 @@
 #ifndef XMLRPC_GUI_COMM_HPP
 #define XMLRPC_GUI_COMM_HPP
 
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #include <xmlrpc-c/base.hpp>
 #include <xmlrpc-c/client_simple.hpp>
 #include <QString>
