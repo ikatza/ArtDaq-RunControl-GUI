@@ -99,7 +99,7 @@ void daqInterfaceState::setStateDiagramReady()
   QPixmap pixmapImage = QPixmap::fromImage(image);
   scene->addPixmap(pixmapImage);
   this->setRunNumberLCDRed();
-  this->parseRun_number();
+  this->setRun_number(gui_utility_functions::getRunNumber());
 }
 
 void daqInterfaceState::setStateDiagramBooting()
@@ -171,7 +171,7 @@ void daqInterfaceState::setOnlineButtonGreen()
   image.load(imagesDirectory + "button_green.png", "PNG");
   QPixmap pixmapImage = QPixmap::fromImage(image);
   ui->labelButtonOnline->setPixmap(pixmapImage);
-  this->parseRun_number();
+  this->setRun_number(gui_utility_functions::getRunNumber());
   if(this->IsRunning()) {
     this->setLCDRunNumber(this->getRun_number());
   }
@@ -294,7 +294,7 @@ void daqInterfaceState::setOffline()
   ui->lcdRunNumber->display(0);
 }
 
-void daqInterfaceState::parseRun_number()
+/*void daqInterfaceState::parseRun_number()
 {
   gpp.start("show_recent_runs.sh", QStringList() << "1");
   gpp.waitForFinished();
@@ -310,4 +310,4 @@ void daqInterfaceState::parseRun_number()
     number = 0;
   }
   this->setRun_number(number);
-}
+}*/

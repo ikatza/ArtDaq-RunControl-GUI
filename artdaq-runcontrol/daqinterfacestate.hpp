@@ -12,6 +12,8 @@
 #include <QProcess>
 #include <QTextCodec>
 
+#include "gui_utility_functions.hpp"
+
 namespace Ui {
 class daqInterfaceState;
 }
@@ -47,7 +49,7 @@ public slots:
   void setStateDiagramOff();
 private slots:
   void setOnlineButtonLightGreen();
-  void parseRun_number();
+  //void parseRun_number();
   void setRunNumberLCDRed();
   void setRunNumberLCDGreen();
 private:

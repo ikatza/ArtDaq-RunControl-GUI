@@ -731,7 +731,7 @@ void MainWindow::bDAQInterfacePressed()
 
 void MainWindow::DAQInterfaceOutput()
 {
-  qDebug() << "Starting function";
+  //qDebug() << "Starting function";
   QByteArray daq_byte_array = daq_interface.readAllStandardOutput();
   //daq_interface.waitForFinished();
   QTextCodec* codec = QTextCodec::codecForName("UTF-8");
@@ -759,7 +759,7 @@ void MainWindow::DAQInterfaceOutput()
   default:
     break;
   }
-  qDebug() << "Ending function";
+  //qDebug() << "Ending function";
 }
 
 void MainWindow::lvComps()

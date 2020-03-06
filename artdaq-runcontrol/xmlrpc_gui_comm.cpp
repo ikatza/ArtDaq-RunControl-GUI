@@ -163,7 +163,7 @@ void xmlrpc_gui_comm::sendTransitionCONFIG(QStringList selected_config)
 
 void xmlrpc_gui_comm::sendTransitionSTART()
 {
-
+  qDebug() << "Starting function";
   try {
     xmlrpc_c::value result;
     xmlrpc_c::paramList params;
@@ -174,7 +174,7 @@ void xmlrpc_gui_comm::sendTransitionSTART()
     QString run_number_str;
     int run_number = 0;
 
-    QStringList comp_line;
+    /*QStringList comp_line;
     QString line, record_directory;
 
     QFile file(env_vars::daqInt_settings);
@@ -196,7 +196,11 @@ void xmlrpc_gui_comm::sendTransitionSTART()
       run_number_str_list = it.next().split("/");
       run_number_str = run_number_str_list.at(run_number_str_list.size() - 1);
       run_number = run_number_str.toInt();
+      qDebug()<<run_number;
     }
+    */
+
+    run_number = gui_utility_functions::getRunNumber();
 
     std::map<std::string, xmlrpc_c::value> structData;
     std::pair<std::string, xmlrpc_c::value> member("run_number", xmlrpc_c::value_int(run_number + 1));
@@ -212,6 +216,7 @@ void xmlrpc_gui_comm::sendTransitionSTART()
     qDebug() << "Call to DAQInterface failed because: "
              << e.what();
   }
+  qDebug() << "Ending function";
 }
 
 void xmlrpc_gui_comm::sendTransitionSTOP()

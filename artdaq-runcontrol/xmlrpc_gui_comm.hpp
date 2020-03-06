@@ -12,6 +12,7 @@
 #include <QDirIterator>
 
 #include "env_vars.hpp"
+#include "gui_utility_functions.hpp"
 
 class xmlrpc_gui_comm {
 public:
