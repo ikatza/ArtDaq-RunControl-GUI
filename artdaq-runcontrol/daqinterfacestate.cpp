@@ -293,21 +293,3 @@ void daqInterfaceState::setOffline()
   ui->lcdPortNumber->display(0);
   ui->lcdRunNumber->display(0);
 }
-
-/*void daqInterfaceState::parseRun_number()
-{
-  gpp.start("show_recent_runs.sh", QStringList() << "1");
-  gpp.waitForFinished();
-  QByteArray byte_status = gpp.readAll();
-  QTextCodec* codec = QTextCodec::codecForName("UTF-8");
-  QStringList gpp_stringlist = codec->codecForMib(106)->toUnicode(byte_status).split(" ", QString::KeepEmptyParts);
-  int number;
-  if(gpp_stringlist.count() > 1) {
-    QString number_str = gpp_stringlist.at(1);
-    number = number_str.toInt();
-  }
-  else {
-    number = 0;
-  }
-  this->setRun_number(number);
-}*/

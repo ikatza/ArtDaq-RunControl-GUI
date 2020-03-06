@@ -49,7 +49,6 @@ public slots:
   void setStateDiagramOff();
 private slots:
   void setOnlineButtonLightGreen();
-  //void parseRun_number();
   void setRunNumberLCDRed();
   void setRunNumberLCDGreen();
 private:

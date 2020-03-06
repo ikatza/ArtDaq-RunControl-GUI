@@ -174,32 +174,6 @@ void xmlrpc_gui_comm::sendTransitionSTART()
     QString run_number_str;
     int run_number = 0;
 
-    /*QStringList comp_line;
-    QString line, record_directory;
-
-    QFile file(env_vars::daqInt_settings);
-    file.open(QIODevice::ReadOnly);
-
-    QTextStream in(&file);
-
-    while(!in.atEnd()) {
-      line = in.readLine();
-      comp_line = line.split(":");
-      if(comp_line.size() > 0 && (comp_line.at(0) == "record_directory")) {
-        record_directory = comp_line.at(1);
-        break;
-      }
-    }
-
-    QDirIterator it(record_directory.right(record_directory.size() - 1), QDirIterator::NoIteratorFlags);
-    while (it.hasNext()) {
-      run_number_str_list = it.next().split("/");
-      run_number_str = run_number_str_list.at(run_number_str_list.size() - 1);
-      run_number = run_number_str.toInt();
-      qDebug()<<run_number;
-    }
-    */
-
     run_number = gui_utility_functions::getRunNumber();
 
     std::map<std::string, xmlrpc_c::value> structData;
