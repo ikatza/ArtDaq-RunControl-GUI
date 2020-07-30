@@ -68,9 +68,11 @@ void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components)
     QTextStream in(&file);
     QString cmd = "";
     QString comp = "";
-    QStringList comp_line;
+    QString arbitrary_command = "";
+    QStringList comp_line, arbitrary_command_stringlist;
 
     QString line;
+    bool has_arbitrary_command = false;
 
     qDebug() << "Components: " << components << "size: " << components.size();
     std::map<std::string, xmlrpc_c::value> structData;
@@ -82,12 +84,30 @@ void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components)
       for(int i = 0; i < components.size(); i++) {
         comp = components.at(i);
         if(comp_line.at(0) == comp) {
-          cmd = comp_line.at(1);
-          array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
-          cmd = comp_line.at(2);
-          array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
-          cmd = "1";
-          array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
+          qDebug() << comp;
+          int comp_line_size = comp_line.size();
+          if(comp_line_size > 5){
+            comp_line_size = 5; // valid for now taking note of daqinterface wiki: Note that to set the Nth field for a BoardReader, you'll also need to set fields 1 through N-1.
+            arbitrary_command_stringlist = line.split("\"");
+            arbitrary_command = "\"" + arbitrary_command_stringlist.at(1) + "\"";
+            has_arbitrary_command = true;
+          }
+          for(int j=1; j < comp_line_size; j++){ // iterate through columns
+            cmd = comp_line.at(j);
+            qDebug() << comp_line.at(j);
+            array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
+          }
+          if(comp_line_size == 2){ // default values for port and subsystem
+            cmd = "-1";
+            array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
+            cmd = "1";
+            array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
+          }else if(has_arbitrary_command){
+            cmd = arbitrary_command;
+            qDebug() << cmd;
+            array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
+            has_arbitrary_command = false;
+          }
           std::pair<std::string, xmlrpc_c::value> member(comp.toStdString(), xmlrpc_c::value_array(array_list));
           structData.insert(member);
           array_list.clear();
