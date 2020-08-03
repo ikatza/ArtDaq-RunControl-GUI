@@ -89,7 +89,7 @@ void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components)
           if(comp_line_size > 5){
             comp_line_size = 5; // valid for now taking note of daqinterface wiki: Note that to set the Nth field for a BoardReader, you'll also need to set fields 1 through N-1.
             arbitrary_command_stringlist = line.split("\"");
-            arbitrary_command = "\"" + arbitrary_command_stringlist.at(1) + "\"";
+            arbitrary_command =  "\"" + arbitrary_command_stringlist.at(1) + "\"";
             has_arbitrary_command = true;
           }
           for(int j=1; j < comp_line_size; j++){ // iterate through columns
@@ -102,7 +102,11 @@ void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components)
             array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
             cmd = "1";
             array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
-          }else if(has_arbitrary_command){
+          }else if(comp_line_size == 3){
+            cmd = "1";
+            array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
+          }
+          else if(has_arbitrary_command){
             cmd = arbitrary_command;
             qDebug() << cmd;
             array_list.push_back(xmlrpc_c::value_string(cmd.toStdString()));
