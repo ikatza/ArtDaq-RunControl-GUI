@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.1.0)
 
 project(artdaq-runcontrol)
 
-add_definitions(-DVERSION="v1_00_00")
+add_definitions(-DVERSION="v1_00_02")
 add_definitions(-DNAME="artdaq-runcontrol-gui")
 add_definitions(-DSYSTEM="slf7-x86_64-e17-prof")
 
@@ -32,7 +32,7 @@ set(CMAKE_AUTOUIC ON)
 include_directories($ENV{XMLRPC_C_FQ_DIR}/include)
 link_directories($ENV{XMLRPC_C_FQ_DIR}/lib)
 
-# set(CMAKE_BUILD_TYPE Debug) # un-comment to build debug product
+#set(CMAKE_BUILD_TYPE Debug) # un-comment to build debug product
 
 add_definitions(-DQT_NO_DEBUG_OUTPUT) # comment to have debug messages printed
 
