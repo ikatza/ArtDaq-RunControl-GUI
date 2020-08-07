@@ -282,13 +282,27 @@ void MainWindow::initializeLV()
 
 void MainWindow::checkStatus()
 {
-  daq_commands.start("status.sh", QStringList() << "");
+  /*daq_commands.start("status.sh", QStringList() << "");
   daq_commands.waitForFinished();
   QByteArray byte_status = daq_commands.readAll();
   QTextCodec* codec = QTextCodec::codecForName("UTF-8");
-  QStringList daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("'", QString::KeepEmptyParts);
-  // qDebug() << "xmlrpc_c: " << commDAQInterface.getDAQInterfaceStatus();
-  if(daq_string.count() > 1) {
+  QStringList daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("'", QString::KeepEmptyParts);*/
+  qDebug() << "xmlrpc_c: " << commDAQInterface.getDAQInterfaceStatus();
+  QString str_status = commDAQInterface.getDAQInterfaceStatus();
+  int est = status_map_int.value(str_status);
+  if(est >= 1 && est <= 10){
+    state_diagram.setOnline();
+    //QString str_status = daq_string.at(1);
+    // qDebug()<<str_status;
+    ui->lbStatus->setText(status_map.value(str_status).toUpper());
+    status(str_status);
+    checkTransitionStartRunPressed(str_status);
+  }
+  else{
+    ui->taDAQInterface->document()->setPlainText(str_status);
+    status("offline");
+  }
+  /*if(daq_string.count() > 1) {
     state_diagram.setOnline();
     QString str_status = daq_string.at(1);
     // qDebug()<<str_status;
@@ -299,7 +313,7 @@ void MainWindow::checkStatus()
   else {
     ui->taDAQInterface->document()->setPlainText(daq_string.at(0));
     status("offline");
-  }
+  }*/
 }
 
 void MainWindow::status(QString status)

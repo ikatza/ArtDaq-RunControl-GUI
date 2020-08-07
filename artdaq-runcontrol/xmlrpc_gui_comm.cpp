@@ -21,9 +21,9 @@ QString xmlrpc_gui_comm::getDAQInterfaceStatus()
     //qDebug()<< "from xmlrpc_c: "<<result_;
   }
   catch(std::exception const & e) {
-    qDebug() << "Call to DAQInterface failed because: "
-             << "crashing here " << e.what();
-    return QString::fromUtf8(e.what(), sizeof(e.what()));
+    qCritical() << "Call to DAQInterface failed because: "
+             << e.what();
+    return QString::fromUtf8(e.what());
   }
 }
 
@@ -35,7 +35,7 @@ void xmlrpc_gui_comm::listDAQInterfaceComponents()
     guiClient.call(serverUrl.toStdString(), a.toStdString(), &result);
   }
   catch(std::exception const & e) {
-    qDebug() << "Call to DAQInterface failed because: "
+    qCritical() << "Call to DAQInterface failed because: "
              << e.what();
   }
 }
@@ -48,7 +48,7 @@ void xmlrpc_gui_comm::listDAQInterfaceConfigs()
     guiClient.call(serverUrl.toStdString(), a.toStdString(), &result);
   }
   catch(std::exception const & e) {
-    qDebug() << "Call to DAQInterface failed because: "
+    qCritical() << "Call to DAQInterface failed because: "
              << e.what();
   }
 }
@@ -124,7 +124,7 @@ void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components)
 
   }
   catch(std::exception const & e) {
-    qDebug() << "Call to DAQInterface failed because: "
+    qCritical() << "Call to DAQInterface failed because: "
              << e.what();
   }
 }
@@ -151,7 +151,7 @@ void xmlrpc_gui_comm::sendTransitionBOOT(QStringList selected_boot_file)
 
   }
   catch(std::exception const & e) {
-    qDebug() << "Call to DAQInterface failed because: "
+    qCritical() << "Call to DAQInterface failed because: "
              << e.what();
   }
 }
@@ -180,14 +180,13 @@ void xmlrpc_gui_comm::sendTransitionCONFIG(QStringList selected_config)
 
   }
   catch(std::exception const & e) {
-    qDebug() << "Call to DAQInterface failed because: "
+    qCritical() << "Call to DAQInterface failed because: "
              << e.what();
   }
 }
 
 void xmlrpc_gui_comm::sendTransitionSTART()
 {
-  qDebug() << "Starting function";
   try {
     xmlrpc_c::value result;
     xmlrpc_c::paramList params;
@@ -211,10 +210,9 @@ void xmlrpc_gui_comm::sendTransitionSTART()
 
   }
   catch(std::exception const & e) {
-    qDebug() << "Call to DAQInterface failed because: "
+    qCritical() << "Call to DAQInterface failed because: "
              << e.what();
   }
-  qDebug() << "Ending function";
 }
 
 void xmlrpc_gui_comm::sendTransitionSTOP()
@@ -236,7 +234,7 @@ void xmlrpc_gui_comm::sendTransitionSTOP()
     guiClient.call(serverUrl.toStdString(), a.toStdString(), params, &result);
   }
   catch(std::exception const & e) {
-    qDebug() << "Call to DAQInterface failed because: "
+    qCritical() << "Call to DAQInterface failed because: "
              << e.what();
   }
 }
@@ -260,7 +258,7 @@ void xmlrpc_gui_comm::sendTransitionTERMINATE()
     guiClient.call(serverUrl.toStdString(), a.toStdString(), params, &result);
   }
   catch(std::exception const & e) {
-    qDebug() << "Call to DAQInterface failed because: "
+    qCritical() << "Call to DAQInterface failed because: "
              << e.what();
   }
 }
