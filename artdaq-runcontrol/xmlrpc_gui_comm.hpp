@@ -10,6 +10,7 @@
 #include <QStringList>
 #include <vector>
 #include <QDirIterator>
+#include <QThread>
 
 #include "env_vars.hpp"
 #include "gui_utility_functions.hpp"
