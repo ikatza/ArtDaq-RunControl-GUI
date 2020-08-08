@@ -152,6 +152,7 @@ private:
   QSize bStartRunIconSize;
   double originalQuadraticMeanConfigurationFontSize;
   bool EnableFontAutoResizing = true;
+  bool enableShellScripts = false;
 };
 
 #endif // MAINWINDOW_HPP

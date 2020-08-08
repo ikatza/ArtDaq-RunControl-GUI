@@ -4,26 +4,43 @@
 xmlrpc_gui_comm::xmlrpc_gui_comm()
 {
   serverUrl = "http://localhost:" + env_vars::rpc_port + "/RPC2";
+  DAQInterfaceCommands.setWorkingDirectory(env_vars::daqInt_wd);
 }
 
 QString xmlrpc_gui_comm::getDAQInterfaceStatus()
 {
-  try {
-    xmlrpc_c::value result;
-    xmlrpc_c::paramList params;
-    QString a = "state";
-    QString b = "daqint";
-    params.add(xmlrpc_c::value_string(b.toStdString()));
-    // qDebug()<< "serverUrl: " << serverUrl ;
-    guiClient.call(serverUrl.toStdString(), a.toStdString(), params, &result);
-    QString result_ = QString::fromStdString(xmlrpc_c::value_string(result));
-    return result_;
-    //qDebug()<< "from xmlrpc_c: "<<result_;
-  }
-  catch(std::exception const & e) {
-    qCritical() << "Call to DAQInterface failed because: "
-             << e.what();
-    return QString::fromUtf8(e.what());
+  if(this->isShellScriptsEnabled){
+    DAQInterfaceCommands.start("status.sh", QStringList() << "");
+    DAQInterfaceCommands.waitForFinished();
+    QByteArray byte_status = DAQInterfaceCommands.readAll();
+    QTextCodec* codec = QTextCodec::codecForName("UTF-8");
+    QStringList daqinterface_string = codec->codecForMib(106)->toUnicode(byte_status).split("'", QString::KeepEmptyParts);
+    QString daqinterface_status;
+    if(daqinterface_string.size() > 1){
+      daqinterface_status = daqinterface_string.at(1);
+      return daqinterface_status;
+    }else{
+      daqinterface_status = daqinterface_string.at(0);
+      return daqinterface_status;
+    }
+  }else{
+    try {
+      xmlrpc_c::value result;
+      xmlrpc_c::paramList params;
+      QString a = "state";
+      QString b = "daqint";
+      params.add(xmlrpc_c::value_string(b.toStdString()));
+      // qDebug()<< "serverUrl: " << serverUrl ;
+      guiClient.call(serverUrl.toStdString(), a.toStdString(), params, &result);
+      QString result_ = QString::fromStdString(xmlrpc_c::value_string(result));
+      return result_;
+      //qDebug()<< "from xmlrpc_c: "<<result_;
+    }
+    catch(std::exception const & e) {
+      qCritical() << "Call to DAQInterface failed because: "
+               << e.what();
+      return QString::fromUtf8(e.what());
+    }
   }
 }
 
@@ -261,4 +278,8 @@ void xmlrpc_gui_comm::sendTransitionTERMINATE()
     qCritical() << "Call to DAQInterface failed because: "
              << e.what();
   }
+}
+
+void xmlrpc_gui_comm::setIsShellScriptsEnabled(bool value){
+  this->isShellScriptsEnabled = value;
 }

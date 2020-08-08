@@ -25,8 +25,9 @@ public:
   void setupFontComboBox();
   bool getEnableAutoResizing() const;
   void setEnableAutoResizing(bool value);
-
   void setupCheckBoxEnableAutoResizing();
+  bool getEnableShellScripts();
+  void setEnableShellScripts(bool value);
 private slots:
   void fontChanged();
   void cbEnableAutoResizingChanged();

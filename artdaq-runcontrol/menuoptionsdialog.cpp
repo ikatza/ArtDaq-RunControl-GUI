@@ -6,7 +6,8 @@ MenuOptionsDialog::MenuOptionsDialog(QWidget *parent) :
   ui(new Ui::MenuOptionsDialog)
 {
   ui->setupUi(this);
-  ui->tabFonts->setTabText(0, "Fonts");
+  ui->optionsTabs->setTabText(0, "Fonts");
+  ui->optionsTabs->setTabText(1,"DAQInterface");
   connect(ui->fcbFontType, SIGNAL(currentIndexChanged(int)), this, SLOT(fontChanged()));
   connect(ui->sbFontSize, SIGNAL(valueChanged(int)), this, SLOT(fontChanged()));
   connect(ui->cbEnableAutoResizing, SIGNAL(toggled(bool)), this, SLOT(cbEnableAutoResizingChanged()));
@@ -92,4 +93,13 @@ QString MenuOptionsDialog::getFontType() const
 void MenuOptionsDialog::setFontType(const QString &value)
 {
   fontType = value;
+}
+
+bool MenuOptionsDialog::getEnableShellScripts(){
+  bool cbEnableShellScriptsSate = ui->cbEnableShellScripts->isChecked();
+  return cbEnableShellScriptsSate;
+}
+
+void MenuOptionsDialog::setEnableShellScripts(bool value){
+  ui->cbEnableShellScripts->setChecked(value);
 }

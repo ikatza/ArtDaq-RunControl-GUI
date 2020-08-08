@@ -29,7 +29,7 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QTabWidget" name="tabFonts">
+  <widget class="QTabWidget" name="optionsTabs">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -39,7 +39,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -119,6 +119,24 @@ p, li { white-space: pre-wrap; }
      </property>
      <property name="text">
       <string>Enable Autoresizing</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>Page</string>
+    </attribute>
+    <widget class="QCheckBox" name="cbEnableShellScripts">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>10</y>
+       <width>501</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Use DAQInterface shell scripts for xmlrpc communications.</string>
      </property>
     </widget>
    </widget>

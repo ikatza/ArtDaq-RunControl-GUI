@@ -287,7 +287,7 @@ void MainWindow::checkStatus()
   QByteArray byte_status = daq_commands.readAll();
   QTextCodec* codec = QTextCodec::codecForName("UTF-8");
   QStringList daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("'", QString::KeepEmptyParts);*/
-  qDebug() << "xmlrpc_c: " << commDAQInterface.getDAQInterfaceStatus();
+  //qDebug() << "xmlrpc_c: " << commDAQInterface.getDAQInterfaceStatus();
   QString str_status = commDAQInterface.getDAQInterfaceStatus();
   int est = status_map_int.value(str_status);
   if(est >= 1 && est <= 10){
@@ -1289,6 +1289,7 @@ void MainWindow::openMenuOptionsDialog()
   menuOptionsDialog->setupFontComboBox();
   menuOptionsDialog->setEnableAutoResizing(this->EnableFontAutoResizing);
   menuOptionsDialog->setupCheckBoxEnableAutoResizing();
+  menuOptionsDialog->setEnableShellScripts(this->enableShellScripts);
   int result = menuOptionsDialog->exec();
   if(result == QDialog::Accepted) {
     QFont font(menuOptionsDialog->getFontType(), menuOptionsDialog->getFontSize());
@@ -1298,6 +1299,8 @@ void MainWindow::openMenuOptionsDialog()
     ui->lvConfigBOOT->setFont(font);
     ui->taDAQInterface->setText(this->daqInterfaceTextAreaLog);
     this->EnableFontAutoResizing = menuOptionsDialog->getEnableAutoResizing();
+    this->enableShellScripts = menuOptionsDialog->getEnableShellScripts();
+    commDAQInterface.setIsShellScriptsEnabled(this->enableShellScripts);
     this->resizeWindow();
   }
   else {
