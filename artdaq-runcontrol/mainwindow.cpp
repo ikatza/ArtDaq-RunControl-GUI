@@ -337,6 +337,8 @@ void MainWindow::status(QString status)
     ui->checkBoxDatabase->setEnabled(true);
     if(ui->checkBoxDatabase->isChecked()) {
       ui->bListDatabaseRunConfigurations->setEnabled(true);
+      ui->bDAQcomp->setEnabled(false);
+      ui->bDAQconf->setEnabled(false);
     }
     break;
   case 2: //booted
@@ -941,8 +943,8 @@ void MainWindow::bListDatabaseRunConfigurations()
     // https://stackoverflow.com/questions/9194799/how-to-return-data-from-qdialog
     dbSelectedConfig = dbDialog->getSelectedDBConfig();
     qDebug() << "dialog_selected_config: " << dbSelectedConfig;
-    this->populateLVConfigurationsFromDatabase();
-    this->populateLVComponentsFromDatabase();
+    commDAQInterface.listDAQInterfaceComponents();
+    DAQState = 3;
   }
   else if(result == QDialog::Rejected) {}
   qDebug() << "Ending function";
@@ -982,10 +984,6 @@ void MainWindow::populateLVComponentsFromDatabase()
   QString selectedDBConfig_dir = dbSelectedConfig.second + "/" + config_name;
   // qDebug() << "selectedDBConfig_dir: " << selectedDBConfig_dir;
 
-  commDAQInterface.listDAQInterfaceComponents();
-  QThread::msleep(100);
-
-  DAQState = 3;
   banBOOTCONFIG = false;
 
   // qDebug() << "Inside " << __func__ << " , daq_string: " << daq_string << "\n";
