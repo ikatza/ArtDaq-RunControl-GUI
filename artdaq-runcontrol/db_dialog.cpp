@@ -31,7 +31,7 @@ void db_dialog::populateLvConfiguration()
   QTextCodec* codec = QTextCodec::codecForName("UTF-8");
   daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("\n", QString::KeepEmptyParts);
   daq_string.removeLast();
-  daq_string.sort();
+  //daq_string.sort();
   //std::sort(daq_string.begin(),daq_string.last(),std::greater);
   QStringListModel* model = new QStringListModel(this);
   model->setStringList(daq_string);
