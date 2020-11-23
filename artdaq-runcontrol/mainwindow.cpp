@@ -54,7 +54,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::configurateWindow()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   this->setWindowTitle("ARTDAQ RUN CONTROL");
   //this->setFixedSize(this->geometry().width(), this->geometry().height());
   ui->taDAQInterface->setReadOnly(true);
@@ -127,12 +127,12 @@ void MainWindow::configurateWindow()
   this->lvComponentsFont = ui->lvComponents->font();
   this->lvBOOTConfigFont = ui->lvConfigBOOT->font();
   this->lvConfigurationsFont = ui->lvConfigurations->font();
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::configurateMenuBar()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   QAction *optionsMenu = new QAction("&Options", this);
   QAction *exitMenu = new QAction("&Exit", this);
   QAction *windowMenu = new QAction("&Show state diagram", this);
@@ -146,19 +146,19 @@ void MainWindow::configurateMenuBar()
   connect(optionsMenu, SIGNAL(triggered(bool)), this, SLOT(openMenuOptionsDialog()));
   connect(exitMenu, SIGNAL(triggered(bool)), this, SLOT(closeProgram()));
   connect(windowMenu, SIGNAL(triggered(bool)), this, SLOT(showDaqInterfaceStateWindow()));
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::showDaqInterfaceStateWindow()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   state_diagram.show();
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::closeProgram()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   QMessageBox msgBox;
   msgBox.setText("Closing Program");
   msgBox.setInformativeText("Do you really wish to close the program?\n All the artDAQ processes will be destroyed ");
@@ -177,12 +177,12 @@ void MainWindow::closeProgram()
   default:
     break;
   }
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   QProcess* kill_p = new QProcess(this);
   QMessageBox::StandardButton msgBox = QMessageBox::question( this, "artdaqRunControl",
                                        tr("Do you really wish to close the program?\n All the artDAQ processes will be destroyed"),
@@ -197,13 +197,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
     event->accept();
     exit(0);
   }
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 
 void MainWindow::bEndSessionPressed()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   QMessageBox msgBox;
   msgBox.setText("End session");
   msgBox.setInformativeText("Do you really wish to end the session?\n All the artDAQ processes will be destroyed ");
@@ -233,12 +233,12 @@ void MainWindow::bEndSessionPressed()
     break;
   }
   status("offline");
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::initializeButtons()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   ui->bDAQcomp->setEnabled(false);
   ui->bDAQconf->setEnabled(false);
   ui->bEndSession->setEnabled(false);
@@ -265,19 +265,19 @@ void MainWindow::initializeButtons()
   ui->bStartRun->setIcon(ButtonIcon);
   ui->bStartRun->setIconSize(0.9 * button_image.rect().size());
   this->bStartRunIconSize = 0.9 * button_image.rect().size();
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::initializeLV()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   QStringListModel* model = new QStringListModel(this);
   QStringList empty;
   model->setStringList(empty);
   ui->lvConfigBOOT->setModel(model);
   ui->lvComponents->setModel(model);
   ui->lvConfigurations->setModel(model);
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::checkStatus()
@@ -473,43 +473,43 @@ void MainWindow::setAllButtonsDisabled()
 
 void MainWindow::bSTOPPressed()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   commDAQInterface.sendTransitionSTOP();
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::bTERMINATEPressed()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   commDAQInterface.sendTransitionTERMINATE();
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::bSTARTPressed()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   commDAQInterface.sendTransitionSTART();
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::bBOOTPressed()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   commDAQInterface.setDAQInterfaceComponents(list_comps_selected);
   commDAQInterface.sendTransitionBOOT(list_BOOTConfig_selected);
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::bCONFIGPressed()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   commDAQInterface.sendTransitionCONFIG(list_config_selected);
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::lvBOOTConfigSelected()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   list_BOOTConfig_selected.clear();
   QStringList list_str;
   QModelIndexList list = ui->lvConfigBOOT->selectionModel()->selectedRows();
@@ -537,12 +537,12 @@ void MainWindow::lvBOOTConfigSelected()
     }
   }
   isLVSelected();
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::lvComponentsSelected()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   if(!ui->checkBoxDatabase->isChecked()) {
     list_comps_selected.clear();
     QStringList list_str;
@@ -579,12 +579,12 @@ void MainWindow::lvComponentsSelected()
     }
     isLVSelected();
   }
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::lvConfigurationsSelected()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   if(DAQState == 3) {
     banCONFIG = true;
     isLVSelected();
@@ -613,7 +613,7 @@ void MainWindow::lvConfigurationsSelected()
     }
     isLVSelected();
   }
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::statusTransition()
@@ -677,7 +677,7 @@ void MainWindow::isLVSelected()
 
 void MainWindow::setButtonsDAQInterfaceInitialized(bool started)
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   if(started) {
     ui->bDAQInterface->setEnabled(false);
     ui->bDAQcomp->setEnabled(true);
@@ -686,12 +686,12 @@ void MainWindow::setButtonsDAQInterfaceInitialized(bool started)
     ui->checkBoxDatabase->setEnabled(true);
     timer.start(1000);
   }
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::bDAQInterfacePressed()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   daq_interface.setWorkingDirectory(env_vars::daqInt_wd);
   daq_commands.setWorkingDirectory(env_vars::daqInt_wd);
 
@@ -741,13 +741,13 @@ void MainWindow::bDAQInterfacePressed()
               qUtf8Printable(env_vars::daqInt_user_sourcefile));
     QCoreApplication::exit(1);
   }
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
   return;
 }
 
 void MainWindow::DAQInterfaceOutput()
 {
-  //qDebug() << "Starting function";
+  //qDebug() << "Starting" << Q_FUNC_INFO;
   QByteArray daq_byte_array = daq_interface.readAllStandardOutput();
   //daq_interface.waitForFinished();
   QTextCodec* codec = QTextCodec::codecForName("UTF-8");
@@ -775,12 +775,12 @@ void MainWindow::DAQInterfaceOutput()
   default:
     break;
   }
-  //qDebug() << "Ending function";
+  //qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::lvComps()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   QStringListModel* model = new QStringListModel(this);
   QStringList list = daq_string.split('\n', QString::SkipEmptyParts);
   list.removeFirst();
@@ -789,21 +789,21 @@ void MainWindow::lvComps()
   ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
   DAQState = 0;
   this->lvComponentsSelected();
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::bListDAQComps()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   commDAQInterface.listDAQInterfaceComponents();
   DAQState = 1;
   QThread::msleep(100);
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::lvConfigs()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   QStringListModel* model = new QStringListModel(this);
   QStringList list = daq_string.split("\n\n", QString::SkipEmptyParts);
   //qDebug()<<list.at(0);
@@ -820,12 +820,12 @@ void MainWindow::lvConfigs()
   this->lvConfigurationsSelected();
   this->lvBOOTConfigSelected();
   this->lvComponentsSelected();
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::bListDAQConfigs()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   commDAQInterface.listDAQInterfaceConfigs();
   DAQState = 2;
   QRegExp reg("*.txt");
@@ -848,17 +848,17 @@ void MainWindow::bListDAQConfigs()
   model->setStringList(list_config);
   ui->lvConfigBOOT->setModel(model);
   QThread::msleep(100);
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::bStartRunPressed()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   banStartRunPressed = true;
   startRunConfigSignalIssued = false;
   startRunStartSignalIssued = false;
   this->bBOOTPressed();
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::checkTransitionStartRunPressed(QString status)
@@ -933,7 +933,7 @@ void MainWindow::bDebugPressed()
 
 void MainWindow::bListDatabaseRunConfigurations()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   db_dialog *dbDialog = new db_dialog(this);
   dbDialog->setWindowTitle("List Of Available Run Configurations");
   int result = dbDialog->exec();
@@ -947,12 +947,12 @@ void MainWindow::bListDatabaseRunConfigurations()
     DAQState = 3;
   }
   else if(result == QDialog::Rejected) {}
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::checkBoxDatabaseChanged()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   bool checked = ui->checkBoxDatabase->isChecked();
   if(checked) {
     ui->bListDatabaseRunConfigurations->setEnabled(true);
@@ -973,20 +973,22 @@ void MainWindow::checkBoxDatabaseChanged()
     ui->lvComponents->setEditTriggers(QAbstractItemView::NoEditTriggers);
     banBOOTCONFIG = false;
   }
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::populateLVComponentsFromDatabase()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting function " << Q_FUNC_INFO;
   QString config_name = dbSelectedConfig.first;
+  qDebug() << "pre  chop config_name: " << config_name;
   config_name.chop(5); // to remove the numbers // TODO: find a better way
+  qDebug() << "post chop config_name: " << config_name;
   QString selectedDBConfig_dir = dbSelectedConfig.second + "/" + config_name;
-  // qDebug() << "selectedDBConfig_dir: " << selectedDBConfig_dir;
+  qDebug() << "selectedDBConfig_dir: " << selectedDBConfig_dir;
 
   banBOOTCONFIG = false;
 
-  // qDebug() << "Inside " << __func__ << " , daq_string: " << daq_string << "\n";
+  qDebug() << "Inside " << __func__ << " , daq_string: " << daq_string << "\n";
   QDirIterator dirIt(selectedDBConfig_dir, QDir::AllEntries | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
   QStringList componentlist = daq_string.split('\n', QString::SkipEmptyParts);
   QStringList lvComponentsList;
@@ -1014,12 +1016,12 @@ void MainWindow::populateLVComponentsFromDatabase()
   ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
   ui->lvComponents->setEditTriggers(QAbstractItemView::NoEditTriggers);
   list_comps_selected = lvComponentsList;
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::populateLVConfigurationsFromDatabase()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   QStringList lvConfigurationsList;
   lvConfigurationsList.append(dbSelectedConfig.first);
   QStringListModel* model = new QStringListModel(this);
@@ -1028,12 +1030,12 @@ void MainWindow::populateLVConfigurationsFromDatabase()
   ui->lvConfigurations->setSelectionMode(QAbstractItemView::NoSelection);
   ui->lvConfigurations->setEditTriggers(QAbstractItemView::NoEditTriggers);
   list_config_selected = lvConfigurationsList;
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::populateLVBOOTConfigurationsFromDatabase()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   QRegExp reg("*.txt");
   reg.setPatternSyntax(QRegExp::Wildcard);
   QDirIterator dirIt(env_vars::daqInt_user_dir);
@@ -1057,41 +1059,41 @@ void MainWindow::populateLVBOOTConfigurationsFromDatabase()
     ui->lvConfigBOOT->setEditTriggers(QAbstractItemView::NoEditTriggers);
   }
   else qInfo() << "No common config files found.";
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 QString MainWindow::getDBConfigurationFHICL_dir() const
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   return DBConfigurationFHICL_dir;
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::setDBConfigurationFHICL_dir(const QString &value)
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   DBConfigurationFHICL_dir = value;
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 QProcessEnvironment MainWindow::getQProcessEnvironment()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   return env_vars::env;
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   QMainWindow::resizeEvent(event);
   this->resizeWindow();
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::resizeWindow()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   QSize windowSize = this->geometry().size();
   int windowHeigth = windowSize.height();
   int windowWidth = windowSize.width();
@@ -1275,12 +1277,12 @@ void MainWindow::resizeWindow()
     lvBOOTConfigFont_.setPointSize(lvFontSizeBOOTConfig);
     ui->lvConfigBOOT->setFont(lvBOOTConfigFont_);
   }
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::openMenuOptionsDialog()
 {
-  qDebug() << "Starting function";
+  qDebug() << "Starting" << Q_FUNC_INFO;
   MenuOptionsDialog* menuOptionsDialog = new MenuOptionsDialog(this);
   menuOptionsDialog->setWindowTitle("Options");
   menuOptionsDialog->setFromMainWindowFont(ui->taDAQInterface->font());
@@ -1304,7 +1306,7 @@ void MainWindow::openMenuOptionsDialog()
   else {
 
   }
-  qDebug() << "Ending function";
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::MensajeParaBelen()
