@@ -997,18 +997,28 @@ void MainWindow::populateLVComponentsFromDatabase()
     componentlist.replace(componentlist.indexOf(component), component_.at(0));
   }
   componentlist.removeFirst();
+  // this section of the code compares know_components_list and the components in the DB
   while (dirIt.hasNext()) {
     QString fileName = dirIt.next();
     QStringList fileName_ = fileName.split('/', QString::KeepEmptyParts);
     fileName = fileName_.last();
+    fileName.replace(".fcl","");
+    qDebug() << "fileName: " << fileName;
     for(QString component : componentlist) {
-      QRegExp reg(component + "*");
-      reg.setPatternSyntax(QRegExp::Wildcard);
-      if(reg.exactMatch(fileName)) {
+      qDebug() << "component: " << component;
+      //QRegExp reg(component + "*");
+      //reg.setPatternSyntax(QRegExp::Wildcard);
+      //if(reg.exactMatch(fileName)) {
+      if(component == fileName){
         lvComponentsList.append(component);
       }
     }
   }
+
+  // this section just fill the components list view with know_components_list
+  /*for(QString component : componentlist){
+    lvComponentsList.append(component);
+  }*/
 
   QStringListModel* model = new QStringListModel(this);
   model->setStringList(lvComponentsList);
