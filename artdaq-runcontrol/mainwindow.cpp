@@ -998,7 +998,7 @@ void MainWindow::populateLVComponentsFromDatabase()
   }
   componentlist.removeFirst();
   // this section of the code compares know_components_list and the components in the DB
-  while (dirIt.hasNext()) {
+  /*while (dirIt.hasNext()) {
     QString fileName = dirIt.next();
     QStringList fileName_ = fileName.split('/', QString::KeepEmptyParts);
     fileName = fileName_.last();
@@ -1013,12 +1013,12 @@ void MainWindow::populateLVComponentsFromDatabase()
         lvComponentsList.append(component);
       }
     }
-  }
+  }*/
 
   // this section just fill the components list view with know_components_list
-  /*for(QString component : componentlist){
+  for(QString component : componentlist){
     lvComponentsList.append(component);
-  }*/
+  }
 
   QStringListModel* model = new QStringListModel(this);
   model->setStringList(lvComponentsList);
