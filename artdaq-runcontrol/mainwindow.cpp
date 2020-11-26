@@ -979,17 +979,18 @@ void MainWindow::checkBoxDatabaseChanged()
 void MainWindow::populateLVComponentsFromDatabase()
 {
   qDebug() << "Starting function " << Q_FUNC_INFO;
-  QString config_name = dbSelectedConfig.first;
-  qDebug() << "pre  chop config_name: " << config_name;
-  config_name.chop(5); // to remove the numbers // TODO: find a better way
-  qDebug() << "post chop config_name: " << config_name;
-  QString selectedDBConfig_dir = dbSelectedConfig.second + "/" + config_name;
-  qDebug() << "selectedDBConfig_dir: " << selectedDBConfig_dir;
-
   banBOOTCONFIG = false;
 
-  qDebug() << "Inside " << __func__ << " , daq_string: " << daq_string << "\n";
-  QDirIterator dirIt(selectedDBConfig_dir, QDir::AllEntries | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+  // Whenever DB allows for this uncomment
+  // QString config_name = dbSelectedConfig.first;
+  // // qDebug() << "pre  chop config_name: " << config_name;
+  // config_name.chop(5); // to remove the numbers // TODO: find a better way
+  // // qDebug() << "post chop config_name: " << config_name;
+  // QString selectedDBConfig_dir = dbSelectedConfig.second + "/" + config_name;
+  // // qDebug() << "selectedDBConfig_dir: " << selectedDBConfig_dir;
+  // // qDebug() << "Inside " << __func__ << " , daq_string: " << daq_string << "\n";
+  // QDirIterator dirIt(selectedDBConfig_dir, QDir::AllEntries | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+
   QStringList componentlist = daq_string.split('\n', QString::SkipEmptyParts);
   QStringList lvComponentsList;
   for(QString component : componentlist) {
@@ -997,23 +998,24 @@ void MainWindow::populateLVComponentsFromDatabase()
     componentlist.replace(componentlist.indexOf(component), component_.at(0));
   }
   componentlist.removeFirst();
+  // Whenever DB allows for this uncomment
   // this section of the code compares know_components_list and the components in the DB
-  /*while (dirIt.hasNext()) {
-    QString fileName = dirIt.next();
-    QStringList fileName_ = fileName.split('/', QString::KeepEmptyParts);
-    fileName = fileName_.last();
-    fileName.replace(".fcl","");
-    qDebug() << "fileName: " << fileName;
-    for(QString component : componentlist) {
-      qDebug() << "component: " << component;
-      //QRegExp reg(component + "*");
-      //reg.setPatternSyntax(QRegExp::Wildcard);
-      //if(reg.exactMatch(fileName)) {
-      if(component == fileName){
-        lvComponentsList.append(component);
-      }
-    }
-  }*/
+  // while (dirIt.hasNext()) {
+  //   QString fileName = dirIt.next();
+  //   QStringList fileName_ = fileName.split('/', QString::KeepEmptyParts);
+  //   fileName = fileName_.last();
+  //   fileName.replace(".fcl","");
+  //   qDebug() << "fileName: " << fileName;
+  //   for(QString component : componentlist) {
+  //     qDebug() << "component: " << component;
+  //     //QRegExp reg(component + "*");
+  //     //reg.setPatternSyntax(QRegExp::Wildcard);
+  //     //if(reg.exactMatch(fileName)) {
+  //     if(component == fileName){
+  //       lvComponentsList.append(component);
+  //     }
+  //   }
+  // }
 
   // this section just fill the components list view with know_components_list
   for(QString component : componentlist){
