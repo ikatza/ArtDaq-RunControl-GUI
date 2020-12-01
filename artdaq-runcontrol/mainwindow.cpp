@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(ui->bBelen, SIGNAL(clicked(bool)), this, SLOT(MensajeParaBelen()));
   connect(ui->bDAQcomp, SIGNAL(clicked(bool)), this, SLOT(bListDAQComps()));
   connect(ui->bDAQconf, SIGNAL(clicked(bool)), this, SLOT(bListDAQConfigs()));
-  connect(ui->lvComponents, SIGNAL(clicked(QModelIndex)), this, SLOT(lvComponentsSelected()));
+  // connect(ui->lvComponents, SIGNAL(clicked(QModelIndex)), this, SLOT(lvComponentsSelected()));
   connect(ui->lvConfigurations, SIGNAL(clicked(QModelIndex)), this, SLOT(lvConfigurationsSelected()));
   connect(ui->lvConfigBOOT, SIGNAL(clicked(QModelIndex)), this, SLOT(lvBOOTConfigSelected()));
   connect(ui->bBOOT, SIGNAL(clicked(bool)), this, SLOT(bBOOTPressed()));
@@ -787,6 +787,7 @@ void MainWindow::lvComps()
   model->setStringList(list);
   ui->lvComponents->setModel(model);
   ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
+  connect(ui->lvComponents->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvComponentsSelected()));
   DAQState = 0;
   this->lvComponentsSelected();
   qDebug() << "Ending" << Q_FUNC_INFO;
@@ -1027,6 +1028,7 @@ void MainWindow::populateLVComponentsFromDatabase()
   ui->lvComponents->setModel(model);
   ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
   ui->lvComponents->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  connect(ui->lvComponents->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvComponentsSelected()));
   list_comps_selected = lvComponentsList;
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
