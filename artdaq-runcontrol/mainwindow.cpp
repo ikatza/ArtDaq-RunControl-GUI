@@ -26,8 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(ui->bDAQcomp, SIGNAL(clicked(bool)), this, SLOT(bListDAQComps()));
   connect(ui->bDAQconf, SIGNAL(clicked(bool)), this, SLOT(bListDAQConfigs()));
   // connect(ui->lvComponents, SIGNAL(clicked(QModelIndex)), this, SLOT(lvComponentsSelected()));
-  connect(ui->lvConfigurations, SIGNAL(clicked(QModelIndex)), this, SLOT(lvConfigurationsSelected()));
-  connect(ui->lvConfigBOOT, SIGNAL(clicked(QModelIndex)), this, SLOT(lvBOOTConfigSelected()));
+  // connect(ui->lvConfigurations, SIGNAL(clicked(QModelIndex)), this, SLOT(lvConfigurationsSelected()));
+  // connect(ui->lvConfigBOOT, SIGNAL(clicked(QModelIndex)), this, SLOT(lvBOOTConfigSelected()));
   connect(ui->bBOOT, SIGNAL(clicked(bool)), this, SLOT(bBOOTPressed()));
   connect(ui->bCONFIG, SIGNAL(clicked(bool)), this, SLOT(bCONFIGPressed()));
   connect(ui->bStart, SIGNAL(clicked(bool)), this, SLOT(bSTARTPressed()));
@@ -335,6 +335,9 @@ void MainWindow::status(QString status)
     state_diagram.setOnlineButtonGreen();
     setButtonsStoppedEnabled();
     ui->checkBoxDatabase->setEnabled(true);
+    ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
+    ui->lvConfigurations->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->lvConfigBOOT->setSelectionMode(QAbstractItemView::SingleSelection);
     if(ui->checkBoxDatabase->isChecked()) {
       ui->bListDatabaseRunConfigurations->setEnabled(true);
       ui->bDAQcomp->setEnabled(false);
@@ -357,6 +360,8 @@ void MainWindow::status(QString status)
     ui->bTerminate->setEnabled(true);
     ui->checkBoxDatabase->setEnabled(false);
     ui->bListDatabaseRunConfigurations->setEnabled(false);
+    ui->lvConfigurations->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->lvConfigBOOT->setSelectionMode(QAbstractItemView::SingleSelection);
     break;
   case 3: //ready
     //banBOOT = false;
@@ -396,6 +401,9 @@ void MainWindow::status(QString status)
     setAllButtonsDisabled();
     ui->checkBoxDatabase->setEnabled(false);
     ui->bListDatabaseRunConfigurations->setEnabled(false);
+    ui->lvComponents->setSelectionMode(QAbstractItemView::NoSelection);
+    ui->lvConfigurations->setSelectionMode(QAbstractItemView::NoSelection);
+    ui->lvConfigBOOT->setSelectionMode(QAbstractItemView::NoSelection);
     break;
   case 7: // configuring
     state_diagram.setStateDiagramConfiguring();
@@ -404,6 +412,8 @@ void MainWindow::status(QString status)
     setAllButtonsDisabled();
     ui->checkBoxDatabase->setEnabled(false);
     ui->bListDatabaseRunConfigurations->setEnabled(false);
+    ui->lvConfigurations->setSelectionMode(QAbstractItemView::NoSelection);
+    ui->lvConfigBOOT->setSelectionMode(QAbstractItemView::NoSelection);
     break;
   case 8: // starting
     state_diagram.setStateDiagramStartingRun();
@@ -817,6 +827,7 @@ void MainWindow::lvConfigs()
   list.removeFirst();
   model->setStringList(list);
   ui->lvConfigurations->setModel(model);
+  connect(ui->lvConfigurations->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvConfigurationsSelected()));
   DAQState = 0;
   this->lvConfigurationsSelected();
   this->lvBOOTConfigSelected();
@@ -848,6 +859,8 @@ void MainWindow::bListDAQConfigs()
   QStringListModel* model = new QStringListModel(this);
   model->setStringList(list_config);
   ui->lvConfigBOOT->setModel(model);
+  ui->lvConfigBOOT->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  connect(ui->lvConfigBOOT->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvBOOTConfigSelected()));
   QThread::msleep(100);
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
@@ -1070,6 +1083,7 @@ void MainWindow::populateLVBOOTConfigurationsFromDatabase()
     QStringListModel* model = new QStringListModel(this);
     model->setStringList(list_config);
     ui->lvConfigBOOT->setModel(model);
+    connect(ui->lvConfigBOOT->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvBOOTConfigSelected()));
     ui->lvConfigBOOT->setEditTriggers(QAbstractItemView::NoEditTriggers);
   }
   else qInfo() << "No common config files found.";
