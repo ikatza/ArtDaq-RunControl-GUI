@@ -183,17 +183,17 @@ void MainWindow::closeProgram()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  QProcess* kill_p = new QProcess(this);
+  // QProcess* kill_p = new QProcess(this);
   QMessageBox::StandardButton msgBox = QMessageBox::question( this, "artdaqRunControl",
-                                       tr("Do you really wish to close the program?\n All the artDAQ processes will be destroyed"),
+                                       tr("Do you really wish to close the program?\n The DAQInterface instance will be running in background if the session is not ended"),
                                        QMessageBox::No | QMessageBox::Yes,
                                        QMessageBox::Yes);
   if (msgBox != QMessageBox::Yes) {
     event->ignore();
   }
   else {
-    kill_p->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << env_vars::user);
-    kill_p->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << env_vars::user);
+    // kill_p->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << env_vars::user);
+    // kill_p->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << env_vars::user);
     event->accept();
     exit(0);
   }
@@ -206,15 +206,16 @@ void MainWindow::bEndSessionPressed()
   qDebug() << "Starting" << Q_FUNC_INFO;
   QMessageBox msgBox;
   msgBox.setText("End session");
-  msgBox.setInformativeText("Do you really wish to end the session?\n All the artDAQ processes will be destroyed ");
+  msgBox.setInformativeText("Do you really wish to end the session?\n The DAQInterface instance in partition will be destroyed");
   msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
   msgBox.setDefaultButton(QMessageBox::No);
   int ret = msgBox.exec();
-  QProcess* kill_p = new QProcess(this);
+  // QProcess* kill_p = new QProcess(this);
   switch (ret) {
   case QMessageBox::Yes:
-    kill_p->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << env_vars::user);
-    kill_p->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << env_vars::user);
+    // kill_p->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << env_vars::user);
+    // kill_p->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << env_vars::user);
+    daq_commands.execute("kill_daqinterface_on_partition.sh", QStringList() << env_vars::partition_number);
     initializeButtons();
     initializeLV();
     timer.stop();
