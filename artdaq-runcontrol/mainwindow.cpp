@@ -1017,6 +1017,7 @@ void MainWindow::populateLVComponentsFromDatabase()
   ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
   ui->lvComponents->setEditTriggers(QAbstractItemView::NoEditTriggers);
   list_comps_selected = lvComponentsList;
+  ui->lvComponents->selectAll();
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
@@ -1031,6 +1032,7 @@ void MainWindow::populateLVConfigurationsFromDatabase()
   ui->lvConfigurations->setSelectionMode(QAbstractItemView::NoSelection);
   ui->lvConfigurations->setEditTriggers(QAbstractItemView::NoEditTriggers);
   list_config_selected = lvConfigurationsList;
+  ui->lvConfigurations->selectAll();
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
