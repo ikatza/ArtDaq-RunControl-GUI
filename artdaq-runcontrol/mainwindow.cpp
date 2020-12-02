@@ -983,12 +983,8 @@ void MainWindow::populateLVComponentsFromDatabase()
 
   // Whenever DB allows for this uncomment
   QString config_name = dbSelectedConfig.first;
-  // qDebug() << "pre  chop config_name: " << config_name;
   config_name.chop(5); // to remove the numbers // TODO: find a better way
-  // qDebug() << "post chop config_name: " << config_name;
   QString selectedDBConfig_dir = dbSelectedConfig.second + "/" + config_name;
-  // qDebug() << "selectedDBConfig_dir: " << selectedDBConfig_dir;
-  // qDebug() << "Inside " << __func__ << " , daq_string: " << daq_string << "\n";
   QDirIterator dirIt(selectedDBConfig_dir, QDir::AllEntries | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
 
   QStringList componentlist = daq_string.split('\n', QString::SkipEmptyParts);
@@ -1008,19 +1004,12 @@ void MainWindow::populateLVComponentsFromDatabase()
     qDebug() << "fileName: " << fileName;
     for(QString component : componentlist) {
       qDebug() << "component: " << component;
-      //QRegExp reg(component + "*");
-      //reg.setPatternSyntax(QRegExp::Wildcard);
-      //if(reg.exactMatch(fileName)) {
       if(component == fileName){
         lvComponentsList.append(component);
+        break;
       }
     }
   }
-
-  // this section just fill the components list view with know_components_list
-  // for(QString component : componentlist){
-  //   lvComponentsList.append(component);
-  // }
 
   QStringListModel* model = new QStringListModel(this);
   model->setStringList(lvComponentsList);
