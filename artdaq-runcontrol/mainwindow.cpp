@@ -236,13 +236,13 @@ void MainWindow::bEndSessionPressed()
     banPAUSED = false;
     banRUNNING = false;
     banStartRunPressed = false;
+    status("offline");
     break;
   case QMessageBox::No:
     break;
   default:
     break;
   }
-  status("offline");
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
