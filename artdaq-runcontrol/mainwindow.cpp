@@ -1009,6 +1009,7 @@ void MainWindow::populateLVComponentsFromDatabase()
     }
   }
 
+  lvComponentsList.sort();
   QStringListModel* model = new QStringListModel(this);
   model->setStringList(lvComponentsList);
   ui->lvComponents->setModel(model);
