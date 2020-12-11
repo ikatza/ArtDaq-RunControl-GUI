@@ -50,7 +50,6 @@ public:
   void setDBConfigurationFHICL_dir(const QString &value);
 
 private slots:
-
   void bEndSessionPressed();
   void bDAQInterfacePressed();
   void DAQInterfaceOutput();
@@ -93,7 +92,7 @@ private slots:
   void closeProgram();
   void closeEvent(QCloseEvent *event);
   void showDaqInterfaceStateWindow();
-  //void menuShowMessageViewerPressed();
+
 private:
   Ui::MainWindow *ui;
   QProcess daq_interface;

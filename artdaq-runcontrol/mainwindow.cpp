@@ -14,11 +14,6 @@ MainWindow::MainWindow(QWidget *parent) :
   QProcess* daqinterface_pointer = new QProcess(this);
   daqinterface_pointer = &daq_interface;
   ui->lbStatus->setText("");
-  // QProcess* kill_proc = new QProcess(this);
-  // kill_proc->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << env_vars::user);
-  // kill_proc->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << env_vars::user);
-  // kill_proc->waitForFinished();
-  // kill_proc->~QProcess();
   connect(ui->bDAQInterface, SIGNAL(clicked(bool)), this, SLOT(bDAQInterfacePressed()));
   connect(daqinterface_pointer, SIGNAL(readyReadStandardOutput()), this, SLOT(DAQInterfaceOutput()));
   connect(&DAQInterface_logwatcher, SIGNAL(fileChanged(QString)), this, SLOT(bDebugPressed()));
@@ -164,20 +159,14 @@ void MainWindow::closeProgram()
                                          tr("Do you really wish to close the program?\n"),
                                          QMessageBox::No | QMessageBox::Yes,
                                          QMessageBox::Yes);
-    if (msgBox != QMessageBox::Yes) {
-      // nothing to do
-    }
-    else {
-      // kill_p->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << env_vars::user);
-      // kill_p->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << env_vars::user);
-      // event->accept();
+    if (msgBox == QMessageBox::Yes) {
       exit(0);
     }
-  }else{
+  }
+  else{
     QMessageBox msgBox;
     msgBox.setText("Please end the DAQInteface session before exiting the program");
     msgBox.exec();
-    // event->ignore();
   }
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
@@ -185,7 +174,6 @@ void MainWindow::closeProgram()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  // QProcess* kill_p = new QProcess(this);
   if(DAQInterfaceProcess_started == false){
     QMessageBox::StandardButton msgBox = QMessageBox::question( this, "artdaqRunControl",
                                          tr("Do you really wish to close the program?\n"),
@@ -195,8 +183,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
       event->ignore();
     }
     else {
-      // kill_p->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << env_vars::user);
-      // kill_p->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << env_vars::user);
       event->accept();
       exit(0);
     }
@@ -219,11 +205,8 @@ void MainWindow::bEndSessionPressed()
   msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
   msgBox.setDefaultButton(QMessageBox::No);
   int ret = msgBox.exec();
-  // QProcess* kill_p = new QProcess(this);
   switch (ret) {
   case QMessageBox::Yes:
-    // kill_p->start("pkill", QStringList() << "-f" << "pmt.rb" << "-u" << env_vars::user);
-    // kill_p->execute("pkill", QStringList() << "-f" << "daqinterface.py" << "-u" << env_vars::user);
     daq_commands.execute("kill_daqinterface_on_partition.sh", QStringList() << env_vars::partition_number);
     initializeButtons();
     initializeLV();
