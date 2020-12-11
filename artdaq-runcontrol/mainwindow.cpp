@@ -25,9 +25,6 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(ui->bBelen, SIGNAL(clicked(bool)), this, SLOT(MensajeParaBelen()));
   connect(ui->bDAQcomp, SIGNAL(clicked(bool)), this, SLOT(bListDAQComps()));
   connect(ui->bDAQconf, SIGNAL(clicked(bool)), this, SLOT(bListDAQConfigs()));
-  // connect(ui->lvComponents, SIGNAL(clicked(QModelIndex)), this, SLOT(lvComponentsSelected()));
-  // connect(ui->lvConfigurations, SIGNAL(clicked(QModelIndex)), this, SLOT(lvConfigurationsSelected()));
-  // connect(ui->lvConfigBOOT, SIGNAL(clicked(QModelIndex)), this, SLOT(lvBOOTConfigSelected()));
   connect(ui->bBOOT, SIGNAL(clicked(bool)), this, SLOT(bBOOTPressed()));
   connect(ui->bCONFIG, SIGNAL(clicked(bool)), this, SLOT(bCONFIGPressed()));
   connect(ui->bStart, SIGNAL(clicked(bool)), this, SLOT(bSTARTPressed()));
@@ -56,7 +53,6 @@ void MainWindow::configurateWindow()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
   this->setWindowTitle("ARTDAQ RUN CONTROL");
-  //this->setFixedSize(this->geometry().width(), this->geometry().height());
   ui->taDAQInterface->setReadOnly(true);
   this->setDBConfigurationFHICL_dir(env_vars::env.value("HOME") + "/work-db-v4-dir");
   this->originalWindowSize = this->geometry().size();
