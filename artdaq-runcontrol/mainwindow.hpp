@@ -102,7 +102,7 @@ private:
   QString daqInterfaceTextAreaLog;
   QStringList list_comps_selected, list_config_selected, list_BOOTConfig_selected;
   int DAQState;
-  int DAQInterface_PID;
+  long long int DAQInterface_PID;
   bool DAQInterfaceProcess_started;
   bool banBOOT, banCONFIG, banBOOTCONFIG, banBOOTED, banCONFIGURED, banRUNNING, banPAUSED, banStartRunPressed;
   bool startRunConfigSignalIssued, startRunStartSignalIssued;

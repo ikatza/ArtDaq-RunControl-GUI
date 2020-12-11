@@ -37,7 +37,7 @@ cet_cmake_env()
 cet_set_compiler_flags(DIAGS VIGILANT
   WERROR
   NO_UNDEFINED
-  EXTRA_FLAGS -pedantic
+  EXTRA_FLAGS -Wall -Wextra -pedantic -Wconversion
   )
 
 SET ( SANITIZE_ADDRESS $ENV{SANITIZE_ADDRESS} )
