@@ -962,7 +962,6 @@ void MainWindow::checkBoxDatabaseChanged()
     banBOOTCONFIG = false;
   }
   else {
-    // qDebug() << env.value("DAQINTERFACE_FHICL_DIRECTORY","FHICL_DEFAULT not found");
     ui->bListDatabaseRunConfigurations->setEnabled(false);
     ui->bDAQcomp->setEnabled(true);
     ui->bDAQconf->setEnabled(true);
@@ -981,7 +980,6 @@ void MainWindow::populateLVComponentsFromDatabase()
   qDebug() << "Starting function " << Q_FUNC_INFO;
   banBOOTCONFIG = false;
 
-  // Whenever DB allows for this uncomment
   QString config_name = dbSelectedConfig.first;
   config_name.chop(5); // to remove the numbers // TODO: find a better way
   QString selectedDBConfig_dir = dbSelectedConfig.second + "/" + config_name;
@@ -994,7 +992,6 @@ void MainWindow::populateLVComponentsFromDatabase()
     componentlist.replace(componentlist.indexOf(component), component_.at(0));
   }
   componentlist.removeFirst();
-  //  Whenever DB allows for this uncomment
   //  this section of the code compares know_components_list and the components in the DB
   while (dirIt.hasNext()) {
     QString fileName = dirIt.next();
@@ -1005,6 +1002,7 @@ void MainWindow::populateLVComponentsFromDatabase()
     for(QString component : componentlist) {
       qDebug() << "component: " << component;
       if(component == fileName){
+        // TODO: if relevant, also remove component from componentList
         lvComponentsList.append(component);
         break;
       }
