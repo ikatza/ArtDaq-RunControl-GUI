@@ -8,9 +8,6 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QTimer>
-#include <string.h>
-#include <QProcess>
-#include <QTextCodec>
 
 #include "gui_utility_functions.hpp"
 
@@ -56,7 +53,6 @@ private:
   QString imagesDirectory;
   QTimer timerTransition;
   QTimer timerOnline;
-  QProcess gpp; //general purpose process
   int run_number;
   bool isRunning = false;
 };

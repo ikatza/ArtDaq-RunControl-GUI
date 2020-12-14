@@ -6,9 +6,6 @@ db_dialog::db_dialog(QWidget *parent) :
   ui(new Ui::db_dialog)
 {
   ui->setupUi(this);
-  env = QProcessEnvironment::systemEnvironment();
-  wd = QCoreApplication::applicationDirPath();
-  conftoolpy.setWorkingDirectory(wd);
   ui->bOK->button(QDialogButtonBox::Ok)->setText("Select");
   connect(ui->tfConfigName, SIGNAL(textEdited(QString)), this, SLOT(tfConfigNameModified()));
   connect(ui->bOK->button(QDialogButtonBox::Ok), SIGNAL(clicked(bool)), this, SLOT(bSelectPressed()));
