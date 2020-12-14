@@ -4,26 +4,33 @@
 xmlrpc_gui_comm::xmlrpc_gui_comm()
 {
   serverUrl = "http://localhost:" + env_vars::rpc_port + "/RPC2";
-  DAQInterfaceCommands.setWorkingDirectory(env_vars::daqInt_wd);
 }
 
 QString xmlrpc_gui_comm::getDAQInterfaceStatus()
 {
   if(this->isShellScriptsEnabled){
-    DAQInterfaceCommands.start("status.sh", QStringList() << "");
-    DAQInterfaceCommands.waitForFinished();
-    QByteArray byte_status = DAQInterfaceCommands.readAll();
+    QProcess di_status;
+    di_status.setWorkingDirectory(env_vars::daqInt_wd);
+    di_status.start("status.sh", QStringList() << "");
+    if(!di_status.waitForFinished()){
+      qCritical() << "DAQInterface status timed out.\n"
+                  << "Restart DAQInterface.";
+      // TODO: get out or do some other actions?
+    }
+    QByteArray byte_status = di_status.readAll();
     QTextCodec* codec = QTextCodec::codecForName("UTF-8");
     QStringList daqinterface_string = codec->codecForMib(106)->toUnicode(byte_status).split("'", QString::KeepEmptyParts);
     QString daqinterface_status;
     if(daqinterface_string.size() > 1){
       daqinterface_status = daqinterface_string.at(1);
       return daqinterface_status;
-    }else{
+    }
+    else{
       daqinterface_status = daqinterface_string.at(0);
       return daqinterface_status;
     }
-  }else{
+  }
+  else{
     try {
       xmlrpc_c::value result;
       xmlrpc_c::paramList params;
@@ -38,7 +45,7 @@ QString xmlrpc_gui_comm::getDAQInterfaceStatus()
     }
     catch(std::exception const & e) {
       qCritical() << "Call to DAQInterface failed because: "
-               << e.what();
+                  << e.what();
       return QString::fromUtf8(e.what());
     }
   }
@@ -47,10 +54,16 @@ QString xmlrpc_gui_comm::getDAQInterfaceStatus()
 void xmlrpc_gui_comm::listDAQInterfaceComponents()
 {
   if(this->isShellScriptsEnabled){
-    DAQInterfaceCommands.start("listdaqcomps.sh", QStringList() << "");
-    qDebug()<<"listdaqcomps.sh called";
-    DAQInterfaceCommands.waitForFinished();
-  }else{
+    QProcess di_comps;
+    di_comps.setWorkingDirectory(env_vars::daqInt_wd);
+    di_comps.start("listdaqcomps.sh", QStringList() << "");
+    if(!di_comps.waitForFinished()){
+      qCritical() << "DAQInterface listdaqcomps timed out.\n"
+                  << "Restart DAQInterface.";
+      // TODO: get out or do some other actions?
+    }
+  }
+  else{
     try {
       xmlrpc_c::value result;
       QString a = "listdaqcomps";
@@ -58,7 +71,7 @@ void xmlrpc_gui_comm::listDAQInterfaceComponents()
     }
     catch(std::exception const & e) {
       qCritical() << "Call to DAQInterface failed because: "
-               << e.what();
+                  << e.what();
     }
   }
 }
@@ -66,10 +79,16 @@ void xmlrpc_gui_comm::listDAQInterfaceComponents()
 void xmlrpc_gui_comm::listDAQInterfaceConfigs()
 {
   if(this->isShellScriptsEnabled){
-    DAQInterfaceCommands.start("listconfigs.sh", QStringList() << "");
-    qDebug()<<"listdaqconfigs.sh called";
-    DAQInterfaceCommands.waitForFinished();
-  }else{
+    QProcess di_configs;
+    di_configs.setWorkingDirectory(env_vars::daqInt_wd);
+    di_configs.start("listconfigs.sh", QStringList() << "");
+    if(!di_configs.waitForFinished()){
+      qCritical() << "DAQInterface listconfigs timed out.\n"
+                  << "Restart DAQInterface.";
+      // TODO: get out or do some other actions?
+    }
+  }
+  else{
     try {
       xmlrpc_c::value result;
       QString a = "listconfigs";
@@ -77,7 +96,7 @@ void xmlrpc_gui_comm::listDAQInterfaceConfigs()
     }
     catch(std::exception const & e) {
       qCritical() << "Call to DAQInterface failed because: "
-               << e.what();
+                  << e.what();
     }
   }
 }
@@ -85,11 +104,17 @@ void xmlrpc_gui_comm::listDAQInterfaceConfigs()
 void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components)
 {
   if(this->isShellScriptsEnabled){
-    DAQInterfaceCommands.start("setdaqcomps.sh", components);
-    qDebug()<<"setdaqcomps.sh called with arguments: " << DAQInterfaceCommands.arguments();
-    DAQInterfaceCommands.waitForFinished();
-    QThread::msleep(1000);
-  }else{
+    QProcess di_setcomps;
+    di_setcomps.setWorkingDirectory(env_vars::daqInt_wd);
+    di_setcomps.start("setdaqcomps.sh", components);
+    if(!di_setcomps.waitForFinished()){
+      qCritical() << "DAQInterface setdaqcomps timed out.\n"
+                  << "components: " << components << "\n"
+                  << "Restart DAQInterface.";
+      // TODO: get out or do some other actions?
+    }
+  }
+  else{
     try{
       xmlrpc_c::value result;
       xmlrpc_c::paramList params;
@@ -152,14 +177,12 @@ void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components)
           }
         }
       }
-
       params.add(xmlrpc_c::value_struct(structData));
       guiClient.call(serverUrl.toStdString(), a.toStdString(), params, &result);
-
     }
     catch(std::exception const & e) {
       qCritical() << "Call to DAQInterface failed because: "
-               << e.what();
+                  << e.what();
     }
   }
 }
@@ -167,10 +190,17 @@ void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components)
 void xmlrpc_gui_comm::sendTransitionBOOT(QStringList selected_boot_file)
 {
   if(this->isShellScriptsEnabled){
-    DAQInterfaceCommands.start("send_transition.sh", QStringList() << "boot" << selected_boot_file.at(0));
-    qDebug()<<"send_transition.sh called with arguments: " << DAQInterfaceCommands.arguments();
-    DAQInterfaceCommands.waitForFinished();
-  }else{
+    QProcess di_boot;
+    di_boot.setWorkingDirectory(env_vars::daqInt_wd);
+    di_boot.start("send_transition.sh", QStringList() << "boot" << selected_boot_file.at(0));
+    if(!di_boot.waitForFinished()){
+      qCritical() << "DAQInterface send_transition BOOT timed out.\n"
+                  << "selected boot: " << selected_boot_file.at(0) << "\n"
+                  << "Restart DAQInterface.";
+      // TODO: get out or do some other actions?
+    }
+  }
+  else{
     try {
       xmlrpc_c::value result;
       xmlrpc_c::paramList params;
@@ -191,7 +221,7 @@ void xmlrpc_gui_comm::sendTransitionBOOT(QStringList selected_boot_file)
     }
     catch(std::exception const & e) {
       qCritical() << "Call to DAQInterface failed because: "
-               << e.what();
+                  << e.what();
     }
   }
 }
@@ -199,10 +229,17 @@ void xmlrpc_gui_comm::sendTransitionBOOT(QStringList selected_boot_file)
 void xmlrpc_gui_comm::sendTransitionCONFIG(QStringList selected_config)
 {
   if(this->isShellScriptsEnabled){
-    DAQInterfaceCommands.start("send_transition.sh", QStringList() << "config" << selected_config.at(0));
-    qDebug()<<"send_transition.sh called with arguments: " << DAQInterfaceCommands.arguments();
-    DAQInterfaceCommands.waitForFinished();
-  }else{
+    QProcess di_config;
+    di_config.setWorkingDirectory(env_vars::daqInt_wd);
+    di_config.start("send_transition.sh", QStringList() << "config" << selected_config.at(0));
+    if(!di_config.waitForFinished()){
+      qCritical() << "DAQInterface send_transition CONFIG timed out.\n"
+                  << "selected config: " << selected_config.at(0) << "\n"
+                  << "Restart DAQInterface.";
+      // TODO: get out or do some other actions?
+    }
+  }
+  else{
     try {
       xmlrpc_c::value result;
       xmlrpc_c::paramList params;
@@ -225,18 +262,24 @@ void xmlrpc_gui_comm::sendTransitionCONFIG(QStringList selected_config)
     }
     catch(std::exception const & e) {
       qCritical() << "Call to DAQInterface failed because: "
-               << e.what();
+                  << e.what();
     }
-    }
+  }
 }
 
 void xmlrpc_gui_comm::sendTransitionSTART()
 {
   if(this->isShellScriptsEnabled){
-    DAQInterfaceCommands.start("send_transition.sh", QStringList() << "start");
-    qDebug()<<"send_transition.sh called with arguments: " << DAQInterfaceCommands.arguments();
-    DAQInterfaceCommands.waitForFinished();
-  }else{
+    QProcess di_start;
+    di_start.setWorkingDirectory(env_vars::daqInt_wd);
+    di_start.start("send_transition.sh", QStringList() << "start");
+    if(!di_start.waitForFinished()){
+      qCritical() << "DAQInterface send_transition START timed out.\n"
+                  << "Restart DAQInterface.";
+      // TODO: get out or do some other actions?
+    }
+  }
+  else{
     try {
       xmlrpc_c::value result;
       xmlrpc_c::paramList params;
@@ -261,7 +304,7 @@ void xmlrpc_gui_comm::sendTransitionSTART()
     }
     catch(std::exception const & e) {
       qCritical() << "Call to DAQInterface failed because: "
-               << e.what();
+                  << e.what();
     }
   }
 }
@@ -269,10 +312,16 @@ void xmlrpc_gui_comm::sendTransitionSTART()
 void xmlrpc_gui_comm::sendTransitionSTOP()
 {
   if(this->isShellScriptsEnabled){
-    DAQInterfaceCommands.start("send_transition.sh", QStringList() << "stop");
-    qDebug()<<"send_transition.sh called with arguments: " << DAQInterfaceCommands.arguments();
-    DAQInterfaceCommands.waitForFinished();
-  }else{
+    QProcess di_stop;
+    di_stop.setWorkingDirectory(env_vars::daqInt_wd);
+    di_stop.start("send_transition.sh", QStringList() << "stop");
+    if(!di_stop.waitForFinished()){
+      qCritical() << "DAQInterface send_transition STOP timed out.\n"
+                  << "Restart DAQInterface.";
+      // TODO: get out or do some other actions?
+    }
+  }
+  else{
     try {
       xmlrpc_c::value result;
       xmlrpc_c::paramList params;
@@ -291,7 +340,7 @@ void xmlrpc_gui_comm::sendTransitionSTOP()
     }
     catch(std::exception const & e) {
       qCritical() << "Call to DAQInterface failed because: "
-               << e.what();
+                  << e.what();
     }
   }
 }
@@ -299,10 +348,16 @@ void xmlrpc_gui_comm::sendTransitionSTOP()
 void xmlrpc_gui_comm::sendTransitionTERMINATE()
 {
   if(this->isShellScriptsEnabled){
-    DAQInterfaceCommands.start("send_transition.sh", QStringList() << "terminate");
-    qDebug()<<"send_transition.sh called with arguments: " << DAQInterfaceCommands.arguments();
-    DAQInterfaceCommands.waitForFinished();
-  }else{
+    QProcess di_terminate;
+    di_terminate.setWorkingDirectory(env_vars::daqInt_wd);
+    di_terminate.start("send_transition.sh", QStringList() << "terminate");
+    if(!di_terminate.waitForFinished()){
+      qCritical() << "DAQInterface send_transition TERMINATE timed out.\n"
+                  << "Restart DAQInterface.";
+      // TODO: get out or do some other actions?
+    }
+  }
+  else{
     try {
       xmlrpc_c::value result;
       xmlrpc_c::paramList params;
@@ -321,7 +376,7 @@ void xmlrpc_gui_comm::sendTransitionTERMINATE()
     }
     catch(std::exception const & e) {
       qCritical() << "Call to DAQInterface failed because: "
-               << e.what();
+                  << e.what();
     }
   }
 }

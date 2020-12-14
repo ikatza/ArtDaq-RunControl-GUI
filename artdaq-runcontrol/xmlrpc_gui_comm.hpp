@@ -33,7 +33,6 @@ private:
   // QString methodName = "listdaqcomps";
   xmlrpc_c::clientSimple guiClient;
   bool isShellScriptsEnabled = false;
-  QProcess DAQInterfaceCommands;
 };
 
 #endif // XMLRPC_GUI_COMM_HPP
