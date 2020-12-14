@@ -8,9 +8,11 @@
 #include <QFile>
 #include <QTextStream>
 #include <QStringList>
-#include <vector>
 #include <QDirIterator>
 #include <QThread>
+
+#include <string>
+#include <vector>
 
 #include "env_vars.hpp"
 #include "gui_utility_functions.hpp"
@@ -29,8 +31,7 @@ public:
   void listDAQInterfaceConfigs();
   void setShellScripts(bool value);
 private:
-  QString serverUrl = "http://localhost:5570/RPC2";
-  // QString methodName = "listdaqcomps";
+  std::string serverUrl = "http://localhost:5570/RPC2";
   xmlrpc_c::clientSimple guiClient;
   bool shellScriptsEnabled = false;
 };
