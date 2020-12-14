@@ -196,6 +196,8 @@ void MainWindow::bEndSessionPressed()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
   QMessageBox msgBox;
+  QProcess kill_daqinterface;
+  kill_daqinterface.setWorkingDirectory(env_vars::daqInt_wd);
   msgBox.setText("End session");
   msgBox.setInformativeText("Do you really wish to end the session?\n The DAQInterface instance in the partition will be destroyed");
   msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -203,7 +205,7 @@ void MainWindow::bEndSessionPressed()
   int ret = msgBox.exec();
   switch (ret) {
   case QMessageBox::Yes:
-    daq_commands.execute("kill_daqinterface_on_partition.sh", QStringList() << env_vars::partition_number);
+    kill_daqinterface.execute("kill_daqinterface_on_partition.sh", QStringList() << env_vars::partition_number);
     initializeButtons();
     initializeLV();
     timer.stop();
@@ -665,7 +667,6 @@ void MainWindow::bDAQInterfacePressed()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
   daq_interface.setWorkingDirectory(env_vars::daqInt_wd);
-  daq_commands.setWorkingDirectory(env_vars::daqInt_wd);
 
   if (env_vars::daqInt_user_sourcefile != "EMPTY") {
     qDebug() << "env_vars::daqInt_user_sourcefile: " << env_vars::daqInt_user_sourcefile;

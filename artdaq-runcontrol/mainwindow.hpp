@@ -96,7 +96,6 @@ private slots:
 private:
   Ui::MainWindow *ui;
   QProcess daq_interface;
-  QProcess daq_commands;
   QString daq_string;
   QString DBConfigurationFHICL_dir;
   QString daqInterfaceTextAreaLog;
