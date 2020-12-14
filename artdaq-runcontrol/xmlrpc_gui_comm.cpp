@@ -101,7 +101,7 @@ void xmlrpc_gui_comm::listDAQInterfaceConfigs()
   }
 }
 
-void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components)
+void xmlrpc_gui_comm::setDAQInterfaceComponents(const QStringList& components)
 {
   if(this->isShellScriptsEnabled){
     QProcess di_setcomps;
@@ -187,7 +187,7 @@ void xmlrpc_gui_comm::setDAQInterfaceComponents(QStringList components)
   }
 }
 
-void xmlrpc_gui_comm::sendTransitionBOOT(QStringList selected_boot_file)
+void xmlrpc_gui_comm::sendTransitionBOOT(const QStringList& selected_boot_file)
 {
   if(this->isShellScriptsEnabled){
     QProcess di_boot;
@@ -226,7 +226,7 @@ void xmlrpc_gui_comm::sendTransitionBOOT(QStringList selected_boot_file)
   }
 }
 
-void xmlrpc_gui_comm::sendTransitionCONFIG(QStringList selected_config)
+void xmlrpc_gui_comm::sendTransitionCONFIG(const QStringList& selected_config)
 {
   if(this->isShellScriptsEnabled){
     QProcess di_config;

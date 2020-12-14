@@ -20,9 +20,9 @@ public:
   xmlrpc_gui_comm();
   QString getDAQInterfaceStatus();
   void listDAQInterfaceComponents();
-  void setDAQInterfaceComponents(QStringList components);
-  void sendTransitionBOOT(QStringList selected_boot_file);
-  void sendTransitionCONFIG(QStringList selected_config);
+  void setDAQInterfaceComponents(const QStringList& components);
+  void sendTransitionBOOT(const QStringList& selected_boot_file);
+  void sendTransitionCONFIG(const QStringList& selected_config);
   void sendTransitionSTOP();
   void sendTransitionTERMINATE();
   void sendTransitionSTART();
