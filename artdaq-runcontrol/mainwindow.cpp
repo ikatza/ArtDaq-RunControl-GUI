@@ -271,18 +271,11 @@ void MainWindow::initializeLV()
 
 void MainWindow::checkStatus()
 {
-  /*daq_commands.start("status.sh", QStringList() << "");
-  daq_commands.waitForFinished();
-  QByteArray byte_status = daq_commands.readAll();
-  QTextCodec* codec = QTextCodec::codecForName("UTF-8");
-  QStringList daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("'", QString::KeepEmptyParts);*/
-  //qDebug() << "xmlrpc_c: " << commDAQInterface.getDAQInterfaceStatus();
   QString str_status = commDAQInterface.getDAQInterfaceStatus();
   int est = status_map_int.value(str_status);
   if(est >= 1 && est <= 10){
     state_diagram.setOnline();
-    //QString str_status = daq_string.at(1);
-    // qDebug()<<str_status;
+    // qDebug() << str_status;
     ui->lbStatus->setText(status_map.value(str_status).toUpper());
     status(str_status);
     checkTransitionStartRunPressed(str_status);
@@ -291,18 +284,6 @@ void MainWindow::checkStatus()
     ui->taDAQInterface->document()->setPlainText(str_status);
     status("offline");
   }
-  /*if(daq_string.count() > 1) {
-    state_diagram.setOnline();
-    QString str_status = daq_string.at(1);
-    // qDebug()<<str_status;
-    ui->lbStatus->setText(status_map.value(str_status).toUpper());
-    status(str_status);
-    checkTransitionStartRunPressed(str_status);
-  }
-  else {
-    ui->taDAQInterface->document()->setPlainText(daq_string.at(0));
-    status("offline");
-  }*/
 }
 
 void MainWindow::status(QString status)
@@ -311,10 +292,7 @@ void MainWindow::status(QString status)
 
   switch (est) {
   case 1: //stopped
-    //banBOOT = true;
-    //banBOOTCONFIG = false;
     banBOOTED = false;
-    //banCONFIG = false;
     banCONFIGURED = false;
     banRUNNING = false;
     banPAUSED = false;
@@ -334,10 +312,7 @@ void MainWindow::status(QString status)
     }
     break;
   case 2: //booted
-    //banBOOT = false;
-    //banBOOTCONFIG = false;
     banBOOTED = true;
-    //banCONFIG = true;
     banCONFIGURED = false;
     banRUNNING = false;
     banPAUSED = false;
@@ -353,11 +328,8 @@ void MainWindow::status(QString status)
     ui->lvConfigBOOT->setSelectionMode(QAbstractItemView::SingleSelection);
     break;
   case 3: //ready
-    //banBOOT = false;
-    //banBOOTCONFIG = false;
     banBOOTED = true;
     banCONFIGURED = true;
-    //banCONFIG = false;
     banRUNNING = false;
     banPAUSED = false;
     isLVSelected();
@@ -695,35 +667,6 @@ void MainWindow::bDAQInterfacePressed()
   daq_interface.setWorkingDirectory(env_vars::daqInt_wd);
   daq_commands.setWorkingDirectory(env_vars::daqInt_wd);
 
-  // QStringList daqinterface_start_commands;
-
-  // qDebug() << "All env variables:";
-  // QString env_variable;
-  // QStringList paths_list = env.toStringList();
-  // foreach( env_variable, paths_list ) qDebug() << env_variable;
-
-  // //////// old way
-  // daqinterface_start_commands << "stdbuf -oL ./rc/control/daqinterface.py --partition-number"
-  //                             << partition_number_str
-  //                             << "--rpc-port" << rpc_port_str;
-  // daq_interface.start(daqinterface_start_commands.join(" "));
-  // //////// old way
-
-
-  // //////// estebans way; sadly not working
-  // daqinterface_start_commands << "stdbuf -oL" << wd + "/rc/control/daqinterface.py --partition-number"
-  //                            << partition_number_str
-  //                            << "--rpc-port" << rpc_port_str;
-  // DAQInterfaceProcess_started = daq_interface.startDetached(daqinterface_start_commands.join(" "));
-  // DAQInterface_PID = daq_interface.processId();
-  // setButtonsDAQInterfaceInitialized(DAQInterfaceProcess_started);
-  // qDebug() << daqinterface_start_commands;
-  // //DAQInterface_logfile = "/home/ecristal/Debug.log";
-  // //DAQInterface_logwatcher.addPath(DAQInterface_logfile);
-
-  // //////// estebans way
-
-
   if (env_vars::daqInt_user_sourcefile != "EMPTY") {
     qDebug() << "env_vars::daqInt_user_sourcefile: " << env_vars::daqInt_user_sourcefile;
     daq_interface.start("./bin/DAQInterface.sh");
@@ -749,7 +692,6 @@ void MainWindow::DAQInterfaceOutput()
 {
   //qDebug() << "Starting" << Q_FUNC_INFO;
   QByteArray daq_byte_array = daq_interface.readAllStandardOutput();
-  //daq_interface.waitForFinished();
   QTextCodec* codec = QTextCodec::codecForName("UTF-8");
   daq_string = codec->codecForMib(106)->toUnicode(daq_byte_array);
   daqInterfaceTextAreaLog = daqInterfaceTextAreaLog + daq_string;
@@ -807,9 +749,6 @@ void MainWindow::lvConfigs()
   qDebug() << "Starting" << Q_FUNC_INFO;
   QStringListModel* model = new QStringListModel(this);
   QStringList list = daq_string.split("\n\n", QString::SkipEmptyParts);
-  //qDebug()<<list.at(0);
-  //list.removeFirst();
-  //list.removeLast();
   QString list_config = list.at(0);
   list = list_config.split('\n');
   //qDebug()<<list;
@@ -889,7 +828,7 @@ void MainWindow::checkTransitionStartRunPressed(QString status)
         this->bSTARTPressed();
       }
       else {
-        //Add error message
+        //TODO: Add error message
       }
       startRunConfigSignalIssued = false;
       break;
