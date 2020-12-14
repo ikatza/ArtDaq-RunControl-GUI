@@ -8,7 +8,7 @@ xmlrpc_gui_comm::xmlrpc_gui_comm()
 
 QString xmlrpc_gui_comm::getDAQInterfaceStatus()
 {
-  if(this->isShellScriptsEnabled){
+  if(this->shellScriptsEnabled){
     QProcess di_status;
     di_status.setWorkingDirectory(env_vars::daqInt_wd);
     di_status.start("status.sh", QStringList() << "");
@@ -53,7 +53,7 @@ QString xmlrpc_gui_comm::getDAQInterfaceStatus()
 
 void xmlrpc_gui_comm::listDAQInterfaceComponents()
 {
-  if(this->isShellScriptsEnabled){
+  if(this->shellScriptsEnabled){
     QProcess di_comps;
     di_comps.setWorkingDirectory(env_vars::daqInt_wd);
     di_comps.start("listdaqcomps.sh", QStringList() << "");
@@ -78,7 +78,7 @@ void xmlrpc_gui_comm::listDAQInterfaceComponents()
 
 void xmlrpc_gui_comm::listDAQInterfaceConfigs()
 {
-  if(this->isShellScriptsEnabled){
+  if(this->shellScriptsEnabled){
     QProcess di_configs;
     di_configs.setWorkingDirectory(env_vars::daqInt_wd);
     di_configs.start("listconfigs.sh", QStringList() << "");
@@ -103,7 +103,7 @@ void xmlrpc_gui_comm::listDAQInterfaceConfigs()
 
 void xmlrpc_gui_comm::setDAQInterfaceComponents(const QStringList& components)
 {
-  if(this->isShellScriptsEnabled){
+  if(this->shellScriptsEnabled){
     QProcess di_setcomps;
     di_setcomps.setWorkingDirectory(env_vars::daqInt_wd);
     di_setcomps.start("setdaqcomps.sh", components);
@@ -189,7 +189,7 @@ void xmlrpc_gui_comm::setDAQInterfaceComponents(const QStringList& components)
 
 void xmlrpc_gui_comm::sendTransitionBOOT(const QStringList& selected_boot_file)
 {
-  if(this->isShellScriptsEnabled){
+  if(this->shellScriptsEnabled){
     QProcess di_boot;
     di_boot.setWorkingDirectory(env_vars::daqInt_wd);
     di_boot.start("send_transition.sh", QStringList() << "boot" << selected_boot_file.at(0));
@@ -228,7 +228,7 @@ void xmlrpc_gui_comm::sendTransitionBOOT(const QStringList& selected_boot_file)
 
 void xmlrpc_gui_comm::sendTransitionCONFIG(const QStringList& selected_config)
 {
-  if(this->isShellScriptsEnabled){
+  if(this->shellScriptsEnabled){
     QProcess di_config;
     di_config.setWorkingDirectory(env_vars::daqInt_wd);
     di_config.start("send_transition.sh", QStringList() << "config" << selected_config.at(0));
@@ -269,7 +269,7 @@ void xmlrpc_gui_comm::sendTransitionCONFIG(const QStringList& selected_config)
 
 void xmlrpc_gui_comm::sendTransitionSTART()
 {
-  if(this->isShellScriptsEnabled){
+  if(this->shellScriptsEnabled){
     QProcess di_start;
     di_start.setWorkingDirectory(env_vars::daqInt_wd);
     di_start.start("send_transition.sh", QStringList() << "start");
@@ -311,7 +311,7 @@ void xmlrpc_gui_comm::sendTransitionSTART()
 
 void xmlrpc_gui_comm::sendTransitionSTOP()
 {
-  if(this->isShellScriptsEnabled){
+  if(this->shellScriptsEnabled){
     QProcess di_stop;
     di_stop.setWorkingDirectory(env_vars::daqInt_wd);
     di_stop.start("send_transition.sh", QStringList() << "stop");
@@ -347,7 +347,7 @@ void xmlrpc_gui_comm::sendTransitionSTOP()
 
 void xmlrpc_gui_comm::sendTransitionTERMINATE()
 {
-  if(this->isShellScriptsEnabled){
+  if(this->shellScriptsEnabled){
     QProcess di_terminate;
     di_terminate.setWorkingDirectory(env_vars::daqInt_wd);
     di_terminate.start("send_transition.sh", QStringList() << "terminate");
@@ -381,6 +381,7 @@ void xmlrpc_gui_comm::sendTransitionTERMINATE()
   }
 }
 
-void xmlrpc_gui_comm::setIsShellScriptsEnabled(bool value){
-  this->isShellScriptsEnabled = value;
+void xmlrpc_gui_comm::setShellScripts(bool value)
+{
+  this->shellScriptsEnabled = value;
 }

@@ -27,12 +27,12 @@ public:
   void sendTransitionTERMINATE();
   void sendTransitionSTART();
   void listDAQInterfaceConfigs();
-  void setIsShellScriptsEnabled(bool value);
+  void setShellScripts(bool value);
 private:
   QString serverUrl = "http://localhost:5570/RPC2";
   // QString methodName = "listdaqcomps";
   xmlrpc_c::clientSimple guiClient;
-  bool isShellScriptsEnabled = false;
+  bool shellScriptsEnabled = false;
 };
 
 #endif // XMLRPC_GUI_COMM_HPP
