@@ -24,11 +24,10 @@ class db_dialog : public QDialog {
   Q_OBJECT
 
 public:
-  explicit db_dialog(QWidget *parent = 0);
+  explicit db_dialog(QWidget* parent = 0);
   ~db_dialog();
-  // QStringList getListOfDBConfigurations();
   QPair<QString, QString> getSelectedDBConfig() const;
-  void setSelectedDBConfig(const QString &value);
+  void setSelectedDBConfig(const QString& value);
 
 private slots:
   void populateLvConfiguration();
@@ -39,12 +38,8 @@ private slots:
 
 private:
   Ui::db_dialog *ui;
-  QProcess conftoolpy;
-  QProcess conftoolpy_export;
-  QString export_dir_base = "/tmp/artdaq-runcontrol-gui/db/";
-  QString conftoolpy_export_output;
+  const QString export_dir_base = "/tmp/artdaq-runcontrol-gui/db/";
   QString selectedDBConfig;
-
   QStringList daq_string;
 };
 

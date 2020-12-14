@@ -22,6 +22,7 @@ db_dialog::~db_dialog()
 
 void db_dialog::populateLvConfiguration()
 {
+  QProcess conftoolpy;
   conftoolpy.start("conftool.py", QStringList() << "getListOfAvailableRunConfigurations");
   conftoolpy.waitForFinished();
   QByteArray byte_status = conftoolpy.readAll();
@@ -35,23 +36,6 @@ void db_dialog::populateLvConfiguration()
   ui->lvConfigurationList->setModel(model);
   this->listViewClicked();
 }
-
-// QStringList db_dialog::getListOfDBConfigurations(){
-//     conftoolpy.start("conftool.py",QStringList()<<"getListOfAvailableRunConfigurations");
-//     conftoolpy.waitForFinished();
-//     QByteArray byte_status = conftoolpy.readAll();
-//     QTextCodec* codec;
-//     daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("\n",QString::KeepEmptyParts);
-//     daq_string.removeLast();
-//     daq_string.sort();
-//     //std::sort(daq_string.begin(),daq_string.last(),std::greater);
-//     qDebug()<<daq_string;
-//     // QStringListModel* model = new QStringListModel(this);
-//     // model->setStringList(daq_string);
-//     // ui->lvConfigurationList->setModel(model);
-//     // this->listViewClicked();
-//     return daq_string;
-// }
 
 void db_dialog::tfConfigNameModified()
 {
@@ -82,29 +66,23 @@ void db_dialog::bSelectPressed()
   QStringList db_profile_stringlist;
   QModelIndexList list = ui->lvConfigurationList->selectionModel()->selectedRows();
   for(QModelIndex idx : list) {
-    db_profile_stringlist = idx.model()->data(idx, Qt::DisplayRole).toString().split(' ', QString::KeepEmptyParts);
+    db_profile_stringlist = idx.model()->data(idx, Qt::DisplayRole).toString()
+      .split(' ', QString::KeepEmptyParts);
   }
   QString selected_db_config = db_profile_stringlist.at(0);
   qDebug() << "selected_db_config: " << selected_db_config;
-
   QString export_dir = export_dir_base + selected_db_config;
+  QProcess conftoolpy_export;
   conftoolpy_export.start("mkdir", QStringList() << "-vp" << export_dir);
   conftoolpy_export.waitForFinished();
-  conftoolpy_export_output = conftoolpy_export.readAllStandardOutput();
+  QString conftoolpy_export_output = conftoolpy_export.readAllStandardOutput();
   qDebug() << "\n mkdir -vp: " << conftoolpy_export_output;
-
   conftoolpy_export.setWorkingDirectory(export_dir);
-
-  conftoolpy_export.start("conftool.py", QStringList() << "exportConfiguration" << selected_db_config);
+  conftoolpy_export.start("conftool.py", QStringList()
+                          << "exportConfiguration" << selected_db_config);
   conftoolpy_export.waitForFinished();
   conftoolpy_export_output = conftoolpy_export.readAllStandardOutput();
   qDebug()  << "\n conftool.py exportConfiguration" << conftoolpy_export_output;
-
-  // conftoolpy_export.start("ls");
-  // conftoolpy_export.waitForFinished();
-  // conftoolpy_export_output = conftoolpy_export.readAllStandardOutput();
-  // qDebug()  << "\n ls" << conftoolpy_export_output;
-
   this->setSelectedDBConfig(selected_db_config);
 }
 
@@ -127,7 +105,7 @@ void db_dialog::bRefreshListPressed()
   tfConfigNameModified();
 }
 
-void db_dialog::setSelectedDBConfig(const QString &value)
+void db_dialog::setSelectedDBConfig(const QString& value)
 {
   selectedDBConfig = value;
 }
