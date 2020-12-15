@@ -67,7 +67,7 @@ void db_dialog::bSelectPressed()
     db_profile_stringlist = idx.model()->data(idx, Qt::DisplayRole).toString()
       .split(' ', QString::KeepEmptyParts);
   }
-  QString selected_db_config = db_profile_stringlist.at(0);
+  const QString& selected_db_config = db_profile_stringlist.at(0);
   qDebug() << "selected_db_config: " << selected_db_config;
   QString export_dir = export_dir_base + selected_db_config;
   QProcess conftoolpy_export;

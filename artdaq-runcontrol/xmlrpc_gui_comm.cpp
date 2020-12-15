@@ -20,14 +20,11 @@ QString xmlrpc_gui_comm::getDAQInterfaceStatus()
     QByteArray byte_status = di_status.readAll();
     QTextCodec* codec = QTextCodec::codecForName("UTF-8");
     QStringList daqinterface_string = codec->codecForMib(106)->toUnicode(byte_status).split("'", QString::KeepEmptyParts);
-    QString daqinterface_status;
     if(daqinterface_string.size() > 1){
-      daqinterface_status = daqinterface_string.at(1);
-      return daqinterface_status;
+      return daqinterface_string.at(1);
     }
     else{
-      daqinterface_status = daqinterface_string.at(0);
-      return daqinterface_status;
+      return daqinterface_string.at(0);
     }
   }
   else{

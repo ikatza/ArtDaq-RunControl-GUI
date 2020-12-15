@@ -750,7 +750,7 @@ void MainWindow::populateLVConfigs(const QString& di_configs_output)
   qDebug() << "Starting" << Q_FUNC_INFO;
   QStringListModel* model = new QStringListModel(this);
   QStringList list = di_configs_output.split("\n\n", QString::SkipEmptyParts);
-  QString list_config = list.at(0);
+  const QString& list_config = list.at(0);
   list = list_config.split('\n');
   //qDebug()<<list;
   list.removeFirst();
