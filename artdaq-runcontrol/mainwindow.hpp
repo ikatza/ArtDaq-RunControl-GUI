@@ -56,8 +56,8 @@ private slots:
   void MensajeParaBelen();
   void bListDAQComps();
   void bListDAQConfigs();
-  void lvComps();
-  void lvConfigs();
+  void populateLVComps(const QString& di_comps_output);
+  void populateLVConfigs(const QString& di_configs_output);
   void initializeButtons();
   void setButtonsDAQInterfaceInitialized(bool started);
   void isLVSelected();

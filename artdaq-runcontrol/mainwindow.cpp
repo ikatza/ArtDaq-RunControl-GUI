@@ -701,10 +701,10 @@ void MainWindow::DAQInterfaceOutput()
   // qDebug() << "Inside " << __func__ << " , daq_string: " << daq_string << "\n";
   switch (DAQState) {
   case 1:
-    lvComps();
+    populateLVComps(daq_string);
     break;
   case 2:
-    lvConfigs();
+    populateLVConfigs(daq_string);
     break;
   case 3:
     populateLVConfigurationsFromDatabase();
@@ -720,11 +720,11 @@ void MainWindow::DAQInterfaceOutput()
   //qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
-void MainWindow::lvComps()
+void MainWindow::populateLVComps(const QString& di_comps_output)
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
   QStringListModel* model = new QStringListModel(this);
-  QStringList list = daq_string.split('\n', QString::SkipEmptyParts);
+  QStringList list = di_comps_output.split('\n', QString::SkipEmptyParts);
   list.removeFirst();
   model->setStringList(list);
   ui->lvComponents->setModel(model);
@@ -744,11 +744,11 @@ void MainWindow::bListDAQComps()
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
-void MainWindow::lvConfigs()
+void MainWindow::populateLVConfigs(const QString& di_configs_output)
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
   QStringListModel* model = new QStringListModel(this);
-  QStringList list = daq_string.split("\n\n", QString::SkipEmptyParts);
+  QStringList list = di_configs_output.split("\n\n", QString::SkipEmptyParts);
   QString list_config = list.at(0);
   list = list_config.split('\n');
   //qDebug()<<list;
