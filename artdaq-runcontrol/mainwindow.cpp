@@ -244,7 +244,7 @@ void MainWindow::initializeButtons()
   ui->bTerminate->setEnabled(false);
   ui->bPause->setEnabled(false);
   ui->bDAQInterface->setEnabled(true);
-  ui->lbStatus->setText(status_map.value("stopped").toUpper());
+  ui->lbStatus->setText("STOPPED");
   ui->checkBoxDatabase->setChecked(false);
   ui->checkBoxDatabase->setEnabled(false);
   ui->bListDatabaseRunConfigurations->setEnabled(false);
@@ -278,7 +278,7 @@ void MainWindow::checkStatus()
   if(int st = status_map_int.value(str_status); st >= 1 && st <= 10){
     state_diagram.setOnline();
     // qDebug() << str_status;
-    ui->lbStatus->setText(status_map.value(str_status).toUpper());
+    ui->lbStatus->setText(str_status.toUpper());
     status(str_status);
     checkTransitionStartRunPressed(str_status);
   }

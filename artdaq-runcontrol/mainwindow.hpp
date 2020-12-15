@@ -107,30 +107,33 @@ private:
   bool startRunConfigSignalIssued, startRunStartSignalIssued;
   QTimer timer;
   QFileSystemWatcher DAQInterface_logwatcher;
-  QMap<QString, QString> status_map = {{"stopped", "stopped"},
-    {"booting", "booting"},
-    {"booted", "booted"},
-    {"configuring", "configuring"},
-    {"configured", "configured"},
-    {"ready", "ready"},
-    {"starting", "starting"},
-    {"running", "running"},
-    {"paused", "paused"},
-    {"stopping", "stopping"},
-    {"terminating", "terminating"}
-  };
-
-  QMap<QString, int> status_map_int = {{"stopped", 1},
-    {"booted", 2},
-    {"ready", 3},
-    {"running", 4},
-    {"paused", 5},
-    {"booting", 6},
-    {"configuring", 7},
-    {"starting", 8},
-    {"stopping", 9},
+  // QMap<QString, QString> status_map =
+  // {
+  //   {"stopped", "stopped"},
+  //   {"booting", "booting"},
+  //   {"booted", "booted"},
+  //   {"configuring", "configuring"},
+  //   {"configured", "configured"},
+  //   {"ready", "ready"},
+  //   {"starting", "starting"},
+  //   {"running", "running"},
+  //   {"paused", "paused"},
+  //   {"stopping", "stopping"},
+  //   {"terminating", "terminating"}
+  // };
+  QMap<QString, int> status_map_int =
+  {
+    {"stopped",      1},
+    {"booted",       2},
+    {"ready",        3},
+    {"running",      4},
+    {"paused",       5},
+    {"booting",      6},
+    {"configuring",  7},
+    {"starting",     8},
+    {"stopping",     9},
     {"terminating", 10},
-    {"offline", 99}
+    {"offline",     99}
   };
   daqInterfaceState state_diagram;
   xmlrpc_gui_comm commDAQInterface;
