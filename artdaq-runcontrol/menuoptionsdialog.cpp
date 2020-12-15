@@ -1,7 +1,7 @@
 #include "menuoptionsdialog.hpp"
 #include "ui_menuoptionsdialog.h"
 
-MenuOptionsDialog::MenuOptionsDialog(QWidget *parent) :
+MenuOptionsDialog::MenuOptionsDialog(QWidget* parent) :
   QDialog(parent),
   ui(new Ui::MenuOptionsDialog)
 {
@@ -33,7 +33,7 @@ void MenuOptionsDialog::setupCheckBoxEnableAutoResizing()
   ui->cbEnableAutoResizing->setChecked(this->enableAutoResizing);
 }
 
-void MenuOptionsDialog::setFromMainWindowFont(const QFont font)
+void MenuOptionsDialog::setFromMainWindowFont(const QFont& font)
 {
   this->fromMainWindowsFont = font;
 }
@@ -90,7 +90,7 @@ QString MenuOptionsDialog::getFontType() const
   return fontType;
 }
 
-void MenuOptionsDialog::setFontType(const QString &value)
+void MenuOptionsDialog::setFontType(const QString& value)
 {
   fontType = value;
 }

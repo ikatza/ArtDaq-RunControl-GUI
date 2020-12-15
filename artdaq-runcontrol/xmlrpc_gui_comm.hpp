@@ -8,9 +8,11 @@
 #include <QFile>
 #include <QTextStream>
 #include <QStringList>
-#include <vector>
 #include <QDirIterator>
 #include <QThread>
+
+#include <string>
+#include <vector>
 
 #include "env_vars.hpp"
 #include "gui_utility_functions.hpp"
@@ -20,20 +22,18 @@ public:
   xmlrpc_gui_comm();
   QString getDAQInterfaceStatus();
   void listDAQInterfaceComponents();
-  void setDAQInterfaceComponents(QStringList components);
-  void sendTransitionBOOT(QStringList selected_boot_file);
-  void sendTransitionCONFIG(QStringList selected_config);
+  void setDAQInterfaceComponents(const QStringList& components);
+  void sendTransitionBOOT(const QStringList& selected_boot_file);
+  void sendTransitionCONFIG(const QStringList& selected_config);
   void sendTransitionSTOP();
   void sendTransitionTERMINATE();
   void sendTransitionSTART();
   void listDAQInterfaceConfigs();
-  void setIsShellScriptsEnabled(bool value);
+  void setShellScripts(bool value);
 private:
-  QString serverUrl = "http://localhost:5570/RPC2";
-  // QString methodName = "listdaqcomps";
+  const std::string serverUrl;
   xmlrpc_c::clientSimple guiClient;
-  bool isShellScriptsEnabled = false;
-  QProcess DAQInterfaceCommands;
+  bool shellScriptsEnabled = false;
 };
 
 #endif // XMLRPC_GUI_COMM_HPP

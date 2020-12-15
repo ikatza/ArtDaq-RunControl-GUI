@@ -1,8 +1,6 @@
 #ifndef MESSAGEHANDLER_HPP
 #define MESSAGEHANDLER_HPP
 
-
-
 #include <QtGlobal>
 #include <QTime>
 #include <iostream>
@@ -24,6 +22,7 @@
 << "\n\t" \
 << COLOR << MSG << COLOR_RESET << "\n";
 
-void customLogWriter(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+void customLogWriter(QtMsgType type, const QMessageLogContext& context,
+                     const QString& msg);
 
 #endif // MESSAGEHANDLER_HPP

@@ -6,21 +6,18 @@
 
 namespace gui_utility_functions {
   inline int getRunNumber(){
-    QProcess gpp;
-    gpp.start("show_recent_runs.sh", QStringList() << "1");
-    gpp.waitForFinished();
-    QByteArray byte_status = gpp.readAll();
+    QProcess srr;
+    srr.start("show_recent_runs.sh", QStringList() << "1");
+    srr.waitForFinished();
+    QByteArray byte_status = srr.readAll();
     QTextCodec* codec = QTextCodec::codecForName("UTF-8");
-    QStringList gpp_stringlist = codec->codecForMib(106)->toUnicode(byte_status).split(" ", QString::KeepEmptyParts);
-    int runNumber;
-    if(gpp_stringlist.count() > 1) {
-      QString number_str = gpp_stringlist.at(1);
-      runNumber = number_str.toInt();
+    QStringList srr_sl = codec ->
+      codecForMib(106)->toUnicode(byte_status).split(" ", QString::KeepEmptyParts);
+    // int runNumber;
+    if(srr_sl.count() > 1) {
+      return srr_sl.at(1).toInt();
     }
-    else {
-      runNumber = 0;
-    }
-    return runNumber;
+    return -1; // non-possible run number
   }
 }
 

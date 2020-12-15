@@ -25,7 +25,7 @@
 #include <QScrollBar>
 #include <QtMath>
 #include <QMenuBar>
-#include <QCloseEvent>
+// #include <QCloseEvent>
 
 #include "daqinterfacestate.hpp"
 #include "xmlrpc_gui_comm.hpp"
@@ -42,12 +42,12 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
 public:
-  explicit MainWindow(QWidget *parent = 0);
+  explicit MainWindow(QWidget* parent = 0);
   ~MainWindow();
-  QProcessEnvironment getQProcessEnvironment();
+  // QProcessEnvironment getQProcessEnvironment();
 
-  QString getDBConfigurationFHICL_dir() const;
-  void setDBConfigurationFHICL_dir(const QString &value);
+  // QString getDBConfigurationFHICL_dir() const;
+  void setDBConfigurationFHICL_dir(const QString& dir);
 
 private slots:
   void bEndSessionPressed();
@@ -56,8 +56,8 @@ private slots:
   void MensajeParaBelen();
   void bListDAQComps();
   void bListDAQConfigs();
-  void lvComps();
-  void lvConfigs();
+  void populateLVComps(const QString& di_comps_output);
+  void populateLVConfigs(const QString& di_configs_output);
   void initializeButtons();
   void setButtonsDAQInterfaceInitialized(bool started);
   void isLVSelected();
@@ -67,7 +67,7 @@ private slots:
   void lvBOOTConfigSelected();
   void bCONFIGPressed();
   void bSTARTPressed();
-  void status(QString status);
+  void status(const QString& status);
   void checkStatus();
   void statusTransition();
   void bSTOPPressed();
@@ -81,8 +81,8 @@ private slots:
   void populateLVBOOTConfigurationsFromDatabase();
   void initializeLV();
   void bStartRunPressed();
-  void checkTransitionStartRunPressed(QString status);
-  void resizeEvent(QResizeEvent *event);
+  void checkTransitionStartRunPressed(const QString& status);
+  void resizeEvent(QResizeEvent* event);
   void configurateMenuBar();
   void openMenuOptionsDialog();
   void resizeWindow();
@@ -90,48 +90,52 @@ private slots:
   void setButtonsStoppedDisabled();
   void setAllButtonsDisabled();
   void closeProgram();
-  void closeEvent(QCloseEvent *event);
+  // void closeEvent(QCloseEvent *event);
   void showDaqInterfaceStateWindow();
 
 private:
   Ui::MainWindow *ui;
   QProcess daq_interface;
-  QProcess daq_commands;
   QString daq_string;
   QString DBConfigurationFHICL_dir;
   QString daqInterfaceTextAreaLog;
-  QStringList list_comps_selected, list_config_selected, list_BOOTConfig_selected;
+  QStringList list_comps_selected, list_config_selected,
+    list_BOOTConfig_selected;
   int DAQState;
   long long int DAQInterface_PID;
   bool DAQInterfaceProcess_started;
-  bool banBOOT, banCONFIG, banBOOTCONFIG, banBOOTED, banCONFIGURED, banRUNNING, banPAUSED, banStartRunPressed;
+  bool banBOOT, banCONFIG, banBOOTCONFIG, banBOOTED,
+    banCONFIGURED, banRUNNING, banPAUSED, banStartRunPressed;
   bool startRunConfigSignalIssued, startRunStartSignalIssued;
   QTimer timer;
   QFileSystemWatcher DAQInterface_logwatcher;
-  QMap<QString, QString> status_map = {{"stopped", "stopped"},
-    {"booting", "booting"},
-    {"booted", "booted"},
-    {"configuring", "configuring"},
-    {"configured", "configured"},
-    {"ready", "ready"},
-    {"starting", "starting"},
-    {"running", "running"},
-    {"paused", "paused"},
-    {"stopping", "stopping"},
-    {"terminating", "terminating"}
-  };
-
-  QMap<QString, int> status_map_int = {{"stopped", 1},
-    {"booted", 2},
-    {"ready", 3},
-    {"running", 4},
-    {"paused", 5},
-    {"booting", 6},
-    {"configuring", 7},
-    {"starting", 8},
-    {"stopping", 9},
+  // QMap<QString, QString> status_map =
+  // {
+  //   {"stopped", "stopped"},
+  //   {"booting", "booting"},
+  //   {"booted", "booted"},
+  //   {"configuring", "configuring"},
+  //   {"configured", "configured"},
+  //   {"ready", "ready"},
+  //   {"starting", "starting"},
+  //   {"running", "running"},
+  //   {"paused", "paused"},
+  //   {"stopping", "stopping"},
+  //   {"terminating", "terminating"}
+  // };
+  QMap<QString, int> status_map_int =
+  {
+    {"stopped",      1},
+    {"booted",       2},
+    {"ready",        3},
+    {"running",      4},
+    {"paused",       5},
+    {"booting",      6},
+    {"configuring",  7},
+    {"starting",     8},
+    {"stopping",     9},
     {"terminating", 10},
-    {"offline", 99}
+    {"offline",     99}
   };
   daqInterfaceState state_diagram;
   xmlrpc_gui_comm commDAQInterface;

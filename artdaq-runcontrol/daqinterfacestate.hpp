@@ -8,9 +8,6 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QTimer>
-#include <string.h>
-#include <QProcess>
-#include <QTextCodec>
 
 #include "gui_utility_functions.hpp"
 
@@ -41,7 +38,7 @@ public:
   void setOffline();
   void setOnlineButtonRed();
   int getRun_number() const;
-  void setRun_number(int value);
+  void setRun_number(int run_number);
   bool IsRunning() const;
   void setIsRunning(bool value);
 
@@ -56,7 +53,6 @@ private:
   QString imagesDirectory;
   QTimer timerTransition;
   QTimer timerOnline;
-  QProcess gpp; //general purpose process
   int run_number;
   bool isRunning = false;
 };
