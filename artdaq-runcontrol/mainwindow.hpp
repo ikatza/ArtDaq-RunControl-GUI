@@ -25,7 +25,7 @@
 #include <QScrollBar>
 #include <QtMath>
 #include <QMenuBar>
-#include <QCloseEvent>
+// #include <QCloseEvent>
 
 #include "daqinterfacestate.hpp"
 #include "xmlrpc_gui_comm.hpp"
@@ -42,12 +42,12 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
 public:
-  explicit MainWindow(QWidget *parent = 0);
+  explicit MainWindow(QWidget* parent = 0);
   ~MainWindow();
-  QProcessEnvironment getQProcessEnvironment();
+  // QProcessEnvironment getQProcessEnvironment();
 
-  QString getDBConfigurationFHICL_dir() const;
-  void setDBConfigurationFHICL_dir(const QString &value);
+  // QString getDBConfigurationFHICL_dir() const;
+  void setDBConfigurationFHICL_dir(const QString& dir);
 
 private slots:
   void bEndSessionPressed();
@@ -67,7 +67,7 @@ private slots:
   void lvBOOTConfigSelected();
   void bCONFIGPressed();
   void bSTARTPressed();
-  void status(QString status);
+  void status(const QString& status);
   void checkStatus();
   void statusTransition();
   void bSTOPPressed();
@@ -81,8 +81,8 @@ private slots:
   void populateLVBOOTConfigurationsFromDatabase();
   void initializeLV();
   void bStartRunPressed();
-  void checkTransitionStartRunPressed(QString status);
-  void resizeEvent(QResizeEvent *event);
+  void checkTransitionStartRunPressed(const QString& status);
+  void resizeEvent(QResizeEvent* event);
   void configurateMenuBar();
   void openMenuOptionsDialog();
   void resizeWindow();
@@ -90,7 +90,7 @@ private slots:
   void setButtonsStoppedDisabled();
   void setAllButtonsDisabled();
   void closeProgram();
-  void closeEvent(QCloseEvent *event);
+  // void closeEvent(QCloseEvent *event);
   void showDaqInterfaceStateWindow();
 
 private:

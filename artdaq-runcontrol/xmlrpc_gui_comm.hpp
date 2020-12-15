@@ -31,7 +31,7 @@ public:
   void listDAQInterfaceConfigs();
   void setShellScripts(bool value);
 private:
-  std::string serverUrl = "http://localhost:5570/RPC2";
+  const std::string serverUrl;
   xmlrpc_c::clientSimple guiClient;
   bool shellScriptsEnabled = false;
 };

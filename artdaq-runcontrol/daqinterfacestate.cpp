@@ -7,7 +7,7 @@ daqInterfaceState::daqInterfaceState(QWidget *parent) :
 {
   ui->setupUi(this);
   imagesDirectory = QCoreApplication::applicationDirPath() + "/../resources/images/";
-  //qDebug()<<imagesDirectory;
+  qDebug() << Q_FUNC_INFO << "imagesDirectory: " << imagesDirectory;
   QGraphicsScene *scene = new QGraphicsScene();
   QImage image;
   image.load(imagesDirectory + "StateDiagram_all_off.png", "PNG");
@@ -242,8 +242,7 @@ void daqInterfaceState::setOnline()
 
 void daqInterfaceState::setRunNumberLCDGreen()
 {
-  QPalette palette = ui->lcdPartitionNumber->palette();
-  palette = ui->lcdRunNumber->palette();
+  QPalette palette = ui->lcdRunNumber->palette();
   palette.setColor(QPalette::WindowText, Qt::darkGreen);
   ui->lcdRunNumber->setPalette(palette);
 }
@@ -260,8 +259,7 @@ void daqInterfaceState::setIsRunning(bool value)
 
 void daqInterfaceState::setRunNumberLCDRed()
 {
-  QPalette palette = ui->lcdPartitionNumber->palette();
-  palette = ui->lcdRunNumber->palette();
+  QPalette palette = ui->lcdRunNumber->palette();
   palette.setColor(QPalette::WindowText, Qt::red);
   ui->lcdRunNumber->setPalette(palette);
 }

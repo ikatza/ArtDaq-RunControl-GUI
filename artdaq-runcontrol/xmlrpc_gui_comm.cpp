@@ -1,9 +1,9 @@
 #include "xmlrpc_gui_comm.hpp"
 #include <QDebug>
 
-xmlrpc_gui_comm::xmlrpc_gui_comm()
+xmlrpc_gui_comm::xmlrpc_gui_comm() :
+  serverUrl("http://localhost:" + env_vars::rpc_port.toStdString() + "/RPC2")
 {
-  serverUrl = "http://localhost:" + env_vars::rpc_port.toStdString() + "/RPC2";
 }
 
 QString xmlrpc_gui_comm::getDAQInterfaceStatus()
@@ -133,7 +133,7 @@ void xmlrpc_gui_comm::setDAQInterfaceComponents(const QStringList& components)
       std::map<std::string, xmlrpc_c::value> structData;
       std::vector<xmlrpc_c::value> array_list;
 
-      // TODO: this while block is too convoluted! 
+      // TODO: this while block is too convoluted!
       while(!in.atEnd()) {
         line = in.readLine();
         comp_line = line.split(" ");

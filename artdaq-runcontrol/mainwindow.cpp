@@ -167,29 +167,30 @@ void MainWindow::closeProgram()
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
-void MainWindow::closeEvent(QCloseEvent *event)
-{
-  qDebug() << "Starting" << Q_FUNC_INFO;
-  if(DAQInterfaceProcess_started == false){
-    QMessageBox::StandardButton msgBox = QMessageBox::question( this, "artdaqRunControl",
-                                         tr("Do you really wish to close the program?\n"),
-                                         QMessageBox::No | QMessageBox::Yes,
-                                         QMessageBox::Yes);
-    if (msgBox != QMessageBox::Yes) {
-      event->ignore();
-    }
-    else {
-      event->accept();
-      exit(0);
-    }
-  }else{
-    QMessageBox msgBox;
-    msgBox.setText("Please end the DAQInteface session before exiting the program");
-    msgBox.exec();
-    event->ignore();
-  }
-  qDebug() << "Ending" << Q_FUNC_INFO;
-}
+// TODO: Is there no purpose for this?
+// void MainWindow::closeEvent(QCloseEvent *event)
+// {
+//   qDebug() << "Starting" << Q_FUNC_INFO;
+//   if(DAQInterfaceProcess_started == false){
+//     QMessageBox::StandardButton msgBox = QMessageBox::question( this, "artdaqRunControl",
+//                                          tr("Do you really wish to close the program?\n"),
+//                                          QMessageBox::No | QMessageBox::Yes,
+//                                          QMessageBox::Yes);
+//     if (msgBox != QMessageBox::Yes) {
+//       event->ignore();
+//     }
+//     else {
+//       event->accept();
+//       exit(0);
+//     }
+//   }else{
+//     QMessageBox msgBox;
+//     msgBox.setText("Please end the DAQInteface session before exiting the program");
+//     msgBox.exec();
+//     event->ignore();
+//   }
+//   qDebug() << "Ending" << Q_FUNC_INFO;
+// }
 
 
 void MainWindow::bEndSessionPressed()
@@ -274,8 +275,7 @@ void MainWindow::initializeLV()
 void MainWindow::checkStatus()
 {
   QString str_status = commDAQInterface.getDAQInterfaceStatus();
-  int est = status_map_int.value(str_status);
-  if(est >= 1 && est <= 10){
+  if(int st = status_map_int.value(str_status); st >= 1 && st <= 10){
     state_diagram.setOnline();
     // qDebug() << str_status;
     ui->lbStatus->setText(status_map.value(str_status).toUpper());
@@ -288,11 +288,10 @@ void MainWindow::checkStatus()
   }
 }
 
-void MainWindow::status(QString status)
+void MainWindow::status(const QString& status)
 {
-  int est = status_map_int.value(status);
-
-  switch (est) {
+  int st = status_map_int.value(status);
+  switch (st) {
   case 1: //stopped
     banBOOTED = false;
     banCONFIGURED = false;
@@ -805,7 +804,7 @@ void MainWindow::bStartRunPressed()
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
-void MainWindow::checkTransitionStartRunPressed(QString status)
+void MainWindow::checkTransitionStartRunPressed(const QString& status)
 {
   int est = status_map_int.value(status);
 
@@ -1010,28 +1009,28 @@ void MainWindow::populateLVBOOTConfigurationsFromDatabase()
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
-QString MainWindow::getDBConfigurationFHICL_dir() const
+// QString MainWindow::getDBConfigurationFHICL_dir() const
+// {
+//   qDebug() << "Starting" << Q_FUNC_INFO;
+//   return DBConfigurationFHICL_dir;
+//   qDebug() << "Ending" << Q_FUNC_INFO;
+// }
+
+void MainWindow::setDBConfigurationFHICL_dir(const QString& dir)
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  return DBConfigurationFHICL_dir;
+  DBConfigurationFHICL_dir = dir;
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
-void MainWindow::setDBConfigurationFHICL_dir(const QString &value)
-{
-  qDebug() << "Starting" << Q_FUNC_INFO;
-  DBConfigurationFHICL_dir = value;
-  qDebug() << "Ending" << Q_FUNC_INFO;
-}
+// QProcessEnvironment MainWindow::getQProcessEnvironment()
+// {
+//   qDebug() << "Starting" << Q_FUNC_INFO;
+//   return env_vars::env;
+//   qDebug() << "Ending" << Q_FUNC_INFO;
+// }
 
-QProcessEnvironment MainWindow::getQProcessEnvironment()
-{
-  qDebug() << "Starting" << Q_FUNC_INFO;
-  return env_vars::env;
-  qDebug() << "Ending" << Q_FUNC_INFO;
-}
-
-void MainWindow::resizeEvent(QResizeEvent *event)
+void MainWindow::resizeEvent(QResizeEvent* event)
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
   QMainWindow::resizeEvent(event);
@@ -1248,7 +1247,7 @@ void MainWindow::openMenuOptionsDialog()
     ui->taDAQInterface->setText(this->daqInterfaceTextAreaLog);
     this->EnableFontAutoResizing = menuOptionsDialog->getEnableAutoResizing();
     this->enableShellScripts = menuOptionsDialog->getEnableShellScripts();
-    commDAQInterface.setIsShellScriptsEnabled(this->enableShellScripts);
+    commDAQInterface.setShellScripts(this->enableShellScripts);
     this->resizeWindow();
   }
   else {

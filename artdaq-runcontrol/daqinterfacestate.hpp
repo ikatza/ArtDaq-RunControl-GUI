@@ -38,7 +38,7 @@ public:
   void setOffline();
   void setOnlineButtonRed();
   int getRun_number() const;
-  void setRun_number(int value);
+  void setRun_number(int run_number);
   bool IsRunning() const;
   void setIsRunning(bool value);
 
