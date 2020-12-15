@@ -99,11 +99,13 @@ private:
   QString daq_string;
   QString DBConfigurationFHICL_dir;
   QString daqInterfaceTextAreaLog;
-  QStringList list_comps_selected, list_config_selected, list_BOOTConfig_selected;
+  QStringList list_comps_selected, list_config_selected,
+    list_BOOTConfig_selected;
   int DAQState;
   long long int DAQInterface_PID;
   bool DAQInterfaceProcess_started;
-  bool banBOOT, banCONFIG, banBOOTCONFIG, banBOOTED, banCONFIGURED, banRUNNING, banPAUSED, banStartRunPressed;
+  bool banBOOT, banCONFIG, banBOOTCONFIG, banBOOTED,
+    banCONFIGURED, banRUNNING, banPAUSED, banStartRunPressed;
   bool startRunConfigSignalIssued, startRunStartSignalIssued;
   QTimer timer;
   QFileSystemWatcher DAQInterface_logwatcher;

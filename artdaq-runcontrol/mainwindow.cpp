@@ -275,7 +275,8 @@ void MainWindow::initializeLV()
 void MainWindow::checkStatus()
 {
   QString str_status = commDAQInterface.getDAQInterfaceStatus();
-  if(int st = status_map_int.value(str_status); st >= 1 && st <= 10){
+  int st = status_map_int.value(str_status);
+  if(st >= 1 && st <= 10){
     state_diagram.setOnline();
     // qDebug() << str_status;
     ui->lbStatus->setText(str_status.toUpper());
@@ -806,10 +807,9 @@ void MainWindow::bStartRunPressed()
 
 void MainWindow::checkTransitionStartRunPressed(const QString& status)
 {
-  int est = status_map_int.value(status);
-
+  int st = status_map_int.value(status);
   if(banStartRunPressed) {
-    switch(est) {
+    switch(st) {
     case 1: //stopped
       banStartRunPressed = false;
       startRunConfigSignalIssued = false;
