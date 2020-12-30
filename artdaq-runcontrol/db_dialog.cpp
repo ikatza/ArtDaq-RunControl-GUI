@@ -11,6 +11,8 @@ db_dialog::db_dialog(QWidget *parent) :
   connect(ui->bOK->button(QDialogButtonBox::Ok), SIGNAL(clicked(bool)), this, SLOT(bSelectPressed()));
   connect(ui->lvConfigurationList, SIGNAL(clicked(QModelIndex)), this, SLOT(listViewClicked()));
   connect(ui->bRefreshList, SIGNAL(clicked(bool)), this, SLOT(bRefreshListPressed()));
+  this->lvConfigurationListModel = new QStringListModel(this);
+  ui->lvConfigurationList->setModel(this->lvConfigurationListModel);
   this->populateLvConfiguration();
   ui->lvConfigurationList->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
@@ -18,6 +20,7 @@ db_dialog::db_dialog(QWidget *parent) :
 db_dialog::~db_dialog()
 {
   delete ui;
+  delete lvConfigurationListModel;
 }
 
 void db_dialog::populateLvConfiguration()
@@ -29,9 +32,8 @@ void db_dialog::populateLvConfiguration()
   QTextCodec* codec = QTextCodec::codecForName("UTF-8");
   daq_string = codec->codecForMib(106)->toUnicode(byte_status).split("\n", QString::KeepEmptyParts);
   daq_string.removeLast();
-  QStringListModel* model = new QStringListModel(this);
+  QStringListModel* model = (QStringListModel*)ui->lvConfigurationList->model();
   model->setStringList(daq_string);
-  ui->lvConfigurationList->setModel(model);
   this->listViewClicked();
 }
 
@@ -48,14 +50,12 @@ void db_dialog::tfConfigNameModified()
         dBConfigList_filtered.append(dBConfig_str);
       }
     }
-    QStringListModel* model = new QStringListModel(this);
+    QStringListModel* model = (QStringListModel*)ui->lvConfigurationList->model();
     model->setStringList(dBConfigList_filtered);
-    ui->lvConfigurationList->setModel(model);
   }
   else {
-    QStringListModel* model = new QStringListModel(this);
+    QStringListModel* model = (QStringListModel*)ui->lvConfigurationList->model();
     model->setStringList(daq_string);
-    ui->lvConfigurationList->setModel(model);
   }
 }
 

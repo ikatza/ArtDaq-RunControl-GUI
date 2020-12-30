@@ -41,6 +41,7 @@ private:
   const QString export_dir_base = "/tmp/artdaq-runcontrol-gui/db/";
   QString selectedDBConfig;
   QStringList daq_string;
+  QStringListModel* lvConfigurationListModel;
 };
 
 #endif // DB_DIALOG_HPP
