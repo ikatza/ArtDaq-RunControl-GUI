@@ -39,6 +39,13 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
   delete ui;
+  delete optionsMenu;
+  delete exitMenu;
+  delete windowMenu;
+  delete Menus;
+  delete lvComponentsModel;
+  delete lvConfigurationsModel;
+  delete lvConfigBOOTModel;
 }
 
 
@@ -122,19 +129,19 @@ void MainWindow::configurateWindow()
 void MainWindow::configurateMenuBar()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  QAction *optionsMenu = new QAction("&Options", this);
-  QAction *exitMenu = new QAction("&Exit", this);
-  QAction *windowMenu = new QAction("&Show state diagram", this);
-  QMenu *Tools;
-  Tools = menuBar()->addMenu("&File");
-  Tools->addAction(exitMenu);
-  Tools = menuBar()->addMenu("&Tools");
-  Tools->addAction(optionsMenu);
-  Tools = menuBar()->addMenu("&Window");
-  Tools->addAction(windowMenu);
-  connect(optionsMenu, SIGNAL(triggered(bool)), this, SLOT(openMenuOptionsDialog()));
-  connect(exitMenu, SIGNAL(triggered(bool)), this, SLOT(closeProgram()));
-  connect(windowMenu, SIGNAL(triggered(bool)), this, SLOT(showDaqInterfaceStateWindow()));
+  this->optionsMenu = new QAction("&Options", this);
+  this->exitMenu = new QAction("&Exit", this);
+  this->windowMenu = new QAction("&Show state diagram", this);
+  this->Menus = new QMenu();
+  this->Menus = menuBar()->addMenu("&File");
+  this->Menus->addAction(exitMenu);
+  this->Menus = menuBar()->addMenu("&Tools");
+  this->Menus->addAction(optionsMenu);
+  this->Menus = menuBar()->addMenu("&Window");
+  this->Menus->addAction(windowMenu);
+  connect(this->optionsMenu, SIGNAL(triggered(bool)), this, SLOT(openMenuOptionsDialog()));
+  connect(this->exitMenu, SIGNAL(triggered(bool)), this, SLOT(closeProgram()));
+  connect(this->windowMenu, SIGNAL(triggered(bool)), this, SLOT(showDaqInterfaceStateWindow()));
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
@@ -265,12 +272,12 @@ void MainWindow::initializeButtons()
 void MainWindow::initializeLV()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  QStringListModel* model = new QStringListModel(this);
-  QStringList empty;
-  model->setStringList(empty);
-  ui->lvConfigBOOT->setModel(model);
-  ui->lvComponents->setModel(model);
-  ui->lvConfigurations->setModel(model);
+  this->lvComponentsModel = new QStringListModel(this);
+  this->lvConfigurationsModel = new QStringListModel(this);
+  this->lvConfigBOOTModel = new QStringListModel(this);
+  ui->lvConfigBOOT->setModel(this->lvComponentsModel);
+  ui->lvComponents->setModel(this->lvConfigurationsModel);
+  ui->lvConfigurations->setModel(this->lvConfigBOOTModel);
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
@@ -726,7 +733,7 @@ void MainWindow::DAQInterfaceOutput()
 void MainWindow::populateLVComps(const QString& di_comps_output)
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  QStringListModel* model = new QStringListModel(this);
+  QStringListModel* model = (QStringListModel*)ui->lvComponents->model();
   QStringList list = di_comps_output.split('\n', QString::SkipEmptyParts);
   list.removeFirst();
   model->setStringList(list);
@@ -750,7 +757,7 @@ void MainWindow::bListDAQComps()
 void MainWindow::populateLVConfigs(const QString& di_configs_output)
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  QStringListModel* model = new QStringListModel(this);
+  QStringListModel* model = (QStringListModel*)ui->lvConfigurations->model();
   QStringList list = di_configs_output.split("\n\n", QString::SkipEmptyParts);
   const QString& list_config = list.at(0);
   list = list_config.split('\n');
@@ -788,7 +795,7 @@ void MainWindow::bListDAQConfigs()
     }
   }
 
-  QStringListModel* model = new QStringListModel(this);
+  QStringListModel* model = (QStringListModel*)ui->lvConfigBOOT->model();
   model->setStringList(list_config);
   ui->lvConfigBOOT->setModel(model);
   ui->lvConfigBOOT->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -892,6 +899,7 @@ void MainWindow::bListDatabaseRunConfigurations()
     DAQState = 3;
   }
   else if(result == QDialog::Rejected) {}
+  delete dbDialog;
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
@@ -955,7 +963,7 @@ void MainWindow::populateLVComponentsFromDatabase()
   }
 
   lvComponentsList.sort();
-  QStringListModel* model = new QStringListModel(this);
+  QStringListModel* model = (QStringListModel*)ui->lvComponents->model();
   model->setStringList(lvComponentsList);
   ui->lvComponents->setModel(model);
   ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
@@ -971,7 +979,7 @@ void MainWindow::populateLVConfigurationsFromDatabase()
   qDebug() << "Starting" << Q_FUNC_INFO;
   QStringList lvConfigurationsList;
   lvConfigurationsList.append(dbSelectedConfig.first);
-  QStringListModel* model = new QStringListModel(this);
+  QStringListModel* model = (QStringListModel*)ui->lvConfigurations->model();
   model->setStringList(lvConfigurationsList);
   ui->lvConfigurations->setModel(model);
   ui->lvConfigurations->setSelectionMode(QAbstractItemView::NoSelection);
@@ -1001,7 +1009,7 @@ void MainWindow::populateLVBOOTConfigurationsFromDatabase()
     }
   }
   if (foundMatch) {
-    QStringListModel* model = new QStringListModel(this);
+    QStringListModel* model = (QStringListModel*)ui->lvConfigBOOT->model();
     model->setStringList(list_config);
     ui->lvConfigBOOT->setModel(model);
     connect(ui->lvConfigBOOT->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvBOOTConfigSelected()));
@@ -1255,6 +1263,7 @@ void MainWindow::openMenuOptionsDialog()
   else {
 
   }
+  delete menuOptionsDialog;
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 

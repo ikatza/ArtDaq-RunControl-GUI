@@ -157,6 +157,13 @@ private:
   double originalQuadraticMeanConfigurationFontSize;
   bool EnableFontAutoResizing = true;
   bool enableShellScripts = false;
+  QAction *optionsMenu;
+  QAction *exitMenu;
+  QAction *windowMenu;
+  QMenu *Menus;
+  QStringListModel* lvComponentsModel;
+  QStringListModel* lvConfigurationsModel;
+  QStringListModel* lvConfigBOOTModel;
 };
 
 #endif // MAINWINDOW_HPP
