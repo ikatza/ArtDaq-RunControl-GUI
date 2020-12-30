@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(&DAQInterface_logwatcher, SIGNAL(fileChanged(QString)), this, SLOT(bDebugPressed()));
   connect(ui->bBelen, SIGNAL(clicked(bool)), this, SLOT(MensajeParaBelen()));
   connect(ui->bDAQcomp, SIGNAL(clicked(bool)), this, SLOT(bListDAQComps()));
-  connect(ui->bDAQconf, SIGNAL(clicked(bool)), this, SLOT(bListDAQConfigs()));
+  //connect(ui->bGetLastRunConfig, SIGNAL(clicked(bool)), this, SLOT(bListDAQConfigs()));
   connect(ui->bBOOT, SIGNAL(clicked(bool)), this, SLOT(bBOOTPressed()));
   connect(ui->bCONFIG, SIGNAL(clicked(bool)), this, SLOT(bCONFIGPressed()));
   connect(ui->bStart, SIGNAL(clicked(bool)), this, SLOT(bSTARTPressed()));
@@ -74,8 +74,8 @@ void MainWindow::configurateWindow()
   this->bListDatabaseRunConfigurationsSize = ui->bListDatabaseRunConfigurations->geometry().size();
   this->bDAQcompPosition = ui->bDAQcomp->pos();
   this->bDAQcompSize = ui->bDAQcomp->geometry().size();
-  this->bDAQconfPosition = ui->bDAQconf->pos();
-  this->bDAQconfSize = ui->bDAQconf->geometry().size();
+  this->bGetLastRunConfigPosition = ui->bGetLastRunConfig->pos();
+  this->bGetLastRunConfigSize = ui->bGetLastRunConfig->geometry().size();
   this->bBOOTPosition = ui->bBOOT->pos();
   this->bBOOTSize = ui->bBOOT->geometry().size();
   this->bCONFIGPosition = ui->bCONFIG->pos();
@@ -232,7 +232,7 @@ void MainWindow::initializeButtons()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
   ui->bDAQcomp->setEnabled(false);
-  ui->bDAQconf->setEnabled(false);
+  ui->bGetLastRunConfig->setEnabled(false);
   ui->bEndSession->setEnabled(false);
   ui->bBelen->setVisible(false);
   ui->bBelen->setEnabled(false);
@@ -310,7 +310,7 @@ void MainWindow::status(const QString& status)
     if(ui->checkBoxDatabase->isChecked()) {
       ui->bListDatabaseRunConfigurations->setEnabled(true);
       ui->bDAQcomp->setEnabled(false);
-      ui->bDAQconf->setEnabled(false);
+      ui->bGetLastRunConfig->setEnabled(false);
     }
     break;
   case 2: //booted
@@ -421,7 +421,7 @@ void MainWindow::setButtonsStoppedEnabled()
   ui->bEndSession->setEnabled(true);
   if(!ui->checkBoxDatabase->isEnabled()) {
     ui->bDAQcomp->setEnabled(true);
-    ui->bDAQconf->setEnabled(true);
+    ui->bGetLastRunConfig->setEnabled(true);
   }
 }
 
@@ -429,14 +429,14 @@ void MainWindow::setButtonsStoppedDisabled()
 {
   ui->bEndSession->setEnabled(false);
   ui->bDAQcomp->setEnabled(false);
-  ui->bDAQconf->setEnabled(false);
+  ui->bGetLastRunConfig->setEnabled(false);
 }
 
 void MainWindow::setAllButtonsDisabled()
 {
   ui->bEndSession->setEnabled(false);
   ui->bDAQcomp->setEnabled(false);
-  ui->bDAQconf->setEnabled(false);
+  ui->bGetLastRunConfig->setEnabled(false);
   ui->bBOOT->setEnabled(false);
   ui->bCONFIG->setEnabled(false);
   ui->bStart->setEnabled(false);
@@ -655,7 +655,7 @@ void MainWindow::setButtonsDAQInterfaceInitialized(bool started)
   if(started) {
     ui->bDAQInterface->setEnabled(false);
     ui->bDAQcomp->setEnabled(true);
-    ui->bDAQconf->setEnabled(true);
+    ui->bGetLastRunConfig->setEnabled(true);
     ui->bEndSession->setEnabled(true);
     ui->checkBoxDatabase->setEnabled(true);
     timer.start(1000);
@@ -703,6 +703,7 @@ void MainWindow::DAQInterfaceOutput()
   switch (DAQState) {
   case 1:
     populateLVComps(daq_string);
+    this->bListDAQConfigs();
     break;
   case 2:
     populateLVConfigs(daq_string);
@@ -900,14 +901,14 @@ void MainWindow::checkBoxDatabaseChanged()
   if(checked) {
     ui->bListDatabaseRunConfigurations->setEnabled(true);
     ui->bDAQcomp->setEnabled(false);
-    ui->bDAQconf->setEnabled(false);
+    ui->bGetLastRunConfig->setEnabled(false);
     initializeLV();
     banBOOTCONFIG = false;
   }
   else {
     ui->bListDatabaseRunConfigurations->setEnabled(false);
     ui->bDAQcomp->setEnabled(true);
-    ui->bDAQconf->setEnabled(true);
+    ui->bGetLastRunConfig->setEnabled(true);
     initializeLV();
     ui->lvConfigurations->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->lvConfigurations->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -1099,10 +1100,10 @@ void MainWindow::resizeWindow()
   ui->bDAQcomp->resize(ui->bDAQcomp->geometry().size().width(), windowHeigth * this->bDAQcompSize.height() / this->originalWindowSize.height());
   ui->bDAQcomp->resize(windowWidth * this->bDAQcompSize.width() / this->originalWindowSize.width(), ui->bDAQcomp->geometry().size().height());
 
-  ui->bDAQconf->move((int)(windowWidth * this->bDAQconfPosition.x() / this->originalWindowSize.width()), ui->bDAQconf->pos().y());
-  ui->bDAQconf->move(ui->bDAQconf->pos().x(), (int)(windowHeigth * this->bDAQconfPosition.y() / this->originalWindowSize.height()));
-  ui->bDAQconf->resize(ui->bDAQconf->geometry().size().width(), windowHeigth * this->bDAQconfSize.height() / this->originalWindowSize.height());
-  ui->bDAQconf->resize(windowWidth * this->bDAQconfSize.width() / this->originalWindowSize.width(), ui->bDAQconf->geometry().size().height());
+  ui->bGetLastRunConfig->move((int)(windowWidth * this->bGetLastRunConfigPosition.x() / this->originalWindowSize.width()), ui->bGetLastRunConfig->pos().y());
+  ui->bGetLastRunConfig->move(ui->bGetLastRunConfig->pos().x(), (int)(windowHeigth * this->bGetLastRunConfigPosition.y() / this->originalWindowSize.height()));
+  ui->bGetLastRunConfig->resize(ui->bGetLastRunConfig->geometry().size().width(), windowHeigth * this->bGetLastRunConfigSize.height() / this->originalWindowSize.height());
+  ui->bGetLastRunConfig->resize(windowWidth * this->bGetLastRunConfigSize.width() / this->originalWindowSize.width(), ui->bGetLastRunConfig->geometry().size().height());
 
   ui->bBOOT->move((int)(windowWidth * this->bBOOTPosition.x() / this->originalWindowSize.width()), ui->bBOOT->pos().y());
   ui->bBOOT->move(ui->bBOOT->pos().x(), (int)(windowHeigth * this->bBOOTPosition.y() / this->originalWindowSize.height()));

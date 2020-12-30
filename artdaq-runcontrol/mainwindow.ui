@@ -140,7 +140,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>List Components</string>
+      <string>List Comps &amp;&amp; Configs</string>
      </property>
     </widget>
     <widget class="QListView" name="lvComponents">
@@ -189,7 +189,7 @@
       <string>Configurations</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="bDAQconf">
+    <widget class="QPushButton" name="bGetLastRunConfig">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -202,7 +202,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>List Configurations</string>
+      <string>Get Last Run Config</string>
      </property>
     </widget>
     <widget class="QListView" name="lvConfigBOOT">

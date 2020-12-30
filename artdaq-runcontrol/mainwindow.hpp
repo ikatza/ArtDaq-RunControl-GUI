@@ -145,8 +145,8 @@ private:
   QPoint gbDAQInterfaceCommandsPosition, gbTransitionCommandsPosition, gbDatabasePosition, gbDAQInterfacePosition;
   QSize bStartSize, bStopSize, bPauseSize, bTerminateSize, bStartRunSize, bListDatabaseRunConfigurationsSize;
   QPoint bStartPosition, bStopPosition, bPausePosition, bTerminatePosition, bStartRunPosition, bListDatabaseRunConfigurationsPosition;
-  QSize bDAQcompSize, bDAQconfSize, bBOOTSize, bCONFIGSize, bDAQInterfaceSize, bEndSessionSize;
-  QPoint bDAQcompPosition, bDAQconfPosition, bBOOTPosition, bCONFIGPosition, bDAQInterfacePosition, bEndSessionPosition;
+  QSize bDAQcompSize, bGetLastRunConfigSize, bBOOTSize, bCONFIGSize, bDAQInterfaceSize, bEndSessionSize;
+  QPoint bDAQcompPosition, bGetLastRunConfigPosition, bBOOTPosition, bCONFIGPosition, bDAQInterfacePosition, bEndSessionPosition;
   QSize lvComponentsSize, lvConfigurationsSize, lvConfigBOOTSize, taDAQInterfaceSize, checkBoxDatabaseSize;
   QPoint lvComponentsPosition, lvConfigurationsPosition, lvConfigBOOTPosition, taDAQInterfacePosition, checkBoxDatabasePosition;
   QSize lbConfigurationsSize, lbComponentsSize, lbBOOTConfigSize, lbMessagesSize, lbStatusTitleSize, lbStatusSize;
