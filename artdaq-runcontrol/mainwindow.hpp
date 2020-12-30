@@ -25,7 +25,7 @@
 #include <QScrollBar>
 #include <QtMath>
 #include <QMenuBar>
-// #include <QCloseEvent>
+#include <QCloseEvent>
 
 #include "daqinterfacestate.hpp"
 #include "xmlrpc_gui_comm.hpp"
@@ -90,7 +90,7 @@ private slots:
   void setButtonsStoppedDisabled();
   void setAllButtonsDisabled();
   void closeProgram();
-  // void closeEvent(QCloseEvent *event);
+  void closeEvent(QCloseEvent *event);
   void showDaqInterfaceStateWindow();
 
 private:

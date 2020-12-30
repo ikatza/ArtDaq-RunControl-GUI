@@ -166,29 +166,33 @@ void MainWindow::closeProgram()
 }
 
 // TODO: Is there no purpose for this?
-// void MainWindow::closeEvent(QCloseEvent *event)
-// {
-//   qDebug() << "Starting" << Q_FUNC_INFO;
-//   if(DAQInterfaceProcess_started == false){
-//     QMessageBox::StandardButton msgBox = QMessageBox::question( this, "artdaqRunControl",
-//                                          tr("Do you really wish to close the program?\n"),
-//                                          QMessageBox::No | QMessageBox::Yes,
-//                                          QMessageBox::Yes);
-//     if (msgBox != QMessageBox::Yes) {
-//       event->ignore();
-//     }
-//     else {
-//       event->accept();
-//       exit(0);
-//     }
-//   }else{
-//     QMessageBox msgBox;
-//     msgBox.setText("Please end the DAQInteface session before exiting the program");
-//     msgBox.exec();
-//     event->ignore();
-//   }
-//   qDebug() << "Ending" << Q_FUNC_INFO;
-// }
+// This part of the code executes when a closeEvent occurs, i.e. x close button on right corner
+// or a alt+F4 is pressed. triggered(bool) signal cannot be assigned to this funtion because it will
+// generate an sender/receiver incompatibility warning, causing misbehavior in the execution.
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+  qDebug() << "Starting" << Q_FUNC_INFO;
+  if(DAQInterfaceProcess_started == false){
+    QMessageBox::StandardButton msgBox = QMessageBox::question( this, "artdaqRunControl",
+                                         tr("Do you really wish to close the program?\n"),
+                                         QMessageBox::No | QMessageBox::Yes,
+                                         QMessageBox::Yes);
+    if (msgBox != QMessageBox::Yes) {
+      event->ignore();
+    }
+    else {
+      event->accept();
+      exit(0);
+    }
+  }else{
+    QMessageBox msgBox;
+    msgBox.setText("Please end the DAQInteface session before exiting the program");
+    msgBox.exec();
+    event->ignore();
+   }
+   qDebug() << "Ending" << Q_FUNC_INFO;
+}
 
 
 void MainWindow::bEndSessionPressed()
@@ -818,7 +822,7 @@ void MainWindow::checkTransitionStartRunPressed(const QString& status)
         this->bCONFIGPressed();
       }
       else {
-        //Add error message
+        //TODO: Add error message
       }
       break;
     case 3: //ready
