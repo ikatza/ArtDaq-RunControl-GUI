@@ -737,7 +737,6 @@ void MainWindow::populateLVComps(const QString& di_comps_output)
   QStringList list = di_comps_output.split('\n', QString::SkipEmptyParts);
   list.removeFirst();
   model->setStringList(list);
-  ui->lvComponents->setModel(model);
   ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
   connect(ui->lvComponents->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvComponentsSelected()));
   DAQState = 0;
@@ -765,7 +764,6 @@ void MainWindow::populateLVConfigs(const QString& di_configs_output)
   list.removeFirst();
   list.removeFirst();
   model->setStringList(list);
-  ui->lvConfigurations->setModel(model);
   connect(ui->lvConfigurations->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvConfigurationsSelected()));
   DAQState = 0;
   this->lvConfigurationsSelected();
@@ -797,7 +795,6 @@ void MainWindow::bListDAQConfigs()
 
   QStringListModel* model = (QStringListModel*)ui->lvConfigBOOT->model();
   model->setStringList(list_config);
-  ui->lvConfigBOOT->setModel(model);
   ui->lvConfigBOOT->setEditTriggers(QAbstractItemView::NoEditTriggers);
   connect(ui->lvConfigBOOT->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvBOOTConfigSelected()));
   QThread::msleep(100);
@@ -965,7 +962,6 @@ void MainWindow::populateLVComponentsFromDatabase()
   lvComponentsList.sort();
   QStringListModel* model = (QStringListModel*)ui->lvComponents->model();
   model->setStringList(lvComponentsList);
-  ui->lvComponents->setModel(model);
   ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
   ui->lvComponents->setEditTriggers(QAbstractItemView::NoEditTriggers);
   connect(ui->lvComponents->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvComponentsSelected()));
@@ -981,7 +977,6 @@ void MainWindow::populateLVConfigurationsFromDatabase()
   lvConfigurationsList.append(dbSelectedConfig.first);
   QStringListModel* model = (QStringListModel*)ui->lvConfigurations->model();
   model->setStringList(lvConfigurationsList);
-  ui->lvConfigurations->setModel(model);
   ui->lvConfigurations->setSelectionMode(QAbstractItemView::NoSelection);
   ui->lvConfigurations->setEditTriggers(QAbstractItemView::NoEditTriggers);
   list_config_selected = lvConfigurationsList;
@@ -1011,7 +1006,6 @@ void MainWindow::populateLVBOOTConfigurationsFromDatabase()
   if (foundMatch) {
     QStringListModel* model = (QStringListModel*)ui->lvConfigBOOT->model();
     model->setStringList(list_config);
-    ui->lvConfigBOOT->setModel(model);
     connect(ui->lvConfigBOOT->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvBOOTConfigSelected()));
     ui->lvConfigBOOT->setEditTriggers(QAbstractItemView::NoEditTriggers);
   }
