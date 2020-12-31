@@ -8,12 +8,12 @@ daqInterfaceState::daqInterfaceState(QWidget *parent) :
   ui->setupUi(this);
   imagesDirectory = QCoreApplication::applicationDirPath() + "/../resources/images/";
   qDebug() << Q_FUNC_INFO << "imagesDirectory: " << imagesDirectory;
-  QGraphicsScene *scene = new QGraphicsScene();
+  this->scene = new QGraphicsScene();
   QImage image;
   image.load(imagesDirectory + "StateDiagram_all_off.png", "PNG");
   QPixmap pixmapImage = QPixmap::fromImage(image);
   scene->addPixmap(pixmapImage);
-  ui->graphicsView->setScene(scene);
+  ui->graphicsView->setScene(this->scene);
 
   ui->labelButtonOnline->setText("");
   image.load(imagesDirectory + "button_red.png", "PNG");
@@ -44,6 +44,7 @@ daqInterfaceState::daqInterfaceState(QWidget *parent) :
 daqInterfaceState::~daqInterfaceState()
 {
   delete ui;
+  delete scene;
 }
 
 void daqInterfaceState::setStateDiagramOff()

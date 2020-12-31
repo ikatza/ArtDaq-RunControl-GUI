@@ -55,6 +55,7 @@ private:
   QTimer timerOnline;
   int run_number;
   bool isRunning = false;
+  QGraphicsScene *scene;
 };
 
 #endif // DAQINTERFACESTATE_HPP

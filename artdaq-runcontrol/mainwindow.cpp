@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
   daqinterface_pointer = &daq_interface;
   ui->lbStatus->setText("");
   connect(ui->bDAQInterface, SIGNAL(clicked(bool)), this, SLOT(bDAQInterfacePressed()));
-  connect(daqinterface_pointer, SIGNAL(readyReadStandardOutput()), this, SLOT(DAQInterfaceOutput()));
+  connect(&daq_interface, SIGNAL(readyReadStandardOutput()), this, SLOT(DAQInterfaceOutput()));
   connect(&DAQInterface_logwatcher, SIGNAL(fileChanged(QString)), this, SLOT(bDebugPressed()));
   connect(ui->bBelen, SIGNAL(clicked(bool)), this, SLOT(MensajeParaBelen()));
   connect(ui->bDAQcomp, SIGNAL(clicked(bool)), this, SLOT(bListDAQComps()));
@@ -42,6 +42,13 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
   delete ui;
+  delete optionsMenu;
+  delete exitMenu;
+  delete windowMenu;
+  delete Menus;
+  delete lvComponentsModel;
+  delete lvConfigurationsModel;
+  delete lvConfigBOOTModel;
 }
 
 
@@ -125,19 +132,19 @@ void MainWindow::configurateWindow()
 void MainWindow::configurateMenuBar()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  QAction *optionsMenu = new QAction("&Options", this);
-  QAction *exitMenu = new QAction("&Exit", this);
-  QAction *windowMenu = new QAction("&Show state diagram", this);
-  QMenu *Tools;
-  Tools = menuBar()->addMenu("&File");
-  Tools->addAction(exitMenu);
-  Tools = menuBar()->addMenu("&Tools");
-  Tools->addAction(optionsMenu);
-  Tools = menuBar()->addMenu("&Window");
-  Tools->addAction(windowMenu);
-  connect(optionsMenu, SIGNAL(triggered(bool)), this, SLOT(openMenuOptionsDialog()));
-  connect(exitMenu, SIGNAL(triggered(bool)), this, SLOT(closeProgram()));
-  connect(windowMenu, SIGNAL(triggered(bool)), this, SLOT(showDaqInterfaceStateWindow()));
+  this->optionsMenu = new QAction("&Options", this);
+  this->exitMenu = new QAction("&Exit", this);
+  this->windowMenu = new QAction("&Show state diagram", this);
+  this->Menus = new QMenu();
+  this->Menus = menuBar()->addMenu("&File");
+  this->Menus->addAction(exitMenu);
+  this->Menus = menuBar()->addMenu("&Tools");
+  this->Menus->addAction(optionsMenu);
+  this->Menus = menuBar()->addMenu("&Window");
+  this->Menus->addAction(windowMenu);
+  connect(this->optionsMenu, SIGNAL(triggered(bool)), this, SLOT(openMenuOptionsDialog()));
+  connect(this->exitMenu, SIGNAL(triggered(bool)), this, SLOT(closeProgram()));
+  connect(this->windowMenu, SIGNAL(triggered(bool)), this, SLOT(showDaqInterfaceStateWindow()));
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
@@ -169,29 +176,33 @@ void MainWindow::closeProgram()
 }
 
 // TODO: Is there no purpose for this?
-// void MainWindow::closeEvent(QCloseEvent *event)
-// {
-//   qDebug() << "Starting" << Q_FUNC_INFO;
-//   if(DAQInterfaceProcess_started == false){
-//     QMessageBox::StandardButton msgBox = QMessageBox::question( this, "artdaqRunControl",
-//                                          tr("Do you really wish to close the program?\n"),
-//                                          QMessageBox::No | QMessageBox::Yes,
-//                                          QMessageBox::Yes);
-//     if (msgBox != QMessageBox::Yes) {
-//       event->ignore();
-//     }
-//     else {
-//       event->accept();
-//       exit(0);
-//     }
-//   }else{
-//     QMessageBox msgBox;
-//     msgBox.setText("Please end the DAQInteface session before exiting the program");
-//     msgBox.exec();
-//     event->ignore();
-//   }
-//   qDebug() << "Ending" << Q_FUNC_INFO;
-// }
+// This part of the code executes when a closeEvent occurs, i.e. x close button on right corner
+// or a alt+F4 is pressed. triggered(bool) signal cannot be assigned to this funtion because it will
+// generate an sender/receiver incompatibility warning, causing misbehavior in the execution.
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+  qDebug() << "Starting" << Q_FUNC_INFO;
+  if(DAQInterfaceProcess_started == false){
+    QMessageBox::StandardButton msgBox = QMessageBox::question( this, "artdaqRunControl",
+                                         tr("Do you really wish to close the program?\n"),
+                                         QMessageBox::No | QMessageBox::Yes,
+                                         QMessageBox::Yes);
+    if (msgBox != QMessageBox::Yes) {
+      event->ignore();
+    }
+    else {
+      event->accept();
+      exit(0);
+    }
+  }else{
+    QMessageBox msgBox;
+    msgBox.setText("Please end the DAQInteface session before exiting the program");
+    msgBox.exec();
+    event->ignore();
+   }
+   qDebug() << "Ending" << Q_FUNC_INFO;
+}
 
 
 void MainWindow::bEndSessionPressed()
@@ -266,12 +277,12 @@ void MainWindow::initializeButtons()
 void MainWindow::initializeLV()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  QStringListModel* model = new QStringListModel(this);
-  QStringList empty;
-  model->setStringList(empty);
-  ui->lvConfigBOOT->setModel(model);
-  ui->lvComponents->setModel(model);
-  ui->lvConfigurations->setModel(model);
+  this->lvComponentsModel = new QStringListModel(this);
+  this->lvConfigurationsModel = new QStringListModel(this);
+  this->lvConfigBOOTModel = new QStringListModel(this);
+  ui->lvConfigBOOT->setModel(this->lvComponentsModel);
+  ui->lvComponents->setModel(this->lvConfigurationsModel);
+  ui->lvConfigurations->setModel(this->lvConfigBOOTModel);
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
@@ -728,11 +739,10 @@ void MainWindow::DAQInterfaceOutput()
 void MainWindow::populateLVComps(const QString& di_comps_output)
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  QStringListModel* model = new QStringListModel(this);
+  QStringListModel* model = (QStringListModel*)ui->lvComponents->model();
   QStringList list = di_comps_output.split('\n', QString::SkipEmptyParts);
   list.removeFirst();
   model->setStringList(list);
-  ui->lvComponents->setModel(model);
   ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
   connect(ui->lvComponents->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvComponentsSelected()));
   DAQState = 0;
@@ -752,7 +762,7 @@ void MainWindow::bListDAQComps()
 void MainWindow::populateLVConfigs(const QString& di_configs_output)
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  QStringListModel* model = new QStringListModel(this);
+  QStringListModel* model = (QStringListModel*)ui->lvConfigurations->model();
   QStringList list = di_configs_output.split("\n\n", QString::SkipEmptyParts);
   const QString& list_config = list.at(0);
   list = list_config.split('\n');
@@ -760,7 +770,6 @@ void MainWindow::populateLVConfigs(const QString& di_configs_output)
   list.removeFirst();
   list.removeFirst();
   model->setStringList(list);
-  ui->lvConfigurations->setModel(model);
   connect(ui->lvConfigurations->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvConfigurationsSelected()));
   DAQState = 0;
   this->lvConfigurationsSelected();
@@ -790,9 +799,8 @@ void MainWindow::bListDAQConfigs()
     }
   }
 
-  QStringListModel* model = new QStringListModel(this);
+  QStringListModel* model = (QStringListModel*)ui->lvConfigBOOT->model();
   model->setStringList(list_config);
-  ui->lvConfigBOOT->setModel(model);
   ui->lvConfigBOOT->setEditTriggers(QAbstractItemView::NoEditTriggers);
   connect(ui->lvConfigBOOT->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvBOOTConfigSelected()));
   QThread::msleep(100);
@@ -824,7 +832,7 @@ void MainWindow::checkTransitionStartRunPressed(const QString& status)
         this->bCONFIGPressed();
       }
       else {
-        //Add error message
+        //TODO: Add error message
       }
       break;
     case 3: //ready
@@ -894,6 +902,7 @@ void MainWindow::bListDatabaseRunConfigurations()
     DAQState = 3;
   }
   else if(result == QDialog::Rejected) {}
+  delete dbDialog;
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
@@ -957,9 +966,8 @@ void MainWindow::populateLVComponentsFromDatabase()
   }
 
   lvComponentsList.sort();
-  QStringListModel* model = new QStringListModel(this);
+  QStringListModel* model = (QStringListModel*)ui->lvComponents->model();
   model->setStringList(lvComponentsList);
-  ui->lvComponents->setModel(model);
   ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
   ui->lvComponents->setEditTriggers(QAbstractItemView::NoEditTriggers);
   connect(ui->lvComponents->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvComponentsSelected()));
@@ -973,9 +981,8 @@ void MainWindow::populateLVConfigurationsFromDatabase()
   qDebug() << "Starting" << Q_FUNC_INFO;
   QStringList lvConfigurationsList;
   lvConfigurationsList.append(dbSelectedConfig.first);
-  QStringListModel* model = new QStringListModel(this);
+  QStringListModel* model = (QStringListModel*)ui->lvConfigurations->model();
   model->setStringList(lvConfigurationsList);
-  ui->lvConfigurations->setModel(model);
   ui->lvConfigurations->setSelectionMode(QAbstractItemView::NoSelection);
   ui->lvConfigurations->setEditTriggers(QAbstractItemView::NoEditTriggers);
   list_config_selected = lvConfigurationsList;
@@ -1003,9 +1010,8 @@ void MainWindow::populateLVBOOTConfigurationsFromDatabase()
     }
   }
   if (foundMatch) {
-    QStringListModel* model = new QStringListModel(this);
+    QStringListModel* model = (QStringListModel*)ui->lvConfigBOOT->model();
     model->setStringList(list_config);
-    ui->lvConfigBOOT->setModel(model);
     connect(ui->lvConfigBOOT->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvBOOTConfigSelected()));
     ui->lvConfigBOOT->setEditTriggers(QAbstractItemView::NoEditTriggers);
   }
@@ -1257,6 +1263,7 @@ void MainWindow::openMenuOptionsDialog()
   else {
 
   }
+  delete menuOptionsDialog;
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
