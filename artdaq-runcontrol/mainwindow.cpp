@@ -734,20 +734,6 @@ void MainWindow::DAQInterfaceOutput()
   //qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
-void MainWindow::populateLVComps(const QString& di_comps_output)
-{
-  qDebug() << "Starting" << Q_FUNC_INFO;
-  QStringListModel* model = (QStringListModel*)ui->lvComponents->model();
-  QStringList list = di_comps_output.split('\n', QString::SkipEmptyParts);
-  list.removeFirst();
-  model->setStringList(list);
-  ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
-  connect(ui->lvComponents->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvComponentsSelected()));
-  DAQState = 0;
-  this->lvComponentsSelected();
-  qDebug() << "Ending" << Q_FUNC_INFO;
-}
-
 void MainWindow::bListDAQCompsEtConfigs()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
@@ -764,21 +750,16 @@ void MainWindow::listDAQComps()
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
-void MainWindow::populateLVConfigs(const QString& di_configs_output)
+void MainWindow::populateLVComps(const QString& di_comps_output)
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  QStringListModel* model = (QStringListModel*)ui->lvConfigurations->model();
-  QStringList list = di_configs_output.split("\n\n", QString::SkipEmptyParts);
-  const QString& list_config = list.at(0);
-  list = list_config.split('\n');
-  //qDebug()<<list;
-  list.removeFirst();
+  QStringListModel* model = (QStringListModel*)ui->lvComponents->model();
+  QStringList list = di_comps_output.split('\n', QString::SkipEmptyParts);
   list.removeFirst();
   model->setStringList(list);
-  connect(ui->lvConfigurations->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvConfigurationsSelected()));
+  ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
+  connect(ui->lvComponents->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvComponentsSelected()));
   DAQState = 0;
-  this->lvConfigurationsSelected();
-  this->lvBOOTConfigSelected();
   this->lvComponentsSelected();
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
@@ -809,6 +790,25 @@ void MainWindow::listDAQConfigs()
   ui->lvConfigBOOT->setEditTriggers(QAbstractItemView::NoEditTriggers);
   connect(ui->lvConfigBOOT->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvBOOTConfigSelected()));
   QThread::msleep(100);
+  qDebug() << "Ending" << Q_FUNC_INFO;
+}
+
+void MainWindow::populateLVConfigs(const QString& di_configs_output)
+{
+  qDebug() << "Starting" << Q_FUNC_INFO;
+  QStringListModel* model = (QStringListModel*)ui->lvConfigurations->model();
+  QStringList list = di_configs_output.split("\n\n", QString::SkipEmptyParts);
+  const QString& list_config = list.at(0);
+  list = list_config.split('\n');
+  //qDebug()<<list;
+  list.removeFirst();
+  list.removeFirst();
+  model->setStringList(list);
+  connect(ui->lvConfigurations->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvConfigurationsSelected()));
+  DAQState = 0;
+  this->lvConfigurationsSelected();
+  this->lvBOOTConfigSelected();
+  this->lvComponentsSelected();
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
