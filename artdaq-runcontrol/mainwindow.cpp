@@ -678,6 +678,7 @@ void MainWindow::setButtonsDAQInterfaceInitialized(bool started)
 void MainWindow::bDAQInterfacePressed()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
+  ui->bDAQInterface->setEnabled(false);
   daq_interface.setWorkingDirectory(env_vars::daqInt_wd);
 
   if (env_vars::daqInt_user_sourcefile != "EMPTY") {
@@ -719,6 +720,8 @@ void MainWindow::DAQInterfaceOutput()
     break;
   case 2:
     populateLVConfigs(daq_string);
+    QThread::msleep(100);
+    ui->bDAQCompEtConf->setEnabled(true);
     break;
   case 3:
     populateLVConfigurationsFromDatabase();
@@ -737,6 +740,7 @@ void MainWindow::DAQInterfaceOutput()
 void MainWindow::bListDAQCompsEtConfigs()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
+  ui->bDAQCompEtConf->setEnabled(false);
   this->listDAQComps();
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
