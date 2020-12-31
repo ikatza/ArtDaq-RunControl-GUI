@@ -4,14 +4,14 @@
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
-  ui(new Ui::MainWindow)
+  ui(new Ui::MainWindow),
+  DAQState(0),
+  DAQInterfaceProcess_started(false),
+  banBOOT(false), banCONFIG(false), banBOOTCONFIG(false),
+  banBOOTED(false), banCONFIGURED(false), banRUNNING(false), banPAUSED(false)
 {
   ui->setupUi(this);
   configurateWindow();
-  DAQState = 0;
-  banBOOT = false, banCONFIG = false, banBOOTCONFIG = false, banBOOTED = false, banCONFIGURED = false;
-  banRUNNING = false, banPAUSED = false;
-  DAQInterfaceProcess_started = false;
   ui->lbStatus->setText("");
   connect(ui->bDAQInterface, SIGNAL(clicked(bool)), this, SLOT(bDAQInterfacePressed()));
   connect(&daq_interface, SIGNAL(readyReadStandardOutput()), this, SLOT(DAQInterfaceOutput()));
