@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
   DAQState = 0;
   banBOOT = false, banCONFIG = false, banBOOTCONFIG = false, banBOOTED = false, banCONFIGURED = false;
   banRUNNING = false, banPAUSED = false;
+  DAQInterfaceProcess_started = false;
   QProcess* daqinterface_pointer = new QProcess(this);
   daqinterface_pointer = &daq_interface;
   ui->lbStatus->setText("");
@@ -250,6 +251,8 @@ void MainWindow::initializeButtons()
   ui->bListDatabaseRunConfigurations->setEnabled(false);
   ui->bDebug->setVisible(false);
   ui->bStartRun->setText("  RUN");
+  // TODO: hiding button for future implementation.
+  ui->bGetLastRunConfig->setVisible(false);
 
   QString imagesDirectory = QCoreApplication::applicationDirPath() + "/../resources/images/";
   QPixmap button_image(imagesDirectory + "start_run.png");
