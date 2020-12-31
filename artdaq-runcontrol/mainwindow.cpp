@@ -12,8 +12,6 @@ MainWindow::MainWindow(QWidget *parent) :
   banBOOT = false, banCONFIG = false, banBOOTCONFIG = false, banBOOTED = false, banCONFIGURED = false;
   banRUNNING = false, banPAUSED = false;
   DAQInterfaceProcess_started = false;
-  QProcess* daqinterface_pointer = new QProcess(this);
-  daqinterface_pointer = &daq_interface;
   ui->lbStatus->setText("");
   connect(ui->bDAQInterface, SIGNAL(clicked(bool)), this, SLOT(bDAQInterfacePressed()));
   connect(&daq_interface, SIGNAL(readyReadStandardOutput()), this, SLOT(DAQInterfaceOutput()));
