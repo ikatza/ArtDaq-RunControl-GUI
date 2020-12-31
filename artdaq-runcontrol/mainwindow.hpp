@@ -54,8 +54,9 @@ private slots:
   void bDAQInterfacePressed();
   void DAQInterfaceOutput();
   void MensajeParaBelen();
-  void bListDAQComps();
-  void bListDAQConfigs();
+  void bListDAQCompsEtConfigs();
+  void listDAQComps();
+  void listDAQConfigs();
   void populateLVComps(const QString& di_comps_output);
   void populateLVConfigs(const QString& di_configs_output);
   void initializeButtons();
@@ -145,8 +146,8 @@ private:
   QPoint gbDAQInterfaceCommandsPosition, gbTransitionCommandsPosition, gbDatabasePosition, gbDAQInterfacePosition;
   QSize bStartSize, bStopSize, bPauseSize, bTerminateSize, bStartRunSize, bListDatabaseRunConfigurationsSize;
   QPoint bStartPosition, bStopPosition, bPausePosition, bTerminatePosition, bStartRunPosition, bListDatabaseRunConfigurationsPosition;
-  QSize bDAQcompSize, bGetLastRunConfigSize, bBOOTSize, bCONFIGSize, bDAQInterfaceSize, bEndSessionSize;
-  QPoint bDAQcompPosition, bGetLastRunConfigPosition, bBOOTPosition, bCONFIGPosition, bDAQInterfacePosition, bEndSessionPosition;
+  QSize bDAQCompEtConfSize, bGetLastRunConfigSize, bBOOTSize, bCONFIGSize, bDAQInterfaceSize, bEndSessionSize;
+  QPoint bDAQCompEtConfPosition, bGetLastRunConfigPosition, bBOOTPosition, bCONFIGPosition, bDAQInterfacePosition, bEndSessionPosition;
   QSize lvComponentsSize, lvConfigurationsSize, lvConfigBOOTSize, taDAQInterfaceSize, checkBoxDatabaseSize;
   QPoint lvComponentsPosition, lvConfigurationsPosition, lvConfigBOOTPosition, taDAQInterfacePosition, checkBoxDatabasePosition;
   QSize lbConfigurationsSize, lbComponentsSize, lbBOOTConfigSize, lbMessagesSize, lbStatusTitleSize, lbStatusSize;

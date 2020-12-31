@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(&daq_interface, SIGNAL(readyReadStandardOutput()), this, SLOT(DAQInterfaceOutput()));
   connect(&DAQInterface_logwatcher, SIGNAL(fileChanged(QString)), this, SLOT(bDebugPressed()));
   connect(ui->bBelen, SIGNAL(clicked(bool)), this, SLOT(MensajeParaBelen()));
-  connect(ui->bDAQcomp, SIGNAL(clicked(bool)), this, SLOT(bListDAQComps()));
+  connect(ui->bDAQCompEtConf, SIGNAL(clicked(bool)), this, SLOT(bListDAQCompsEtConfigs()));
   //connect(ui->bGetLastRunConfig, SIGNAL(clicked(bool)), this, SLOT(bListDAQConfigs()));
   connect(ui->bBOOT, SIGNAL(clicked(bool)), this, SLOT(bBOOTPressed()));
   connect(ui->bCONFIG, SIGNAL(clicked(bool)), this, SLOT(bCONFIGPressed()));
@@ -78,8 +78,8 @@ void MainWindow::configurateWindow()
   this->bStartRunSize = ui->bStartRun->geometry().size();
   this->bListDatabaseRunConfigurationsPosition = ui->bListDatabaseRunConfigurations->pos();
   this->bListDatabaseRunConfigurationsSize = ui->bListDatabaseRunConfigurations->geometry().size();
-  this->bDAQcompPosition = ui->bDAQcomp->pos();
-  this->bDAQcompSize = ui->bDAQcomp->geometry().size();
+  this->bDAQCompEtConfPosition = ui->bDAQCompEtConf->pos();
+  this->bDAQCompEtConfSize = ui->bDAQCompEtConf->geometry().size();
   this->bGetLastRunConfigPosition = ui->bGetLastRunConfig->pos();
   this->bGetLastRunConfigSize = ui->bGetLastRunConfig->geometry().size();
   this->bBOOTPosition = ui->bBOOT->pos();
@@ -241,7 +241,7 @@ void MainWindow::bEndSessionPressed()
 void MainWindow::initializeButtons()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  ui->bDAQcomp->setEnabled(false);
+  ui->bDAQCompEtConf->setEnabled(false);
   ui->bGetLastRunConfig->setEnabled(false);
   ui->bEndSession->setEnabled(false);
   ui->bBelen->setVisible(false);
@@ -321,7 +321,7 @@ void MainWindow::status(const QString& status)
     ui->lvConfigBOOT->setSelectionMode(QAbstractItemView::SingleSelection);
     if(ui->checkBoxDatabase->isChecked()) {
       ui->bListDatabaseRunConfigurations->setEnabled(true);
-      ui->bDAQcomp->setEnabled(false);
+      ui->bDAQCompEtConf->setEnabled(false);
       ui->bGetLastRunConfig->setEnabled(false);
     }
     break;
@@ -432,7 +432,7 @@ void MainWindow::setButtonsStoppedEnabled()
 {
   ui->bEndSession->setEnabled(true);
   if(!ui->checkBoxDatabase->isEnabled()) {
-    ui->bDAQcomp->setEnabled(true);
+    ui->bDAQCompEtConf->setEnabled(true);
     ui->bGetLastRunConfig->setEnabled(true);
   }
 }
@@ -440,14 +440,14 @@ void MainWindow::setButtonsStoppedEnabled()
 void MainWindow::setButtonsStoppedDisabled()
 {
   ui->bEndSession->setEnabled(false);
-  ui->bDAQcomp->setEnabled(false);
+  ui->bDAQCompEtConf->setEnabled(false);
   ui->bGetLastRunConfig->setEnabled(false);
 }
 
 void MainWindow::setAllButtonsDisabled()
 {
   ui->bEndSession->setEnabled(false);
-  ui->bDAQcomp->setEnabled(false);
+  ui->bDAQCompEtConf->setEnabled(false);
   ui->bGetLastRunConfig->setEnabled(false);
   ui->bBOOT->setEnabled(false);
   ui->bCONFIG->setEnabled(false);
@@ -666,7 +666,7 @@ void MainWindow::setButtonsDAQInterfaceInitialized(bool started)
   qDebug() << "Starting" << Q_FUNC_INFO;
   if(started) {
     ui->bDAQInterface->setEnabled(false);
-    ui->bDAQcomp->setEnabled(true);
+    ui->bDAQCompEtConf->setEnabled(true);
     ui->bGetLastRunConfig->setEnabled(true);
     ui->bEndSession->setEnabled(true);
     ui->checkBoxDatabase->setEnabled(true);
@@ -715,7 +715,7 @@ void MainWindow::DAQInterfaceOutput()
   switch (DAQState) {
   case 1:
     populateLVComps(daq_string);
-    this->bListDAQConfigs();
+    this->listDAQConfigs();
     break;
   case 2:
     populateLVConfigs(daq_string);
@@ -748,7 +748,14 @@ void MainWindow::populateLVComps(const QString& di_comps_output)
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
-void MainWindow::bListDAQComps()
+void MainWindow::bListDAQCompsEtConfigs()
+{
+  qDebug() << "Starting" << Q_FUNC_INFO;
+  this->listDAQComps();
+  qDebug() << "Ending" << Q_FUNC_INFO;
+}
+
+void MainWindow::listDAQComps()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
   commDAQInterface.listDAQInterfaceComponents();
@@ -776,7 +783,7 @@ void MainWindow::populateLVConfigs(const QString& di_configs_output)
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
-void MainWindow::bListDAQConfigs()
+void MainWindow::listDAQConfigs()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
   commDAQInterface.listDAQInterfaceConfigs();
@@ -910,14 +917,14 @@ void MainWindow::checkBoxDatabaseChanged()
   bool checked = ui->checkBoxDatabase->isChecked();
   if(checked) {
     ui->bListDatabaseRunConfigurations->setEnabled(true);
-    ui->bDAQcomp->setEnabled(false);
+    ui->bDAQCompEtConf->setEnabled(false);
     ui->bGetLastRunConfig->setEnabled(false);
     initializeLV();
     banBOOTCONFIG = false;
   }
   else {
     ui->bListDatabaseRunConfigurations->setEnabled(false);
-    ui->bDAQcomp->setEnabled(true);
+    ui->bDAQCompEtConf->setEnabled(true);
     ui->bGetLastRunConfig->setEnabled(true);
     initializeLV();
     ui->lvConfigurations->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -1102,10 +1109,10 @@ void MainWindow::resizeWindow()
   ui->bListDatabaseRunConfigurations->resize(ui->bListDatabaseRunConfigurations->geometry().size().width(), windowHeigth * this->bListDatabaseRunConfigurationsSize.height() / this->originalWindowSize.height());
   ui->bListDatabaseRunConfigurations->resize(windowWidth * this->bListDatabaseRunConfigurationsSize.width() / this->originalWindowSize.width(), ui->bListDatabaseRunConfigurations->geometry().size().height());
 
-  ui->bDAQcomp->move((int)(windowWidth * this->bDAQcompPosition.x() / this->originalWindowSize.width()), ui->bDAQcomp->pos().y());
-  ui->bDAQcomp->move(ui->bDAQcomp->pos().x(), (int)(windowHeigth * this->bDAQcompPosition.y() / this->originalWindowSize.height()));
-  ui->bDAQcomp->resize(ui->bDAQcomp->geometry().size().width(), windowHeigth * this->bDAQcompSize.height() / this->originalWindowSize.height());
-  ui->bDAQcomp->resize(windowWidth * this->bDAQcompSize.width() / this->originalWindowSize.width(), ui->bDAQcomp->geometry().size().height());
+  ui->bDAQCompEtConf->move((int)(windowWidth * this->bDAQCompEtConfPosition.x() / this->originalWindowSize.width()), ui->bDAQCompEtConf->pos().y());
+  ui->bDAQCompEtConf->move(ui->bDAQCompEtConf->pos().x(), (int)(windowHeigth * this->bDAQCompEtConfPosition.y() / this->originalWindowSize.height()));
+  ui->bDAQCompEtConf->resize(ui->bDAQCompEtConf->geometry().size().width(), windowHeigth * this->bDAQCompEtConfSize.height() / this->originalWindowSize.height());
+  ui->bDAQCompEtConf->resize(windowWidth * this->bDAQCompEtConfSize.width() / this->originalWindowSize.width(), ui->bDAQCompEtConf->geometry().size().height());
 
   ui->bGetLastRunConfig->move((int)(windowWidth * this->bGetLastRunConfigPosition.x() / this->originalWindowSize.width()), ui->bGetLastRunConfig->pos().y());
   ui->bGetLastRunConfig->move(ui->bGetLastRunConfig->pos().x(), (int)(windowHeigth * this->bGetLastRunConfigPosition.y() / this->originalWindowSize.height()));

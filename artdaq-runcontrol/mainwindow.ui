@@ -127,7 +127,7 @@
     <property name="title">
      <string>DAQInterface Commands</string>
     </property>
-    <widget class="QPushButton" name="bDAQcomp">
+    <widget class="QPushButton" name="bDAQCompEtConf">
      <property name="enabled">
       <bool>false</bool>
      </property>
