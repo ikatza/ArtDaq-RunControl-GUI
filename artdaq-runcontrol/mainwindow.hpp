@@ -10,6 +10,7 @@
 #include <QTextCodec>
 #include <QThread>
 #include <QAbstractItemView>
+#include <QDir>
 #include <QDirIterator>
 #include <QRegExp>
 #include <QModelIndexList>
@@ -18,11 +19,13 @@
 #include <QTimer>
 #include <QSizePolicy>
 #include <QMessageBox>
+#include <QFile>
 #include <QFileDialog>
 #include <QFileSystemWatcher>
 #include <QPair>
 #include <QVector>
 #include <QScrollBar>
+#include <QTextStream>
 #include <QtMath>
 #include <QMenuBar>
 #include <QCloseEvent>
@@ -54,6 +57,7 @@ private slots:
   void bDAQInterfacePressed();
   void DAQInterfaceOutput();
   void MensajeParaBelen();
+  void saveRunConfig();
   void bListDAQCompsEtConfigs();
   void listDAQComps();
   void listDAQConfigs();
@@ -98,6 +102,8 @@ private:
   Ui::MainWindow *ui;
   QProcess daq_interface;
   QString daq_string;
+  const QDir homePath, localConfigPath;
+  const QString lastRunFileName;
   QString DBConfigurationFHICL_dir;
   QString daqInterfaceTextAreaLog;
   QStringList list_comps_selected, list_config_selected,

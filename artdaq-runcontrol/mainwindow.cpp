@@ -5,11 +5,15 @@
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::MainWindow),
+  homePath(QDir::home()),
+  localConfigPath(homePath.absolutePath() + "/.config/ARTDAQ/artdaq-runcontrol-gui/"),
+  lastRunFileName(localConfigPath.absolutePath() + "/last_run.txt"),
   DAQState(0),
   DAQInterfaceProcess_started(false),
   banBOOT(false), banCONFIG(false), banBOOTCONFIG(false),
   banBOOTED(false), banCONFIGURED(false), banRUNNING(false), banPAUSED(false)
 {
+  localConfigPath.mkpath(localConfigPath.absolutePath());
   ui->setupUi(this);
   configurateWindow();
   ui->lbStatus->setText("");
@@ -474,6 +478,7 @@ void MainWindow::bTERMINATEPressed()
 void MainWindow::bSTARTPressed()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
+  saveRunConfig();
   commDAQInterface.sendTransitionSTART();
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
@@ -737,6 +742,27 @@ void MainWindow::DAQInterfaceOutput()
   //qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
+void MainWindow::saveRunConfig()
+{
+  qDebug() << "Starting" << Q_FUNC_INFO;
+  qDebug() << "Saving run info to file: " << lastRunFileName << "\n";
+  QFile f(lastRunFileName);
+  if(!f.open(QFile::WriteOnly |
+             QFile::Text)) {
+    qWarning() << " Could not open file "
+               << lastRunFileName << " for writing";
+    return;
+  }
+  QTextStream out(&f);
+  out << "DAQINTERFACE_USER_SOURCEFILE: " << env_vars::daqInt_user_sourcefile << "\n";
+  out << "components: " << list_comps_selected.join(" ") << "\n";
+  out << "configs: " << list_config_selected.join(" ") << "\n";
+  out << "boot_configs: " << list_BOOTConfig_selected.join(" ") << "\n";
+  f.flush();
+  f.close();
+  qDebug() << "Ending" << Q_FUNC_INFO;
+}
+
 void MainWindow::bListDAQCompsEtConfigs()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
@@ -822,6 +848,7 @@ void MainWindow::bStartRunPressed()
   banStartRunPressed = true;
   startRunConfigSignalIssued = false;
   startRunStartSignalIssued = false;
+  saveRunConfig();
   this->bBOOTPressed();
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
