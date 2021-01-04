@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(&DAQInterface_logwatcher, SIGNAL(fileChanged(QString)), this, SLOT(bDebugPressed()));
   connect(ui->bBelen, SIGNAL(clicked(bool)), this, SLOT(MensajeParaBelen()));
   connect(ui->bDAQCompEtConf, SIGNAL(clicked(bool)), this, SLOT(bListDAQCompsEtConfigs()));
-  //connect(ui->bGetLastRunConfig, SIGNAL(clicked(bool)), this, SLOT(bListDAQConfigs()));
+  connect(ui->bLastRunConfig, SIGNAL(clicked(bool)), this, SLOT(bLastRunConfigPressed()));
   connect(ui->bBOOT, SIGNAL(clicked(bool)), this, SLOT(bBOOTPressed()));
   connect(ui->bCONFIG, SIGNAL(clicked(bool)), this, SLOT(bCONFIGPressed()));
   connect(ui->bStart, SIGNAL(clicked(bool)), this, SLOT(bSTARTPressed()));
@@ -84,8 +84,8 @@ void MainWindow::configurateWindow()
   this->bListDatabaseRunConfigurationsSize = ui->bListDatabaseRunConfigurations->geometry().size();
   this->bDAQCompEtConfPosition = ui->bDAQCompEtConf->pos();
   this->bDAQCompEtConfSize = ui->bDAQCompEtConf->geometry().size();
-  this->bGetLastRunConfigPosition = ui->bGetLastRunConfig->pos();
-  this->bGetLastRunConfigSize = ui->bGetLastRunConfig->geometry().size();
+  this->bLastRunConfigPosition = ui->bLastRunConfig->pos();
+  this->bLastRunConfigSize = ui->bLastRunConfig->geometry().size();
   this->bBOOTPosition = ui->bBOOT->pos();
   this->bBOOTSize = ui->bBOOT->geometry().size();
   this->bCONFIGPosition = ui->bCONFIG->pos();
@@ -246,7 +246,7 @@ void MainWindow::initializeButtons()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
   ui->bDAQCompEtConf->setEnabled(false);
-  ui->bGetLastRunConfig->setEnabled(false);
+  ui->bLastRunConfig->setEnabled(false);
   ui->bEndSession->setEnabled(false);
   ui->bBelen->setVisible(false);
   ui->bBelen->setEnabled(false);
@@ -264,8 +264,6 @@ void MainWindow::initializeButtons()
   ui->bListDatabaseRunConfigurations->setEnabled(false);
   ui->bDebug->setVisible(false);
   ui->bStartRun->setText("  RUN");
-  // TODO: hiding button for future implementation.
-  ui->bGetLastRunConfig->setVisible(false);
 
   QString imagesDirectory = QCoreApplication::applicationDirPath() + "/../resources/images/";
   QPixmap button_image(imagesDirectory + "start_run.png");
@@ -326,7 +324,7 @@ void MainWindow::status(const QString& status)
     if(ui->checkBoxDatabase->isChecked()) {
       ui->bListDatabaseRunConfigurations->setEnabled(true);
       ui->bDAQCompEtConf->setEnabled(false);
-      ui->bGetLastRunConfig->setEnabled(false);
+      ui->bLastRunConfig->setEnabled(false);
     }
     break;
   case 2: //booted
@@ -437,7 +435,7 @@ void MainWindow::setButtonsStoppedEnabled()
   ui->bEndSession->setEnabled(true);
   if(!ui->checkBoxDatabase->isEnabled()) {
     ui->bDAQCompEtConf->setEnabled(true);
-    ui->bGetLastRunConfig->setEnabled(true);
+    ui->bLastRunConfig->setEnabled(true);
   }
 }
 
@@ -445,14 +443,14 @@ void MainWindow::setButtonsStoppedDisabled()
 {
   ui->bEndSession->setEnabled(false);
   ui->bDAQCompEtConf->setEnabled(false);
-  ui->bGetLastRunConfig->setEnabled(false);
+  ui->bLastRunConfig->setEnabled(false);
 }
 
 void MainWindow::setAllButtonsDisabled()
 {
   ui->bEndSession->setEnabled(false);
   ui->bDAQCompEtConf->setEnabled(false);
-  ui->bGetLastRunConfig->setEnabled(false);
+  ui->bLastRunConfig->setEnabled(false);
   ui->bBOOT->setEnabled(false);
   ui->bCONFIG->setEnabled(false);
   ui->bStart->setEnabled(false);
@@ -672,7 +670,7 @@ void MainWindow::setButtonsDAQInterfaceInitialized(bool started)
   if(started) {
     ui->bDAQInterface->setEnabled(false);
     ui->bDAQCompEtConf->setEnabled(true);
-    ui->bGetLastRunConfig->setEnabled(true);
+    ui->bLastRunConfig->setEnabled(true);
     ui->bEndSession->setEnabled(true);
     ui->checkBoxDatabase->setEnabled(true);
     timer.start(1000);
@@ -740,6 +738,72 @@ void MainWindow::DAQInterfaceOutput()
     break;
   }
   //qDebug() << "Ending" << Q_FUNC_INFO;
+}
+
+void MainWindow::bLastRunConfigPressed()
+{
+  qDebug() << "Starting" << Q_FUNC_INFO;
+  QFile f(lastRunFileName);
+  if(!f.open(QFile::ReadOnly |
+             QFile::Text)) {
+    qInfo() << " Could not open file "
+               << lastRunFileName << " for writing";
+    return;
+  }
+  QTextStream in(&f);
+  unsigned checks = 0;
+  QStringList usf = (in.readLine()).split(" ");
+  if(usf[0] == "DAQINTERFACE_USER_SOURCEFILE:") {
+    if(usf[1] == env_vars::daqInt_user_sourcefile) checks++;
+  }
+  if(checks == 0){
+    qWarning()
+      << "Current DAQINTERFACE_USER_SOURCEFILE: " << env_vars::daqInt_user_sourcefile
+      << ",\n\tdoesn't match the one stored: " << usf[1]
+      << ".\n\tCan't use last run Components and Configs.";
+    return;
+  }
+  if(QStringList sl = (in.readLine()).split(" ");
+     sl[0] == "components:") {
+    sl.removeFirst();
+    list_comps_selected = sl;
+    QStringListModel* model = (QStringListModel*)ui->lvComponents->model();
+    model->setStringList(list_comps_selected);
+    ui->lvComponents->setSelectionMode(QAbstractItemView::NoSelection);
+    checks++;
+    qInfo() << "components: " << list_comps_selected;
+  }
+  if(QStringList sl = (in.readLine()).split(" ");
+     sl[0] == "configs:") {
+    sl.removeFirst();
+    list_config_selected = sl;
+    QStringListModel* model = (QStringListModel*)ui->lvConfigurations->model();
+    model->setStringList(list_config_selected);
+    ui->lvConfigurations->setSelectionMode(QAbstractItemView::NoSelection);
+    checks++;
+    qInfo() << "configs: " << list_config_selected;
+  }
+  if(QStringList sl = (in.readLine()).split(" ");
+     sl[0] == "boot_configs:") {
+    sl.removeFirst();
+    list_BOOTConfig_selected = sl;
+    QFileInfo boot_fInfo(list_BOOTConfig_selected[0]);
+    QStringList boot_fname(boot_fInfo.fileName());
+    QStringListModel* model = (QStringListModel*)ui->lvConfigBOOT->model();
+    ui->lvConfigBOOT->setSelectionMode(QAbstractItemView::NoSelection);
+    model->setStringList(boot_fname);
+    checks++;
+    qInfo() << "boot_configs: " << list_BOOTConfig_selected;
+  }
+  if(checks != 4){
+    qWarning()
+      << "Didn't pass all the checks, so can't use Components and Configs from last run.";
+  }
+  banCONFIG = true;
+  banBOOTCONFIG = true;
+  banBOOT = true;
+  f.close();
+  qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
 void MainWindow::saveRunConfig()
@@ -949,14 +1013,14 @@ void MainWindow::checkBoxDatabaseChanged()
   if(checked) {
     ui->bListDatabaseRunConfigurations->setEnabled(true);
     ui->bDAQCompEtConf->setEnabled(false);
-    ui->bGetLastRunConfig->setEnabled(false);
+    ui->bLastRunConfig->setEnabled(false);
     initializeLV();
     banBOOTCONFIG = false;
   }
   else {
     ui->bListDatabaseRunConfigurations->setEnabled(false);
     ui->bDAQCompEtConf->setEnabled(true);
-    ui->bGetLastRunConfig->setEnabled(true);
+    ui->bLastRunConfig->setEnabled(true);
     initializeLV();
     ui->lvConfigurations->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->lvConfigurations->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -1145,10 +1209,10 @@ void MainWindow::resizeWindow()
   ui->bDAQCompEtConf->resize(ui->bDAQCompEtConf->geometry().size().width(), windowHeigth * this->bDAQCompEtConfSize.height() / this->originalWindowSize.height());
   ui->bDAQCompEtConf->resize(windowWidth * this->bDAQCompEtConfSize.width() / this->originalWindowSize.width(), ui->bDAQCompEtConf->geometry().size().height());
 
-  ui->bGetLastRunConfig->move((int)(windowWidth * this->bGetLastRunConfigPosition.x() / this->originalWindowSize.width()), ui->bGetLastRunConfig->pos().y());
-  ui->bGetLastRunConfig->move(ui->bGetLastRunConfig->pos().x(), (int)(windowHeigth * this->bGetLastRunConfigPosition.y() / this->originalWindowSize.height()));
-  ui->bGetLastRunConfig->resize(ui->bGetLastRunConfig->geometry().size().width(), windowHeigth * this->bGetLastRunConfigSize.height() / this->originalWindowSize.height());
-  ui->bGetLastRunConfig->resize(windowWidth * this->bGetLastRunConfigSize.width() / this->originalWindowSize.width(), ui->bGetLastRunConfig->geometry().size().height());
+  ui->bLastRunConfig->move((int)(windowWidth * this->bLastRunConfigPosition.x() / this->originalWindowSize.width()), ui->bLastRunConfig->pos().y());
+  ui->bLastRunConfig->move(ui->bLastRunConfig->pos().x(), (int)(windowHeigth * this->bLastRunConfigPosition.y() / this->originalWindowSize.height()));
+  ui->bLastRunConfig->resize(ui->bLastRunConfig->geometry().size().width(), windowHeigth * this->bLastRunConfigSize.height() / this->originalWindowSize.height());
+  ui->bLastRunConfig->resize(windowWidth * this->bLastRunConfigSize.width() / this->originalWindowSize.width(), ui->bLastRunConfig->geometry().size().height());
 
   ui->bBOOT->move((int)(windowWidth * this->bBOOTPosition.x() / this->originalWindowSize.width()), ui->bBOOT->pos().y());
   ui->bBOOT->move(ui->bBOOT->pos().x(), (int)(windowHeigth * this->bBOOTPosition.y() / this->originalWindowSize.height()));

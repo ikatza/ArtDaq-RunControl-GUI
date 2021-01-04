@@ -189,7 +189,7 @@
       <string>Configurations</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="bGetLastRunConfig">
+    <widget class="QPushButton" name="bLastRunConfig">
      <property name="enabled">
       <bool>false</bool>
      </property>
