@@ -798,6 +798,7 @@ void MainWindow::bLastRunConfigPressed()
   if(checks != 4){
     qWarning()
       << "Didn't pass all the checks, so can't use Components and Configs from last run.";
+    return;
   }
   banCONFIG = true;
   banBOOTCONFIG = true;
