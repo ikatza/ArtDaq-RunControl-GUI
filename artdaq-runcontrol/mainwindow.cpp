@@ -742,6 +742,7 @@ void MainWindow::DAQInterfaceOutput()
 
 void MainWindow::bLastRunConfigPressed()
 {
+  QStringList sl;
   qDebug() << "Starting" << Q_FUNC_INFO;
   QFile f(lastRunFileName);
   if(!f.open(QFile::ReadOnly |
@@ -763,8 +764,8 @@ void MainWindow::bLastRunConfigPressed()
       << ".\n\tCan't use last run Components and Configs.";
     return;
   }
-  if(QStringList sl = (in.readLine()).split(" ");
-     sl[0] == "components:") {
+  sl = (in.readLine()).split(" ");
+  if(sl[0] == "components:") {
     sl.removeFirst();
     list_comps_selected = sl;
     QStringListModel* model = (QStringListModel*)ui->lvComponents->model();
@@ -773,8 +774,8 @@ void MainWindow::bLastRunConfigPressed()
     checks++;
     qInfo() << "components: " << list_comps_selected;
   }
-  if(QStringList sl = (in.readLine()).split(" ");
-     sl[0] == "configs:") {
+  sl = (in.readLine()).split(" ");
+  if(sl[0] == "configs:") {
     sl.removeFirst();
     list_config_selected = sl;
     QStringListModel* model = (QStringListModel*)ui->lvConfigurations->model();
@@ -783,8 +784,8 @@ void MainWindow::bLastRunConfigPressed()
     checks++;
     qInfo() << "configs: " << list_config_selected;
   }
-  if(QStringList sl = (in.readLine()).split(" ");
-     sl[0] == "boot_configs:") {
+  sl = (in.readLine()).split(" ");
+  if(sl[0] == "boot_configs:") {
     sl.removeFirst();
     list_BOOTConfig_selected = sl;
     QFileInfo boot_fInfo(list_BOOTConfig_selected[0]);
@@ -803,6 +804,12 @@ void MainWindow::bLastRunConfigPressed()
   banCONFIG = true;
   banBOOTCONFIG = true;
   banBOOT = true;
+  ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
+  ui->lvComponents->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  connect(ui->lvComponents->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvComponentsSelected()));
+  connect(ui->lvConfigurations->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvConfigurationsSelected()));
+  connect(ui->lvConfigBOOT->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvBOOTConfigSelected()));
+  ui->lvComponents->selectAll();
   f.close();
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
