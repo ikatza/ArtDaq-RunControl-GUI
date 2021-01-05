@@ -476,7 +476,7 @@ void MainWindow::bTERMINATEPressed()
 void MainWindow::bSTARTPressed()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  saveRunConfig();
+  saveRunConfig(lastRunFileName);
   commDAQInterface.sendTransitionSTART();
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
@@ -740,15 +740,15 @@ void MainWindow::DAQInterfaceOutput()
   //qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
-void MainWindow::bLastRunConfigPressed()
+void MainWindow::retrieveConfigFromFile(const QString &RunFileName)
 {
-  QStringList sl;
   qDebug() << "Starting" << Q_FUNC_INFO;
-  QFile f(lastRunFileName);
+  QStringList sl;
+  QFile f(RunFileName);
   if(!f.open(QFile::ReadOnly |
              QFile::Text)) {
     qInfo() << " Could not open file "
-               << lastRunFileName << " for writing";
+               << RunFileName << " for writing";
     return;
   }
   QTextStream in(&f);
@@ -813,16 +813,22 @@ void MainWindow::bLastRunConfigPressed()
   f.close();
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
-
-void MainWindow::saveRunConfig()
+void MainWindow::bLastRunConfigPressed()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  qDebug() << "Saving run info to file: " << lastRunFileName << "\n";
-  QFile f(lastRunFileName);
+  this->retrieveConfigFromFile(lastRunFileName);
+  qDebug() << "Ending" << Q_FUNC_INFO;
+}
+
+void MainWindow::saveRunConfig(const QString& RunFileName)
+{
+  qDebug() << "Starting" << Q_FUNC_INFO;
+  qDebug() << "Saving run info to file: " << RunFileName << "\n";
+  QFile f(RunFileName);
   if(!f.open(QFile::WriteOnly |
              QFile::Text)) {
     qWarning() << " Could not open file "
-               << lastRunFileName << " for writing";
+               << RunFileName << " for writing";
     return;
   }
   QTextStream out(&f);
@@ -920,7 +926,7 @@ void MainWindow::bStartRunPressed()
   banStartRunPressed = true;
   startRunConfigSignalIssued = false;
   startRunStartSignalIssued = false;
-  saveRunConfig();
+  saveRunConfig(lastRunFileName);
   this->bBOOTPressed();
   qDebug() << "Ending" << Q_FUNC_INFO;
 }

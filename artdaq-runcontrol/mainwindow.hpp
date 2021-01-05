@@ -58,7 +58,8 @@ private slots:
   void DAQInterfaceOutput();
   void MensajeParaBelen();
   void bLastRunConfigPressed();
-  void saveRunConfig();
+  void saveRunConfig(const QString& RunFileName);
+  void retrieveConfigFromFile(const QString& RunFileName);
   void bListDAQCompsEtConfigs();
   void listDAQComps();
   void listDAQConfigs();
