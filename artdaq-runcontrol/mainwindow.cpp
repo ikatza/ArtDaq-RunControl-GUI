@@ -740,15 +740,14 @@ void MainWindow::DAQInterfaceOutput()
   //qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
-void MainWindow::retrieveConfigFromFile(const QString &RunFileName)
+void MainWindow::retrieveConfigFromFile(const QString &runFileName)
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  QStringList sl;
-  QFile f(RunFileName);
+  QFile f(runFileName);
   if(!f.open(QFile::ReadOnly |
              QFile::Text)) {
     qInfo() << " Could not open file "
-               << RunFileName << " for writing";
+               << runFileName << " for writing";
     return;
   }
   QTextStream in(&f);
@@ -764,6 +763,7 @@ void MainWindow::retrieveConfigFromFile(const QString &RunFileName)
       << ".\n\tCan't use last run Components and Configs.";
     return;
   }
+  QStringList sl;
   sl = (in.readLine()).split(" ");
   if(sl[0] == "components:") {
     sl.removeFirst();
@@ -798,7 +798,8 @@ void MainWindow::retrieveConfigFromFile(const QString &RunFileName)
   }
   if(checks != 4){
     qWarning()
-      << "Didn't pass all the checks, so can't use Components and Configs from last run.";
+      << "Didn't pass all the checks, so can't use Components and Configs from "
+      << runFileName;
     return;
   }
   banCONFIG = true;
@@ -820,15 +821,15 @@ void MainWindow::bLastRunConfigPressed()
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
-void MainWindow::saveRunConfig(const QString& RunFileName)
+void MainWindow::saveRunConfig(const QString& runFileName)
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  qDebug() << "Saving run info to file: " << RunFileName << "\n";
-  QFile f(RunFileName);
+  qDebug() << "Saving run info to file: " << runFileName << "\n";
+  QFile f(runFileName);
   if(!f.open(QFile::WriteOnly |
              QFile::Text)) {
     qWarning() << " Could not open file "
-               << RunFileName << " for writing";
+               << runFileName << " for writing";
     return;
   }
   QTextStream out(&f);
