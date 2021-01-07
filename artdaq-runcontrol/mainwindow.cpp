@@ -63,7 +63,9 @@ void MainWindow::configurateWindow()
   ui->taDAQInterface->setReadOnly(true);
   this->setDBConfigurationFHICL_dir(env_vars::env.value("HOME") + "/work-db-v4-dir");
   this->originalWindowSize = this->geometry().size();
-  this->originalQuadraticMeanConfigurationFontSize = (double)qSqrt((qreal)(this->originalWindowSize.height() * this->originalWindowSize.height() + this->originalWindowSize.width() * this->originalWindowSize.width()));
+  this->originalQuadraticMeanConfigurationFontSize =
+    (double)qSqrt((qreal)(this->originalWindowSize.height() * this->originalWindowSize.height()
+                          + this->originalWindowSize.width() * this->originalWindowSize.width()));
   this->gbDAQInterfaceCommandsPosition = ui->groupBox_DAQInterfaceCommands->pos();
   this->gbDAQInterfaceCommandsSize = ui->groupBox_DAQInterfaceCommands->geometry().size();
   this->gbTransitionCommandsPosition = ui->groupBox_TransitionCommands->pos();
@@ -205,7 +207,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
       event->accept();
       exit(0);
     }
-  }else{
+  }
+  else{
     QMessageBox msgBox;
     msgBox.setText("Please end the DAQInteface session before exiting the program");
     msgBox.exec();
@@ -222,13 +225,15 @@ void MainWindow::bEndSessionPressed()
   QProcess kill_daqinterface;
   kill_daqinterface.setWorkingDirectory(env_vars::daqInt_wd);
   msgBox.setText("End session");
-  msgBox.setInformativeText("Do you really wish to end the session?\n The DAQInterface instance in the partition will be destroyed");
+  msgBox.setInformativeText("Do you really wish to end the session?\n"
+                            "The DAQInterface instance in the partition will be destroyed");
   msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
   msgBox.setDefaultButton(QMessageBox::No);
   int ret = msgBox.exec();
   switch (ret) {
   case QMessageBox::Yes:
-    kill_daqinterface.execute("kill_daqinterface_on_partition.sh", QStringList() << env_vars::partition_number);
+    kill_daqinterface.execute("kill_daqinterface_on_partition.sh",
+                              QStringList() << env_vars::partition_number);
     initializeButtons();
     initializeLV();
     timer.stop();
@@ -515,7 +520,8 @@ void MainWindow::lvBOOTConfigSelected()
   QModelIndexList list = ui->lvConfigBOOT->selectionModel()->selectedRows();
   if(list.length() != 0) {
     for(QModelIndex idx : list) {
-      list_str = idx.model()->data(idx, Qt::DisplayRole).toString().split(' ', QString::KeepEmptyParts);
+      list_str = idx.model()->data(idx, Qt::DisplayRole).toString()
+        .split(' ', QString::KeepEmptyParts);
       QString s_ = env_vars::daqInt_user_dir + "/" + list_str.first();
       list_BOOTConfig_selected.append(s_);
       list_str.clear();
@@ -549,7 +555,8 @@ void MainWindow::lvComponentsSelected()
     QModelIndexList list = ui->lvComponents->selectionModel()->selectedRows();
     if(list.length() != 0) {
       for(QModelIndex idx : list) {
-        list_str = idx.model()->data(idx, Qt::DisplayRole).toString().split(' ', QString::KeepEmptyParts);
+        list_str = idx.model()->data(idx, Qt::DisplayRole).toString()
+          .split(' ', QString::KeepEmptyParts);
         list_comps_selected.append(list_str.first());
         list_str.clear();
       }
@@ -566,7 +573,8 @@ void MainWindow::lvComponentsSelected()
     QModelIndexList list = ui->lvComponents->selectionModel()->selectedRows();
     if(list.length() != 0) {
       for(QModelIndex idx : list) {
-        list_str = idx.model()->data(idx, Qt::DisplayRole).toString().split(' ', QString::KeepEmptyParts);
+        list_str = idx.model()->data(idx, Qt::DisplayRole).toString()
+          .split(' ', QString::KeepEmptyParts);
         list_comps_selected.append(list_str.first());
         list_str.clear();
       }
@@ -595,7 +603,8 @@ void MainWindow::lvConfigurationsSelected()
     QModelIndexList list = ui->lvConfigurations->selectionModel()->selectedRows();
     if(list.length() != 0) {
       for(QModelIndex idx : list) {
-        list_str = idx.model()->data(idx, Qt::DisplayRole).toString().split(' ', QString::KeepEmptyParts);
+        list_str = idx.model()->data(idx, Qt::DisplayRole).toString()
+          .split(' ', QString::KeepEmptyParts);
         list_config_selected.append(list_str.first());
         list_str.clear();
       }
@@ -1067,7 +1076,8 @@ void MainWindow::populateLVComponentsFromDatabase()
   QString config_name = dbSelectedConfig.first;
   config_name.chop(5); // to remove the numbers // TODO: find a better way
   QString selectedDBConfig_dir = dbSelectedConfig.second + "/" + config_name;
-  QDirIterator dirIt(selectedDBConfig_dir, QDir::AllEntries | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+  QDirIterator dirIt(selectedDBConfig_dir, QDir::AllEntries | QDir::NoDotAndDotDot,
+                     QDirIterator::Subdirectories);
 
   QStringList componentlist = daq_string.split('\n', QString::SkipEmptyParts);
   QStringList lvComponentsList;
