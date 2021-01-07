@@ -115,9 +115,9 @@ private:
   int DAQState;
   long long int DAQInterface_PID;
   bool DAQInterfaceProcess_started;
-  bool banBOOT, banCONFIG, banBOOTCONFIG, banBOOTED,
-    banCONFIGURED, banRUNNING, banPAUSED, banStartRunPressed;
   bool startRunConfigSignalIssued, startRunStartSignalIssued;
+  bool flgBOOT, flgCONFIG, flgBOOTCONFIG, flgBOOTED,
+    flgCONFIGURED, flgRUNNING, flgPAUSED, flgRunPressed;
   QTimer timer;
   QFileSystemWatcher DAQInterface_logwatcher;
   // QMap<QString, QString> status_map =

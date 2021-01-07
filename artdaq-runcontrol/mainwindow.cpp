@@ -10,8 +10,8 @@ MainWindow::MainWindow(QWidget *parent) :
   lastRunFileName(localConfigPath.absolutePath() + "/last_run.txt"),
   DAQState(0),
   DAQInterfaceProcess_started(false),
-  banBOOT(false), banCONFIG(false), banBOOTCONFIG(false),
-  banBOOTED(false), banCONFIGURED(false), banRUNNING(false), banPAUSED(false)
+  flgBOOT(false), flgCONFIG(false), flgBOOTCONFIG(false),
+  flgBOOTED(false), flgCONFIGURED(false), flgRUNNING(false), flgPAUSED(false)
 {
   localConfigPath.mkpath(localConfigPath.absolutePath());
   ui->setupUi(this);
@@ -232,14 +232,14 @@ void MainWindow::bEndSessionPressed()
     initializeButtons();
     initializeLV();
     timer.stop();
-    banBOOT = false;
-    banBOOTCONFIG = false;
-    banBOOTED = false;
-    banCONFIG = false;
-    banCONFIGURED = false;
-    banPAUSED = false;
-    banRUNNING = false;
-    banStartRunPressed = false;
+    flgBOOT = false;
+    flgBOOTCONFIG = false;
+    flgBOOTED = false;
+    flgCONFIG = false;
+    flgCONFIGURED = false;
+    flgPAUSED = false;
+    flgRUNNING = false;
+    flgRunPressed = false;
     status("offline");
     break;
   case QMessageBox::No:
@@ -319,10 +319,10 @@ void MainWindow::status(const QString& status)
   int st = status_map_int.value(status);
   switch (st) {
   case 1: //stopped
-    banBOOTED = false;
-    banCONFIGURED = false;
-    banRUNNING = false;
-    banPAUSED = false;
+    flgBOOTED = false;
+    flgCONFIGURED = false;
+    flgRUNNING = false;
+    flgPAUSED = false;
     isLVSelected();
     statusTransition();
     state_diagram.setStateDiagramStopped();
@@ -339,10 +339,10 @@ void MainWindow::status(const QString& status)
     }
     break;
   case 2: //booted
-    banBOOTED = true;
-    banCONFIGURED = false;
-    banRUNNING = false;
-    banPAUSED = false;
+    flgBOOTED = true;
+    flgCONFIGURED = false;
+    flgRUNNING = false;
+    flgPAUSED = false;
     isLVSelected();
     statusTransition();
     state_diagram.setStateDiagramBooted();
@@ -355,10 +355,10 @@ void MainWindow::status(const QString& status)
     ui->lvConfigBOOT->setSelectionMode(QAbstractItemView::SingleSelection);
     break;
   case 3: //ready
-    banBOOTED = true;
-    banCONFIGURED = true;
-    banRUNNING = false;
-    banPAUSED = false;
+    flgBOOTED = true;
+    flgCONFIGURED = true;
+    flgRUNNING = false;
+    flgPAUSED = false;
     isLVSelected();
     statusTransition();
     state_diagram.setStateDiagramReady();
@@ -369,8 +369,8 @@ void MainWindow::status(const QString& status)
     ui->bListDatabaseRunConfigurations->setEnabled(false);
     break;
   case 4: // running
-    banRUNNING = true;
-    banPAUSED = false;
+    flgRUNNING = true;
+    flgPAUSED = false;
     statusTransition();
     state_diagram.setStateDiagramRunning();
     state_diagram.setOnlineButtonGreen();
@@ -379,8 +379,8 @@ void MainWindow::status(const QString& status)
     ui->bListDatabaseRunConfigurations->setEnabled(false);
     break;
   case 5: // pause
-    banRUNNING = false;
-    banPAUSED = true;
+    flgRUNNING = false;
+    flgPAUSED = true;
     break;
   case 6: // booting
     state_diagram.setStateDiagramBooting();
@@ -520,7 +520,7 @@ void MainWindow::lvBOOTConfigSelected()
       list_BOOTConfig_selected.append(s_);
       list_str.clear();
     }
-    banBOOTCONFIG = true;
+    flgBOOTCONFIG = true;
   }
   else {
     QStringListModel* unselectedListModel = (QStringListModel*)ui->lvConfigBOOT->model();
@@ -528,12 +528,12 @@ void MainWindow::lvBOOTConfigSelected()
       list_BOOTConfig_selected.clear();
       QString s_ = env_vars::daqInt_user_dir + "/" + unselectedListModel->stringList().first();
       list_BOOTConfig_selected.append(s_);
-      banBOOTCONFIG = true;
-      banBOOT = true;
+      flgBOOTCONFIG = true;
+      flgBOOT = true;
     }
     else {
-      banBOOTCONFIG = false;
-      banBOOT = true;
+      flgBOOTCONFIG = false;
+      flgBOOT = true;
     }
   }
   isLVSelected();
@@ -553,10 +553,10 @@ void MainWindow::lvComponentsSelected()
         list_comps_selected.append(list_str.first());
         list_str.clear();
       }
-      banBOOT = true;
+      flgBOOT = true;
     }
     else {
-      banBOOT = false;
+      flgBOOT = false;
     }
     isLVSelected();
   }
@@ -570,12 +570,12 @@ void MainWindow::lvComponentsSelected()
         list_comps_selected.append(list_str.first());
         list_str.clear();
       }
-      banBOOT = true;
+      flgBOOT = true;
     }
     else {
       QStringListModel* unselectedListModel = (QStringListModel*)ui->lvComponents->model();
       list_comps_selected = unselectedListModel->stringList();
-      banBOOT = true;
+      flgBOOT = true;
     }
     isLVSelected();
   }
@@ -586,7 +586,7 @@ void MainWindow::lvConfigurationsSelected()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
   if(DAQState == 3) {
-    banCONFIG = true;
+    flgCONFIG = true;
     isLVSelected();
   }
   else if(!ui->checkBoxDatabase->isChecked()) {
@@ -599,16 +599,16 @@ void MainWindow::lvConfigurationsSelected()
         list_config_selected.append(list_str.first());
         list_str.clear();
       }
-      banCONFIG = true;
+      flgCONFIG = true;
     }
     else {
       QStringListModel* unselectedListModel = (QStringListModel*)ui->lvConfigurations->model();
       if(unselectedListModel->stringList().length() == 1) {
         list_config_selected = unselectedListModel->stringList();
-        banCONFIG = true;
+        flgCONFIG = true;
       }
       else {
-        banCONFIG = false;
+        flgCONFIG = false;
       }
     }
     isLVSelected();
@@ -618,7 +618,7 @@ void MainWindow::lvConfigurationsSelected()
 
 void MainWindow::statusTransition()
 {
-  if(banRUNNING) {
+  if(flgRUNNING) {
     ui->bStart->setEnabled(false);
     ui->bStop->setEnabled(true);
   }
@@ -629,7 +629,7 @@ void MainWindow::statusTransition()
 
 void MainWindow::isLVSelected()
 {
-  if(banBOOT && banCONFIG && banBOOTCONFIG && !banBOOTED && !banCONFIGURED) {
+  if(flgBOOT && flgCONFIG && flgBOOTCONFIG && !flgBOOTED && !flgCONFIGURED) {
     ui->bBOOT->setEnabled(true);
     ui->bCONFIG->setEnabled(false);
     ui->bStartRun->setEnabled(true);
@@ -637,37 +637,37 @@ void MainWindow::isLVSelected()
     ui->bStart->setEnabled(false);
     // qDebug()<<"selected: 1";
   }
-  else if(banBOOT && banCONFIG && banBOOTCONFIG && !banBOOTED) {
+  else if(flgBOOT && flgCONFIG && flgBOOTCONFIG && !flgBOOTED) {
     ui->bBOOT->setEnabled(true);
     // qDebug()<<"selected: 2";
   }
-  else if(!banBOOT || !banBOOTCONFIG || !banCONFIG) {
+  else if(!flgBOOT || !flgBOOTCONFIG || !flgCONFIG) {
     ui->bBOOT->setEnabled(false);
     ui->bCONFIG->setEnabled(false);
     ui->bStartRun->setEnabled(false);
     // qDebug()<<"selected: 3";
   }
-  else if(!banCONFIG && banBOOTED) {
+  else if(!flgCONFIG && flgBOOTED) {
     ui->bBOOT->setEnabled(false);
     ui->bCONFIG->setEnabled(false);
     ui->bStartRun->setEnabled(false);
     // qDebug()<<"selected: 4";
   }
-  else if(banBOOTED && banCONFIG && !banCONFIGURED) {
+  else if(flgBOOTED && flgCONFIG && !flgCONFIGURED) {
     ui->bBOOT->setEnabled(false);
     ui->bCONFIG->setEnabled(true);
     ui->bStartRun->setEnabled(false);
     ui->bTerminate->setEnabled(true);
     // qDebug()<<"selected: 5";
   }
-  else if(banBOOTED && banCONFIGURED) {
+  else if(flgBOOTED && flgCONFIGURED) {
     ui->bBOOT->setEnabled(false);
     ui->bCONFIG->setEnabled(false);
     ui->bStartRun->setEnabled(false);
     ui->bStart->setEnabled(true);
     // qDebug()<<"selected: 6";
   }
-  else if(banBOOTED && !banCONFIGURED) {
+  else if(flgBOOTED && !flgCONFIGURED) {
     ui->bBOOT->setEnabled(false);
     ui->bCONFIG->setEnabled(true);
     ui->bStartRun->setEnabled(false);
@@ -815,9 +815,9 @@ void MainWindow::retrieveConfigFromFile(const QString &runFileName)
       << runFileName;
     return;
   }
-  banCONFIG = true;
-  banBOOTCONFIG = true;
-  banBOOT = true;
+  flgCONFIG = true;
+  flgBOOTCONFIG = true;
+  flgBOOT = true;
   ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
   ui->lvComponents->setEditTriggers(QAbstractItemView::NoEditTriggers);
   connect(ui->lvComponents->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvComponentsSelected()));
@@ -937,9 +937,9 @@ void MainWindow::populateLVConfigs(const QString& di_configs_output)
 void MainWindow::bStartRunPressed()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  banStartRunPressed = true;
   startRunConfigSignalIssued = false;
   startRunStartSignalIssued = false;
+  flgRunPressed = true;
   saveRunConfig(lastRunFileName);
   this->bBOOTPressed();
   qDebug() << "Ending" << Q_FUNC_INFO;
@@ -948,12 +948,12 @@ void MainWindow::bStartRunPressed()
 void MainWindow::checkTransitionStartRunPressed(const QString& status)
 {
   int st = status_map_int.value(status);
-  if(banStartRunPressed) {
+  if(flgRunPressed) {
     switch(st) {
     case 1: //stopped
-      banStartRunPressed = false;
       startRunConfigSignalIssued = false;
       startRunStartSignalIssued = false;
+      flgRunPressed = false;
       break;
     case 2: //booted
       if(!startRunConfigSignalIssued) {
@@ -988,10 +988,10 @@ void MainWindow::checkTransitionStartRunPressed(const QString& status)
       startRunStartSignalIssued = true;
       break;
     case 9: // stopping
-      banStartRunPressed = false;
+      flgRunPressed = false;
       break;
     case 10: // terminating
-      banStartRunPressed = false;
+      flgRunPressed = false;
       break;
     case 99:
 
@@ -1043,7 +1043,7 @@ void MainWindow::checkBoxDatabaseChanged()
     ui->bDAQCompEtConf->setEnabled(false);
     ui->bLastRunConfig->setEnabled(false);
     initializeLV();
-    banBOOTCONFIG = false;
+    flgBOOTCONFIG = false;
   }
   else {
     ui->bListDatabaseRunConfigurations->setEnabled(false);
@@ -1054,7 +1054,7 @@ void MainWindow::checkBoxDatabaseChanged()
     ui->lvConfigurations->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
     ui->lvComponents->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    banBOOTCONFIG = false;
+    flgBOOTCONFIG = false;
   }
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
@@ -1062,7 +1062,7 @@ void MainWindow::checkBoxDatabaseChanged()
 void MainWindow::populateLVComponentsFromDatabase()
 {
   qDebug() << "Starting function " << Q_FUNC_INFO;
-  banBOOTCONFIG = false;
+  flgBOOTCONFIG = false;
 
   QString config_name = dbSelectedConfig.first;
   config_name.chop(5); // to remove the numbers // TODO: find a better way
