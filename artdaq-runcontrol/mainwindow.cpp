@@ -34,8 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(ui->bListDatabaseRunConfigurations, SIGNAL(clicked(bool)), this, SLOT(bListDatabaseRunConfigurations()));
   connect(ui->checkBoxDatabase, SIGNAL(toggled(bool)), this, SLOT(checkBoxDatabaseChanged()));
   connect(ui->bStartRun, SIGNAL(clicked(bool)), this, SLOT(bStartRunPressed()));
-  initializeButtons();
   configurateMenuBar();
+  initializeButtons();
   state_diagram.setWindowTitle("DAQInterface State Diagram");
   state_diagram.setFixedSize(state_diagram.geometry().width(), state_diagram.geometry().height());
   state_diagram.show();
@@ -46,6 +46,8 @@ MainWindow::~MainWindow()
   delete ui;
   delete optionsMenu;
   delete exitMenu;
+  delete saveConfigMenu;
+  delete openConfigMenu;
   delete windowMenu;
   delete Menus;
   delete lvComponentsModel;
@@ -136,9 +138,13 @@ void MainWindow::configurateMenuBar()
   qDebug() << "Starting" << Q_FUNC_INFO;
   this->optionsMenu = new QAction("&Options", this);
   this->exitMenu = new QAction("&Exit", this);
+  this->openConfigMenu = new QAction("Open Config", this);
+  this->saveConfigMenu = new QAction("Save Config", this);
   this->windowMenu = new QAction("&Show state diagram", this);
   this->Menus = new QMenu();
   this->Menus = menuBar()->addMenu("&File");
+  this->Menus->addAction(openConfigMenu);
+  this->Menus->addAction(saveConfigMenu);
   this->Menus->addAction(exitMenu);
   this->Menus = menuBar()->addMenu("&Tools");
   this->Menus->addAction(optionsMenu);
@@ -147,6 +153,8 @@ void MainWindow::configurateMenuBar()
   connect(this->optionsMenu, SIGNAL(triggered(bool)), this, SLOT(openMenuOptionsDialog()));
   connect(this->exitMenu, SIGNAL(triggered(bool)), this, SLOT(closeProgram()));
   connect(this->windowMenu, SIGNAL(triggered(bool)), this, SLOT(showDaqInterfaceStateWindow()));
+  connect(this->saveConfigMenu, SIGNAL(triggered(bool)), this, SLOT(saveConfigDialog()));
+  connect(this->openConfigMenu, SIGNAL(triggered(bool)), this, SLOT(openConfigDialog()));
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
@@ -264,6 +272,9 @@ void MainWindow::initializeButtons()
   ui->bListDatabaseRunConfigurations->setEnabled(false);
   ui->bDebug->setVisible(false);
   ui->bStartRun->setText("  RUN");
+
+  this->openConfigMenu->setEnabled(false);
+  this->saveConfigMenu->setEnabled(false);
 
   QString imagesDirectory = QCoreApplication::applicationDirPath() + "/../resources/images/";
   QPixmap button_image(imagesDirectory + "start_run.png");
@@ -673,6 +684,8 @@ void MainWindow::setButtonsDAQInterfaceInitialized(bool started)
     ui->bLastRunConfig->setEnabled(true);
     ui->bEndSession->setEnabled(true);
     ui->checkBoxDatabase->setEnabled(true);
+    this->openConfigMenu->setEnabled(true);
+    this->saveConfigMenu->setEnabled(true);
     timer.start(1000);
   }
   qDebug() << "Ending" << Q_FUNC_INFO;
@@ -1378,6 +1391,34 @@ void MainWindow::openMenuOptionsDialog()
 
   }
   delete menuOptionsDialog;
+  qDebug() << "Ending" << Q_FUNC_INFO;
+}
+
+void MainWindow::openConfigDialog(){
+  qDebug() << "Starting" << Q_FUNC_INFO;
+  QString fileName = QFileDialog::getOpenFileName(this, tr("Open configuration"), "", tr("Configuration Files (*.txt)"));
+  if(fileName != "")
+    this->retrieveConfigFromFile(fileName);
+  qDebug() << "Ending" << Q_FUNC_INFO;
+}
+
+void MainWindow::saveConfigDialog(){
+  qDebug() << "Starting" << Q_FUNC_INFO;
+  QMessageBox msgBox;
+  if(this->list_comps_selected.length() == 0){
+    msgBox.setText("Selected components list is empty");
+    msgBox.exec();
+  }else if(this->list_config_selected.length() == 0){
+    msgBox.setText("Selected configurations list is empty");
+    msgBox.exec();
+  }else if(this->list_BOOTConfig_selected.length() == 0){
+    msgBox.setText("Selected BOOT list is empty");
+    msgBox.exec();
+  }else{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save configuration"), ".txt", tr("Configuration Files (*.txt)"));
+    if(fileName != "")
+      this->saveRunConfig(fileName);
+  }
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 

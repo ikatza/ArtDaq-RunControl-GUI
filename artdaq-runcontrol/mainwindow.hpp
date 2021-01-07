@@ -99,6 +99,8 @@ private slots:
   void closeProgram();
   void closeEvent(QCloseEvent *event);
   void showDaqInterfaceStateWindow();
+  void saveConfigDialog();
+  void openConfigDialog();
 
 private:
   Ui::MainWindow *ui;
@@ -168,6 +170,8 @@ private:
   bool enableShellScripts = false;
   QAction *optionsMenu;
   QAction *exitMenu;
+  QAction *openConfigMenu;
+  QAction *saveConfigMenu;
   QAction *windowMenu;
   QMenu *Menus;
   QStringListModel* lvComponentsModel;
