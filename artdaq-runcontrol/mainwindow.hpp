@@ -65,7 +65,6 @@ private slots:
   void listDAQConfigs();
   void populateLVComps(const QString& di_comps_output);
   void populateLVConfigs(const QString& di_configs_output);
-  void initializeButtons();
   void setButtonsDAQInterfaceInitialized(bool started);
   void isLVSelected();
   void lvComponentsSelected();
@@ -86,6 +85,8 @@ private slots:
   void populateLVComponentsFromDatabase();
   void populateLVConfigurationsFromDatabase();
   void populateLVBOOTConfigurationsFromDatabase();
+  void initializeFlags();
+  void initializeButtons();
   void initializeLV();
   void bRunPressed();
   void checkTransitionRunPressed(const QString& status);

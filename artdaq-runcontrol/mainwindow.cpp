@@ -9,9 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
   localConfigPath(homePath.absolutePath() + "/.config/ARTDAQ/artdaq-runcontrol-gui/"),
   lastRunFileName(localConfigPath.absolutePath() + "/last_run.txt"),
   DAQState(0),
-  DAQInterfaceProcess_started(false),
-  flgBOOT(false), flgCONFIG(false), flgBOOTCONFIG(false),
-  flgBOOTED(false), flgCONFIGURED(false), flgRUNNING(false), flgPAUSED(false)
+  DAQInterfaceProcess_started(false)
 {
   localConfigPath.mkpath(localConfigPath.absolutePath());
   ui->setupUi(this);
@@ -34,6 +32,8 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(ui->bListDatabaseRunConfigurations, SIGNAL(clicked(bool)), this, SLOT(bListDatabaseRunConfigurations()));
   connect(ui->checkBoxDatabase, SIGNAL(toggled(bool)), this, SLOT(checkBoxDatabaseChanged()));
   connect(ui->bRun, SIGNAL(clicked(bool)), this, SLOT(bRunPressed()));
+  initializeFlags();
+  initializeButtons();
   configurateMenuBar();
   initializeButtons();
   state_diagram.setWindowTitle("DAQInterface State Diagram");
@@ -234,17 +234,10 @@ void MainWindow::bEndSessionPressed()
   case QMessageBox::Yes:
     kill_daqinterface.execute("kill_daqinterface_on_partition.sh",
                               QStringList() << env_vars::partition_number);
+    initializeFlags();
     initializeButtons();
     initializeLV();
     timer.stop();
-    flgBOOT = false;
-    flgBOOTCONFIG = false;
-    flgBOOTED = false;
-    flgCONFIG = false;
-    flgCONFIGURED = false;
-    flgPAUSED = false;
-    flgRUNNING = false;
-    flgRunPressed = false;
     status("offline");
     break;
   case QMessageBox::No:
@@ -252,6 +245,20 @@ void MainWindow::bEndSessionPressed()
   default:
     break;
   }
+  qDebug() << "Ending" << Q_FUNC_INFO;
+}
+
+void MainWindow::initializeFlags()
+{
+  qDebug() << "Starting" << Q_FUNC_INFO;
+  flgBOOT = false;
+  flgCONFIG = false;
+  flgBOOTCONFIG = false;
+  flgBOOTED = false;
+  flgCONFIGURED = false;
+  flgRUNNING = false;
+  flgPAUSED = false;
+  flgRunPressed = false;
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
@@ -293,6 +300,9 @@ void MainWindow::initializeButtons()
 void MainWindow::initializeLV()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
+  list_comps_selected.clear();
+  list_config_selected.clear();
+  list_BOOTConfig_selected.clear();
   this->lvComponentsModel = new QStringListModel(this);
   this->lvConfigurationsModel = new QStringListModel(this);
   this->lvConfigBOOTModel = new QStringListModel(this);
@@ -875,6 +885,9 @@ void MainWindow::bListDAQCompsEtConfigs()
 void MainWindow::listDAQComps()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
+  list_comps_selected.clear();
+  list_config_selected.clear();
+  list_BOOTConfig_selected.clear();
   commDAQInterface.listDAQInterfaceComponents();
   DAQState = 1;
   QThread::msleep(100);
