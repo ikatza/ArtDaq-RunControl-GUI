@@ -1420,9 +1420,16 @@ void MainWindow::openMenuOptionsDialog()
 
 void MainWindow::openConfigDialog(){
   qDebug() << "Starting" << Q_FUNC_INFO;
-  QString fileName = QFileDialog::getOpenFileName(this, tr("Open configuration"), "", tr("Configuration Files (*.txt)"));
-  if(fileName != "")
-    this->retrieveConfigFromFile(fileName);
+  QMessageBox msgBox;
+  QString str_status = commDAQInterface.getDAQInterfaceStatus();
+  if(status_map_int.value(str_status) == 1){
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open configuration"), "", tr("Configuration Files (*.txt)"));
+    if(fileName != "")
+      this->retrieveConfigFromFile(fileName);
+  }else{
+    msgBox.setText("Open Config operation is only permitted in 'Stopped' state");
+    msgBox.exec();
+  }
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
