@@ -1426,6 +1426,7 @@ void MainWindow::openConfigDialog(){
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open configuration"), "", tr("Configuration Files (*.txt)"));
     if(fileName != "")
       this->retrieveConfigFromFile(fileName);
+      qInfo() << "Opened file: " << fileName;
   }else{
     msgBox.setText("Open Config operation is only permitted in 'Stopped' state");
     msgBox.exec();
@@ -1449,6 +1450,7 @@ void MainWindow::saveConfigDialog(){
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save configuration"), ".txt", tr("Configuration Files (*.txt)"));
     if(fileName != "")
       this->saveRunConfig(fileName);
+      qInfo() << "Saving configuration in file: " << fileName;
   }
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
