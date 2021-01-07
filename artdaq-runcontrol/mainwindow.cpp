@@ -14,6 +14,10 @@ MainWindow::MainWindow(QWidget *parent) :
   localConfigPath.mkpath(localConfigPath.absolutePath());
   ui->setupUi(this);
   configurateWindow();
+  configurateMenuBar();
+  initializeFlags();
+  initializeButtons();
+  initializeButtons();
   ui->lbStatus->setText("");
   connect(ui->bDAQInterface, SIGNAL(clicked(bool)), this, SLOT(bDAQInterfacePressed()));
   connect(&daq_interface, SIGNAL(readyReadStandardOutput()), this, SLOT(DAQInterfaceOutput()));
@@ -32,10 +36,6 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(ui->bListDatabaseRunConfigurations, SIGNAL(clicked(bool)), this, SLOT(bListDatabaseRunConfigurations()));
   connect(ui->checkBoxDatabase, SIGNAL(toggled(bool)), this, SLOT(checkBoxDatabaseChanged()));
   connect(ui->bRun, SIGNAL(clicked(bool)), this, SLOT(bRunPressed()));
-  initializeFlags();
-  initializeButtons();
-  configurateMenuBar();
-  initializeButtons();
   state_diagram.setWindowTitle("DAQInterface State Diagram");
   state_diagram.setFixedSize(state_diagram.geometry().width(), state_diagram.geometry().height());
   state_diagram.show();
