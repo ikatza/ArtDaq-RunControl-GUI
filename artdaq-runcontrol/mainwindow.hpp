@@ -87,8 +87,8 @@ private slots:
   void populateLVConfigurationsFromDatabase();
   void populateLVBOOTConfigurationsFromDatabase();
   void initializeLV();
-  void bStartRunPressed();
-  void checkTransitionStartRunPressed(const QString& status);
+  void bRunPressed();
+  void checkTransitionRunPressed(const QString& status);
   void resizeEvent(QResizeEvent* event);
   void configurateMenuBar();
   void openMenuOptionsDialog();
@@ -115,9 +115,9 @@ private:
   int DAQState;
   long long int DAQInterface_PID;
   bool DAQInterfaceProcess_started;
-  bool startRunConfigSignalIssued, startRunStartSignalIssued;
   bool flgBOOT, flgCONFIG, flgBOOTCONFIG, flgBOOTED,
     flgCONFIGURED, flgRUNNING, flgPAUSED, flgRunPressed;
+  bool runConfigSignalIssued, runStartSignalIssued;
   QTimer timer;
   QFileSystemWatcher DAQInterface_logwatcher;
   // QMap<QString, QString> status_map =
@@ -154,8 +154,8 @@ private:
   QSize originalWindowSize;
   QSize gbDAQInterfaceCommandsSize, gbTransitionCommandsSize, gbDatabaseSize, gbDAQInterfaceSize;
   QPoint gbDAQInterfaceCommandsPosition, gbTransitionCommandsPosition, gbDatabasePosition, gbDAQInterfacePosition;
-  QSize bStartSize, bStopSize, bPauseSize, bTerminateSize, bStartRunSize, bListDatabaseRunConfigurationsSize;
-  QPoint bStartPosition, bStopPosition, bPausePosition, bTerminatePosition, bStartRunPosition, bListDatabaseRunConfigurationsPosition;
+  QSize bStartSize, bStopSize, bPauseSize, bTerminateSize, bRunSize, bListDatabaseRunConfigurationsSize;
+  QPoint bStartPosition, bStopPosition, bPausePosition, bTerminatePosition, bRunPosition, bListDatabaseRunConfigurationsPosition;
   QSize bDAQCompEtConfSize, bLastRunConfigSize, bBOOTSize, bCONFIGSize, bDAQInterfaceSize, bEndSessionSize;
   QPoint bDAQCompEtConfPosition, bLastRunConfigPosition, bBOOTPosition, bCONFIGPosition, bDAQInterfacePosition, bEndSessionPosition;
   QSize lvComponentsSize, lvConfigurationsSize, lvConfigBOOTSize, taDAQInterfaceSize, checkBoxDatabaseSize;
@@ -163,8 +163,8 @@ private:
   QSize lbConfigurationsSize, lbComponentsSize, lbBOOTConfigSize, lbMessagesSize, lbStatusTitleSize, lbStatusSize;
   QPoint lbConfigurationsPosition, lbComponentsPosition, lbBOOTConfigPosition, lbMessagesPosition, lbStatusTitlePosition, lbStatusPosition;
   QFont lbConfigurationsFont, lbComponentsFont, lbBOOTConfigFont, lbMessagesFont, lbStatusTitleFont, lbStatusFont;
-  QFont gbDAQInterfaceFont, gbDAQInterfaceCommandsFont, bStartRunFont, taDAQInterfaceFont, lvComponentsFont, lvConfigurationsFont, lvBOOTConfigFont;
-  QSize bStartRunIconSize;
+  QFont gbDAQInterfaceFont, gbDAQInterfaceCommandsFont, bRunFont, taDAQInterfaceFont, lvComponentsFont, lvConfigurationsFont, lvBOOTConfigFont;
+  QSize bRunIconSize;
   double originalQuadraticMeanConfigurationFontSize;
   bool EnableFontAutoResizing = true;
   bool enableShellScripts = false;

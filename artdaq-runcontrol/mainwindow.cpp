@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(ui->bDebug, SIGNAL(clicked(bool)), this, SLOT(bDebugPressed()));
   connect(ui->bListDatabaseRunConfigurations, SIGNAL(clicked(bool)), this, SLOT(bListDatabaseRunConfigurations()));
   connect(ui->checkBoxDatabase, SIGNAL(toggled(bool)), this, SLOT(checkBoxDatabaseChanged()));
-  connect(ui->bStartRun, SIGNAL(clicked(bool)), this, SLOT(bStartRunPressed()));
+  connect(ui->bRun, SIGNAL(clicked(bool)), this, SLOT(bRunPressed()));
   configurateMenuBar();
   initializeButtons();
   state_diagram.setWindowTitle("DAQInterface State Diagram");
@@ -80,8 +80,8 @@ void MainWindow::configurateWindow()
   this->bPauseSize = ui->bPause->geometry().size();
   this->bTerminatePosition = ui->bTerminate->pos();
   this->bTerminateSize = ui->bTerminate->geometry().size();
-  this->bStartRunPosition = ui->bStartRun->pos();
-  this->bStartRunSize = ui->bStartRun->geometry().size();
+  this->bRunPosition = ui->bRun->pos();
+  this->bRunSize = ui->bRun->geometry().size();
   this->bListDatabaseRunConfigurationsPosition = ui->bListDatabaseRunConfigurations->pos();
   this->bListDatabaseRunConfigurationsSize = ui->bListDatabaseRunConfigurations->geometry().size();
   this->bDAQCompEtConfPosition = ui->bDAQCompEtConf->pos();
@@ -123,7 +123,7 @@ void MainWindow::configurateWindow()
   this->lbBOOTConfigFont = ui->lbBOOTConfig->font();
   this->lbStatusFont = ui->lbStatus->font();
   this->lbStatusTitleFont = ui->lbStatusTitle->font();
-  this->bStartRunFont = ui->bStartRun->font();
+  this->bRunFont = ui->bRun->font();
   this->gbDAQInterfaceCommandsFont = ui->groupBox_DAQInterfaceCommands->font();
   this->gbDAQInterfaceFont = ui->groupBox_DAQInterface->font();
   this->taDAQInterfaceFont = ui->taDAQInterface->font();
@@ -185,11 +185,11 @@ void MainWindow::closeProgram()
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
-// TODO: Is there no purpose for this?
-// This part of the code executes when a closeEvent occurs, i.e. x close button on right corner
-// or a alt+F4 is pressed. triggered(bool) signal cannot be assigned to this funtion because it will
-// generate an sender/receiver incompatibility warning, causing misbehavior in the execution.
-
+// This part of the code executes when a closeEvent occurs, i.e. x
+// close button on right corner or a alt+F4 is
+// pressed. triggered(bool) signal cannot be assigned to this funtion
+// because it will generate an sender/receiver incompatibility
+// warning, causing misbehavior in the execution.
 void MainWindow::closeEvent(QCloseEvent *event)
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
@@ -260,7 +260,7 @@ void MainWindow::initializeButtons()
   ui->bBelen->setEnabled(false);
   ui->bCONFIG->setEnabled(false);
   ui->bBOOT->setEnabled(false);
-  ui->bStartRun->setEnabled(false);
+  ui->bRun->setEnabled(false);
   ui->bStart->setEnabled(false);
   ui->bStop->setEnabled(false);
   ui->bTerminate->setEnabled(false);
@@ -271,7 +271,7 @@ void MainWindow::initializeButtons()
   ui->checkBoxDatabase->setEnabled(false);
   ui->bListDatabaseRunConfigurations->setEnabled(false);
   ui->bDebug->setVisible(false);
-  ui->bStartRun->setText("  RUN");
+  ui->bRun->setText("  RUN");
 
   this->openConfigMenu->setEnabled(false);
   this->saveConfigMenu->setEnabled(false);
@@ -279,9 +279,9 @@ void MainWindow::initializeButtons()
   QString imagesDirectory = QCoreApplication::applicationDirPath() + "/../resources/images/";
   QPixmap button_image(imagesDirectory + "start_run.png");
   QIcon ButtonIcon(button_image);
-  ui->bStartRun->setIcon(ButtonIcon);
-  ui->bStartRun->setIconSize(0.9 * button_image.rect().size());
-  this->bStartRunIconSize = 0.9 * button_image.rect().size();
+  ui->bRun->setIcon(ButtonIcon);
+  ui->bRun->setIconSize(0.9 * button_image.rect().size());
+  this->bRunIconSize = 0.9 * button_image.rect().size();
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
@@ -306,7 +306,7 @@ void MainWindow::checkStatus()
     // qDebug() << str_status;
     ui->lbStatus->setText(str_status.toUpper());
     status(str_status);
-    checkTransitionStartRunPressed(str_status);
+    checkTransitionRunPressed(str_status);
   }
   else{
     ui->taDAQInterface->document()->setPlainText(str_status);
@@ -467,7 +467,7 @@ void MainWindow::setAllButtonsDisabled()
   ui->bStart->setEnabled(false);
   ui->bStop->setEnabled(false);
   ui->bTerminate->setEnabled(false);
-  ui->bStartRun->setEnabled(false);
+  ui->bRun->setEnabled(false);
 }
 
 void MainWindow::bSTOPPressed()
@@ -632,7 +632,7 @@ void MainWindow::isLVSelected()
   if(flgBOOT && flgCONFIG && flgBOOTCONFIG && !flgBOOTED && !flgCONFIGURED) {
     ui->bBOOT->setEnabled(true);
     ui->bCONFIG->setEnabled(false);
-    ui->bStartRun->setEnabled(true);
+    ui->bRun->setEnabled(true);
     ui->bTerminate->setEnabled(false);
     ui->bStart->setEnabled(false);
     // qDebug()<<"selected: 1";
@@ -644,33 +644,33 @@ void MainWindow::isLVSelected()
   else if(!flgBOOT || !flgBOOTCONFIG || !flgCONFIG) {
     ui->bBOOT->setEnabled(false);
     ui->bCONFIG->setEnabled(false);
-    ui->bStartRun->setEnabled(false);
+    ui->bRun->setEnabled(false);
     // qDebug()<<"selected: 3";
   }
   else if(!flgCONFIG && flgBOOTED) {
     ui->bBOOT->setEnabled(false);
     ui->bCONFIG->setEnabled(false);
-    ui->bStartRun->setEnabled(false);
+    ui->bRun->setEnabled(false);
     // qDebug()<<"selected: 4";
   }
   else if(flgBOOTED && flgCONFIG && !flgCONFIGURED) {
     ui->bBOOT->setEnabled(false);
     ui->bCONFIG->setEnabled(true);
-    ui->bStartRun->setEnabled(false);
+    ui->bRun->setEnabled(false);
     ui->bTerminate->setEnabled(true);
     // qDebug()<<"selected: 5";
   }
   else if(flgBOOTED && flgCONFIGURED) {
     ui->bBOOT->setEnabled(false);
     ui->bCONFIG->setEnabled(false);
-    ui->bStartRun->setEnabled(false);
+    ui->bRun->setEnabled(false);
     ui->bStart->setEnabled(true);
     // qDebug()<<"selected: 6";
   }
   else if(flgBOOTED && !flgCONFIGURED) {
     ui->bBOOT->setEnabled(false);
     ui->bCONFIG->setEnabled(true);
-    ui->bStartRun->setEnabled(false);
+    ui->bRun->setEnabled(false);
     // qDebug()<<"selected: 7";
   }
 }
@@ -875,9 +875,9 @@ void MainWindow::listDAQComps()
 void MainWindow::populateLVComps(const QString& di_comps_output)
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  QStringListModel* model = (QStringListModel*)ui->lvComponents->model();
   QStringList list = di_comps_output.split('\n', QString::SkipEmptyParts);
   list.removeFirst();
+  QStringListModel* model = (QStringListModel*)ui->lvComponents->model();
   model->setStringList(list);
   ui->lvComponents->setSelectionMode(QAbstractItemView::MultiSelection);
   connect(ui->lvComponents->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(lvComponentsSelected()));
@@ -934,29 +934,29 @@ void MainWindow::populateLVConfigs(const QString& di_configs_output)
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
-void MainWindow::bStartRunPressed()
+void MainWindow::bRunPressed()
 {
   qDebug() << "Starting" << Q_FUNC_INFO;
-  startRunConfigSignalIssued = false;
-  startRunStartSignalIssued = false;
   flgRunPressed = true;
+  runConfigSignalIssued = false;
+  runStartSignalIssued = false;
   saveRunConfig(lastRunFileName);
   this->bBOOTPressed();
   qDebug() << "Ending" << Q_FUNC_INFO;
 }
 
-void MainWindow::checkTransitionStartRunPressed(const QString& status)
+void MainWindow::checkTransitionRunPressed(const QString& status)
 {
   int st = status_map_int.value(status);
   if(flgRunPressed) {
     switch(st) {
     case 1: //stopped
-      startRunConfigSignalIssued = false;
-      startRunStartSignalIssued = false;
       flgRunPressed = false;
+      runConfigSignalIssued = false;
+      runStartSignalIssued = false;
       break;
     case 2: //booted
-      if(!startRunConfigSignalIssued) {
+      if(!runConfigSignalIssued) {
         this->bCONFIGPressed();
       }
       else {
@@ -964,16 +964,16 @@ void MainWindow::checkTransitionStartRunPressed(const QString& status)
       }
       break;
     case 3: //ready
-      if(!startRunStartSignalIssued) {
+      if(!runStartSignalIssued) {
         this->bSTARTPressed();
       }
       else {
         //TODO: Add error message
       }
-      startRunConfigSignalIssued = false;
+      runConfigSignalIssued = false;
       break;
     case 4: // running
-      startRunStartSignalIssued = false;
+      runStartSignalIssued = false;
       break;
     case 5: // pause
 
@@ -982,10 +982,10 @@ void MainWindow::checkTransitionStartRunPressed(const QString& status)
 
       break;
     case 7: // configuring
-      startRunConfigSignalIssued = true;
+      runConfigSignalIssued = true;
       break;
     case 8: // starting
-      startRunStartSignalIssued = true;
+      runStartSignalIssued = true;
       break;
     case 9: // stopping
       flgRunPressed = false;
@@ -1222,10 +1222,10 @@ void MainWindow::resizeWindow()
   ui->bTerminate->resize(ui->bTerminate->geometry().size().width(), windowHeigth * this->bTerminateSize.height() / this->originalWindowSize.height());
   ui->bTerminate->resize(windowWidth * this->bTerminateSize.width() / this->originalWindowSize.width(), ui->bTerminate->geometry().size().height());
 
-  ui->bStartRun->move((int)(windowWidth * this->bStartRunPosition.x() / this->originalWindowSize.width()), ui->bStartRun->pos().y());
-  ui->bStartRun->move(ui->bStartRun->pos().x(), (int)(windowHeigth * this->bStartRunPosition.y() / this->originalWindowSize.height()));
-  ui->bStartRun->resize(ui->bStartRun->geometry().size().width(), windowHeigth * this->bStartRunSize.height() / this->originalWindowSize.height());
-  ui->bStartRun->resize(windowWidth * this->bStartRunSize.width() / this->originalWindowSize.width(), ui->bStartRun->geometry().size().height());
+  ui->bRun->move((int)(windowWidth * this->bRunPosition.x() / this->originalWindowSize.width()), ui->bRun->pos().y());
+  ui->bRun->move(ui->bRun->pos().x(), (int)(windowHeigth * this->bRunPosition.y() / this->originalWindowSize.height()));
+  ui->bRun->resize(ui->bRun->geometry().size().width(), windowHeigth * this->bRunSize.height() / this->originalWindowSize.height());
+  ui->bRun->resize(windowWidth * this->bRunSize.width() / this->originalWindowSize.width(), ui->bRun->geometry().size().height());
 
   ui->bListDatabaseRunConfigurations->move((int)(windowWidth * this->bListDatabaseRunConfigurationsPosition.x() / this->originalWindowSize.width()), ui->bListDatabaseRunConfigurations->pos().y());
   ui->bListDatabaseRunConfigurations->move(ui->bListDatabaseRunConfigurations->pos().x(), (int)(windowHeigth * this->bListDatabaseRunConfigurationsPosition.y() / this->originalWindowSize.height()));
@@ -1329,13 +1329,13 @@ void MainWindow::resizeWindow()
   gbDAQInterfaceFont_.setPointSize(lbFontSizeDAQInterface);
   ui->groupBox_DAQInterface->setFont(gbDAQInterfaceFont_);
 
-  QFont bStartRunFont_("Cantarell", 11);
-  int lbFontSizeStartRun = (int)(this->bStartRunFont.pointSize() * quadraticMeanConfigurationFontSize / this->originalQuadraticMeanConfigurationFontSize);
-  bStartRunFont_.setPointSize(lbFontSizeStartRun);
-  ui->bStartRun->setFont(bStartRunFont_);
+  QFont bRunFont_("Cantarell", 11);
+  int lbFontSizeRun = (int)(this->bRunFont.pointSize() * quadraticMeanConfigurationFontSize / this->originalQuadraticMeanConfigurationFontSize);
+  bRunFont_.setPointSize(lbFontSizeRun);
+  ui->bRun->setFont(bRunFont_);
 
-  QSize bStartRunIconResize = this->bStartRunIconSize * quadraticMeanConfigurationFontSize / this->originalQuadraticMeanConfigurationFontSize;
-  ui->bStartRun->setIconSize(bStartRunIconResize);
+  QSize bRunIconResize = this->bRunIconSize * quadraticMeanConfigurationFontSize / this->originalQuadraticMeanConfigurationFontSize;
+  ui->bRun->setIconSize(bRunIconResize);
 
   if(this->EnableFontAutoResizing) {
     QFont taDAQInterfaceFont_("Cantarell", 11);
