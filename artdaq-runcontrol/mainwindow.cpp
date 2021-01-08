@@ -800,6 +800,7 @@ void MainWindow::retrieveConfigFromFile(const QString &runFileName)
   if(sl[0] == "components:") {
     sl.removeFirst();
     list_comps_selected = sl;
+    list_comps_selected.sort();
     QStringListModel* model = (QStringListModel*)ui->lvComponents->model();
     model->setStringList(list_comps_selected);
     ui->lvComponents->setSelectionMode(QAbstractItemView::NoSelection);
@@ -865,6 +866,7 @@ void MainWindow::saveRunConfig(const QString& runFileName)
     return;
   }
   QTextStream out(&f);
+  list_comps_selected.sort();
   out << "DAQINTERFACE_USER_SOURCEFILE: " << env_vars::daqInt_user_sourcefile << "\n";
   out << "components: " << list_comps_selected.join(" ") << "\n";
   out << "configs: " << list_config_selected.join(" ") << "\n";
