@@ -164,7 +164,7 @@ void xmlrpc_gui_comm::setDAQInterfaceComponents(const QStringList& components)
           }
           else if(has_arbitrary_command){
             cmd = arbitrary_command;
-            qDebug() << cmd;
+            qDebug() << QString::fromStdString(cmd);
             array_list.push_back(xmlrpc_c::value_string(cmd));
             has_arbitrary_command = false;
           }
